@@ -23,6 +23,11 @@ public class LogModel {
 		mObservable.notifyChanged();
 	}
 
+	public void clean() {
+		mLogBuffer = new StringBuffer();
+		mObservable.notifyChanged();
+	}
+
 	public void registerObserver(final Observer observer) {
 		mObservable.registerObserver(observer);
 		observer.onLogChanged(this);

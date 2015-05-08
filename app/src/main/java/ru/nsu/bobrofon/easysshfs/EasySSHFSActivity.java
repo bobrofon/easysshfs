@@ -50,6 +50,8 @@ public class EasySSHFSActivity extends ActionBarActivity
 		mNavigationDrawerFragment.setUp(
 			R.id.navigation_drawer,
 			(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		((LogFragment)mFragments[1]).setDrawerStatus(mNavigationDrawerFragment);
 	}
 
 	@Override
@@ -86,7 +88,6 @@ public class EasySSHFSActivity extends ActionBarActivity
 			// Only show items in the action bar relevant to this screen
 			// if the drawer is not showing. Otherwise, let the drawer
 			// decide what to show in the action bar.
-			getMenuInflater().inflate(R.menu.easy_sshf, menu);
 			restoreActionBar();
 			return true;
 		}
