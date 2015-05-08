@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">EasySSHFS</string>
+
+    <string name="title_section1">Mount points</string>
+    <string name="title_section2">Log</string>
+    <string name="title_section3">Exit</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="debug_log_header">Debug log:\n\n</string>
+    <string name="debug_log_title">Log</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
