@@ -16,10 +16,12 @@ import android.support.v4.widget.DrawerLayout;
 import ru.nsu.bobrofon.easysshfs.log.LogFragment;
 import ru.nsu.bobrofon.easysshfs.log.LogModel;
 import ru.nsu.bobrofon.easysshfs.log.LogWorkerFragment;
+import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.EditFragment;
+import ru.nsu.bobrofon.easysshfs.mountpointList.MountpointFragment;
 
 
 public class EasySSHFSActivity extends ActionBarActivity
-	implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+	implements NavigationDrawerFragment.NavigationDrawerCallbacks, MountpointFragment.OnFragmentInteractionListener {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -36,7 +38,7 @@ public class EasySSHFSActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mFragments = new Fragment[] {
-			PlaceholderFragment.newInstance(0),
+			new MountpointFragment(),
 			new LogFragment()
 		};
 
@@ -109,43 +111,9 @@ public class EasySSHFSActivity extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
+	@Override
+	public void onFragmentInteraction(String id) {
 
-		/**
-		 * Returns a new instance of this fragment for the given section
-		 * number.
-		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-		                         Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_easy_sshf, container, false);
-			return rootView;
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			((EasySSHFSActivity) activity).onSectionAttached(R.string.title_section1);
-		}
 	}
 
 }

@@ -1,21 +1,27 @@
 <resources>
     <string name="app_name">EasySSHFS</string>
 
-    <string name="title_section1">Mount points</string>
-    <string name="title_section2">Log</string>
-    <string name="title_section3">Exit</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">Example action</string>
     <string name="action_clean_log">Clean</string>
+    <string name="action_new_mount_point">Add</string>
+    <string name="action_save">Save</string>
 
-    <string name="action_settings">Settings</string>
 
     <string name="debug_log_header">Debug log:\n\n</string>
     <string name="debug_log_title">Log</string>
+    <string name="mount_point_title">Mount point</string>
+    <string name="mount_point_list_title">Mount points</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mount_point_name_hint">Mount point name</string>
+    <string name="username_hint">Username</string>
+    <string name="host_hint">Host</string>
+    <string name="port_hint">Port</string>
+    <string name="password_hint">Password</string>
+    <string name="remote_path_hint">/remote/path</string>
+    <string name="local_path_hint">/local/path</string>
+    <string name="store">Store</string>
+    <string name="automount">Auto</string>
+    <string name="sshfs_options_hint">sshfs options</string>
 </resources>
