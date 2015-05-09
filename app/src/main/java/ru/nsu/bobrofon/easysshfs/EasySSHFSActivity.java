@@ -53,6 +53,7 @@ public class EasySSHFSActivity extends ActionBarActivity
 			R.id.navigation_drawer,
 			(DrawerLayout) findViewById(R.id.drawer_layout));
 
+		((MountpointFragment)mFragments[0]).setDrawerStatus(mNavigationDrawerFragment);
 		((LogFragment)mFragments[1]).setDrawerStatus(mNavigationDrawerFragment);
 	}
 
@@ -102,11 +103,6 @@ public class EasySSHFSActivity extends ActionBarActivity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
 
 		return super.onOptionsItemSelected(item);
 	}
