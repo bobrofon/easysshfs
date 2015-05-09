@@ -131,7 +131,12 @@ public class MountPoint implements Serializable {
 	}
 
 	public String getPointName() {
-		return mPointName;
+		if (!mPointName.isEmpty()) {
+			return mPointName;
+		}
+		else {
+			return mLocalPath;
+		}
 	}
 
 	public boolean getAutoMount() {
