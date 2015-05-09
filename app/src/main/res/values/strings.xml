@@ -33,4 +33,8 @@
     <string name="store">Store</string>
     <string name="automount">Auto</string>
     <string name="sshfs_options_hint">sshfs options</string>
+    <string name="mount">mount</string>
+    <string name="umount">umount</string>
+    <string name="mounted">mounted</string>
+    <string name="not_mounted">not umounted</string>
 </resources>
