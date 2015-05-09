@@ -2,6 +2,7 @@ package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 import android.database.Observable;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.stericson.RootShell.RootShell;
 import com.stericson.RootShell.exceptions.RootDeniedException;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import ru.nsu.bobrofon.easysshfs.log.LogModel;
@@ -35,7 +37,7 @@ public class MountPoint implements Serializable {
 	private String mRootDir;
 
 	private transient LogModel mLog;
-	private transient final MountObservable mObservable = new MountObservable();
+	private transient MountObservable mObservable = new MountObservable();
 	private transient boolean mIsMounted = false;
 
 	final static String DEFAULT_OPTIONS =     "password_stdin,"
@@ -62,6 +64,17 @@ public class MountPoint implements Serializable {
 		mLocalPath = "";
 		mOptions = DEFAULT_OPTIONS;
 		mRootDir = "";
+	}
+
+	public void init(final LogModel logModel) {
+		if (mPassword == null) {
+			mPassword = "";
+		}
+		mLog = logModel;
+		if (mObservable == null) {
+			mObservable = new MountObservable();
+		}
+
 	}
 
 	public void setPointName(final String name) {
@@ -234,11 +247,11 @@ public class MountPoint implements Serializable {
 		}
 	}
 
-	private class CheckMountTask extends AsyncTask<Void, Void, Boolean> {
+	private class CheckMountTask extends AsyncTask<Void, Void, Pair<Boolean, String>> {
 		private final String mMountFile = "/proc/mounts";
 
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Pair<Boolean, String> doInBackground(Void... params) {
 			final StringBuilder mountLine = new StringBuilder();
 			mountLine.append(getUserName()).append('@');
 			mountLine.append(getHostIp()).append(':');
@@ -258,24 +271,24 @@ public class MountPoint implements Serializable {
 
 				br.close();
 			} catch (FileNotFoundException e) {
-				logMessage(e.getMessage());
+				return new Pair(result, e.getMessage());
 			} catch (IOException e) {
-				logMessage(e.getMessage());
+				return new Pair(result, e.getMessage());
 			}
 
+			mIsMounted = result;
 			if (result) {
-				logMessage("Pattern " + mountLine.toString() + " is in " + mMountFile);
+				return new Pair(result, "Pattern " + mountLine.toString() + " is in " + mMountFile);
 			}
 			else {
-				logMessage("Pattern " + mountLine.toString() + " is not in " + mMountFile);
+				return new Pair(result, "Pattern " + mountLine.toString() + " is not in " + mMountFile);
 			}
-
-			return result;
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean mounted) {
-			mIsMounted = mounted;
+		protected void onPostExecute(final Pair<Boolean, String> result) {
+			mIsMounted = result.first;
+			logMessage(result.second);
 
 			mObservable.notifyChanged();
 		}
@@ -325,6 +338,7 @@ public class MountPoint implements Serializable {
 					checkMount();
 				}
 			};
+			shell.add(cmd);
 		} catch (RootDeniedException e) {
 			logMessage(e.getMessage());
 		} catch (TimeoutException e) {

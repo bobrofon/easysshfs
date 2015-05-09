@@ -36,5 +36,5 @@
     <string name="mount">mount</string>
     <string name="umount">umount</string>
     <string name="mounted">mounted</string>
-    <string name="not_mounted">not umounted</string>
+    <string name="not_mounted">not mounted</string>
 </resources>

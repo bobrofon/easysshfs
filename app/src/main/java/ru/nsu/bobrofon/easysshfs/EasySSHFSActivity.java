@@ -62,6 +62,11 @@ public class EasySSHFSActivity extends ActionBarActivity
 		// update the main content by replacing fragments
 		try {
 			FragmentManager fragmentManager = getSupportFragmentManager();
+			int backStackCount = fragmentManager.getBackStackEntryCount();
+			while (backStackCount-- > 0) {
+				fragmentManager.popBackStack();
+			}
+
 			fragmentManager.beginTransaction()
 				.replace(R.id.container, mFragments[position])
 				.commit();
@@ -108,8 +113,12 @@ public class EasySSHFSActivity extends ActionBarActivity
 	}
 
 	@Override
-	public void onFragmentInteraction(String id) {
-
+	public void onFragmentInteraction(int id) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+			.replace(R.id.container, EditFragment.newInstance(id))
+			.addToBackStack(null)
+			.commit();
 	}
 
 }

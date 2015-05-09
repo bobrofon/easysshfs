@@ -50,6 +50,20 @@ public class MountPointsWorkerFragment extends Fragment {
 		}
 	}
 
+	public void registerObserver(final MountPoint.Observer observer) {
+		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
+			final MountPoint item = i.next();
+			item.registerObserver(observer);
+		}
+	}
+
+	public void unregisterObserver(final MountPoint.Observer observer) {
+		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
+			final MountPoint item = i.next();
+			item.unregisterObserver(observer);
+		}
+	}
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,6 +83,11 @@ public class MountPointsWorkerFragment extends Fragment {
 			ois.close();
 		} catch (Exception ex) {
 			log(ex.getMessage());
+		}
+
+		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
+			final MountPoint item = i.next();
+			item.init(mLog);
 		}
 
 		return this;
