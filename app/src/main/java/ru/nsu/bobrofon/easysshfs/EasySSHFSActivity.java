@@ -37,6 +37,9 @@ public class EasySSHFSActivity extends ActionBarActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		new VersionUpdater(getApplicationContext()).update();
+
 		mFragments = new Fragment[] {
 			new MountpointFragment(),
 			new LogFragment()
@@ -77,8 +80,6 @@ public class EasySSHFSActivity extends ActionBarActivity
 	}
 
 	public void onSectionAttached(int titleId) {
-		LogModel log = LogWorkerFragment.getLogModelByTag(getSupportFragmentManager(), LogFragment.TAG_WORKER);
-		log.addMessage("new title");
 		mTitle = getString(titleId);
 	}
 

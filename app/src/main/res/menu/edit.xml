@@ -5,4 +5,7 @@
     <item android:id="@+id/action_save"
           android:title="@string/action_save"
           app:showAsAction="withText|ifRoom"/>
+    <item android:id="@+id/action_delete"
+          android:title="@string/action_delete"
+          app:showAsAction="withText|ifRoom"/>
 </menu>

@@ -23,6 +23,8 @@ import java.util.concurrent.TimeoutException;
 import ru.nsu.bobrofon.easysshfs.log.LogModel;
 
 public class MountPoint implements Serializable {
+	private static transient int commandCode = 0;
+
 	private String mPointName;
 	private boolean mAutoMount;
 	private String mUserName;
@@ -318,7 +320,7 @@ public class MountPoint implements Serializable {
 	private void runCommand(final String command) {
 		try {
 			Shell shell = RootShell.getShell(true);
-			Command cmd = new Command(0, command) {
+			Command cmd = new Command(commandCode++, 1000, command) {
 				@Override
 				public void commandOutput(int id, String line)
 				{

@@ -27,9 +27,8 @@
     <string name="remote_path_hint">/remote/path</string>
     <string name="local_path_hint">/local/path</string>
     <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="store">Store</string>
     <string name="automount">Auto</string>
     <string name="sshfs_options_hint">sshfs options</string>

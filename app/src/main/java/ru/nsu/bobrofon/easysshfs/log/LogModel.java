@@ -19,7 +19,7 @@ public class LogModel {
 
 	public void addMessage(CharSequence message) {
 		Log.i(TAG, "new message: " + message);
-		mLogBuffer.append(message).append("\n");
+		mLogBuffer.append(">_ ").append(message).append("\n");
 		mObservable.notifyChanged();
 	}
 
