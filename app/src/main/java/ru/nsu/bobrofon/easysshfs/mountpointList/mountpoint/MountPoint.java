@@ -230,7 +230,7 @@ public class MountPoint implements Serializable {
 
 	public void registerObserver(final Observer observer) {
 		mObservable.registerObserver(observer);
-		observer.onMountStateChanged(this);
+		checkMount();
 	}
 
 	public void unregisterObserver(final Observer observer) {
@@ -267,7 +267,7 @@ public class MountPoint implements Serializable {
 				BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
 				String line;
-				while (result && (line = br.readLine()) != null) {
+				while (!result && (line = br.readLine()) != null) {
 					result = line.contains(mountLine.toString());
 				}
 
