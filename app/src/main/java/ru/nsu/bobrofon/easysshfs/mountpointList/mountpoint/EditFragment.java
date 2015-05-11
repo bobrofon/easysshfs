@@ -153,6 +153,7 @@ public class EditFragment extends Fragment {
 			final MountPointsList worker
 				= MountPointsList.getIntent().load(getActivity());
 			worker.getMountPoints().remove(mSelf);
+			worker.save(getActivity());
 
 			return true;
 		}
