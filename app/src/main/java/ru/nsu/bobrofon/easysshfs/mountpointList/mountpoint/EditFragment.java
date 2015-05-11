@@ -20,7 +20,7 @@ import ru.nsu.bobrofon.easysshfs.R;
 import ru.nsu.bobrofon.easysshfs.log.LogFragment;
 import ru.nsu.bobrofon.easysshfs.log.LogModel;
 import ru.nsu.bobrofon.easysshfs.log.LogWorkerFragment;
-import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsWorkerFragment;
+import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 
 public class EditFragment extends Fragment {
 	private static final String MOUNT_POINT_ID = "MOUNT_POINT_ID";
@@ -75,8 +75,8 @@ public class EditFragment extends Fragment {
 		// Inflate the layout for this fragment
 		final View selfView = inflater.inflate(R.layout.fragment_edit, container, false);
 
-		final MountPointsWorkerFragment worker
-			= MountPointsWorkerFragment.getFragment(getFragmentManager()).load(getActivity());
+		final MountPointsList worker
+			= MountPointsList.getIntent().load(getActivity());
 
 		mLog = LogWorkerFragment.getLogModelByTag(getFragmentManager(), LogFragment.TAG_WORKER);
 
@@ -139,8 +139,8 @@ public class EditFragment extends Fragment {
 			mSelf.setLocalPath(mLocalPath.getText().toString());
 			mSelf.setOptions(mOptions.getText().toString());
 
-			final MountPointsWorkerFragment worker
-				= MountPointsWorkerFragment.getFragment(getFragmentManager()).load(getActivity());
+			final MountPointsList worker
+				= MountPointsList.getIntent().load(getActivity());
 
 			if (!worker.getMountPoints().contains(mSelf)) {
 				worker.getMountPoints().add(mSelf);
@@ -150,8 +150,8 @@ public class EditFragment extends Fragment {
 			return true;
 		}
 		else if (id == R.id.action_delete) {
-			final MountPointsWorkerFragment worker
-				= MountPointsWorkerFragment.getFragment(getFragmentManager()).load(getActivity());
+			final MountPointsList worker
+				= MountPointsList.getIntent().load(getActivity());
 			worker.getMountPoints().remove(mSelf);
 
 			return true;

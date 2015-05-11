@@ -48,7 +48,7 @@ public class MountpointFragment extends Fragment
 
 	private DrawerStatus mDrawerStatus;
 
-	private MountPointsWorkerFragment mountpoints;
+	private MountPointsList mountpoints;
 
 	public void setDrawerStatus(final DrawerStatus drawerStatus) {
 		mDrawerStatus = drawerStatus;
@@ -66,7 +66,7 @@ public class MountpointFragment extends Fragment
 		super.onCreate(savedInstanceState);
 
 		mountpoints
-			= MountPointsWorkerFragment.getFragment(getFragmentManager()).load(getActivity());
+			= MountPointsList.getIntent().load(getActivity());
 		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints());
 	}
 
