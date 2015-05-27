@@ -2,11 +2,12 @@ package ru.nsu.bobrofon.easysshfs.mountpointList;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,9 +21,9 @@ public class MountPointsList {
 
 	private List<MountPoint> mMountPoints;
 
-	private static final MountPointsList self = new MountPointsList();
+	private static MountPointsList self;
 
-	public MountPointsList() {
+	private MountPointsList() {
 	}
 
 	public List<MountPoint> getMountPoints() {
@@ -30,8 +31,7 @@ public class MountPointsList {
 	}
 
 	public void autoMount() {
-		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
-			final MountPoint item = i.next();
+		for (final MountPoint item : mMountPoints) {
 			if (item.getAutoMount() && !item.isMounted()) {
 				item.mount();
 			}
@@ -39,58 +39,56 @@ public class MountPointsList {
 	}
 
 	public void registerObserver(final MountPoint.Observer observer) {
-		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
-			final MountPoint item = i.next();
+		for (final MountPoint item : mMountPoints) {
 			item.registerObserver(observer);
 		}
 	}
 
 	public void unregisterObserver(final MountPoint.Observer observer) {
-		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
-			final MountPoint item = i.next();
+		for (final MountPoint item : mMountPoints) {
 			item.unregisterObserver(observer);
 		}
 	}
 
-	public MountPointsList load(final Context context) {
-		if (mMountPoints != null) {
-			return this;
-		}
-
-		mMountPoints = new LinkedList<MountPoint>();
+	private MountPointsList load(final Context context) {
+		final SharedPreferences settings = context.getSharedPreferences(STORAGE_FILE, 0);
 		try {
-			FileInputStream fis = context.openFileInput(STORAGE_FILE);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			mMountPoints = (LinkedList<MountPoint>) ois.readObject();
-			ois.close();
-		} catch (Exception ex) {
-			log(ex.getMessage());
-		}
+			JSONArray selfJson = new JSONArray(settings.getString(STORAGE_FILE, "[]"));
 
-		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
-			final MountPoint item = i.next();
-			item.init();
+			mMountPoints = new LinkedList<>();
+			for (int i = 0; i < selfJson.length(); ++i) {
+				MountPoint mountPoint = new MountPoint();
+				mountPoint.json(selfJson.getJSONObject(i));
+				mMountPoints.add(mountPoint);
+			}
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage());
+			log(e.getMessage());
 		}
 
 		return this;
 	}
 
 	public void save(final Context context) {
-		try {
-			FileOutputStream fos = context.openFileOutput(STORAGE_FILE, Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(mMountPoints);
-			oos.close();
-		} catch (Exception ex) {
-			log(ex.getMessage());
+		final SharedPreferences settings = context.getSharedPreferences(STORAGE_FILE, 0);
+
+		JSONArray selJson = new JSONArray();
+		for (MountPoint item : mMountPoints) {
+			selJson.put(item.json());
 		}
+
+		SharedPreferences.Editor prefsEditor = settings.edit();
+		prefsEditor.putString(STORAGE_FILE, selJson.toString()).commit();
 	}
 
 	private void log(final CharSequence message) {
 		LogSingleton.getLogModel().addMessage(message);
 	}
 
-	public static MountPointsList getIntent() {
+	public static MountPointsList getIntent(final Context context) {
+		if (self == null) {
+			self = new MountPointsList().load(context);
+		}
 		return self;
 	}
 

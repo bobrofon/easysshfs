@@ -1,5 +1,6 @@
 package ru.nsu.bobrofon.easysshfs;
 
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.Toast;
 
 import ru.nsu.bobrofon.easysshfs.log.LogFragment;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.EditFragment;
@@ -27,11 +29,13 @@ public class EasySSHFSActivity extends ActionBarActivity
 	 */
 	private CharSequence mTitle;
 	private Fragment[] mFragments;
+	private static Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mContext = getApplicationContext();
 		new VersionUpdater(getApplicationContext()).update();
 
 		mFragments = new Fragment[] {
@@ -114,6 +118,13 @@ public class EasySSHFSActivity extends ActionBarActivity
 			.replace(R.id.container, EditFragment.newInstance(id))
 			.addToBackStack(null)
 			.commit();
+	}
+
+	public static void showToast(final CharSequence message) {
+		if (mContext != null) {
+			Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+			toast.show();
+		}
 	}
 
 }

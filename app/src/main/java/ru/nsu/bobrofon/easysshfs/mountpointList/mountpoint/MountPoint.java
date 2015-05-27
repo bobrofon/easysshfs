@@ -2,6 +2,7 @@ package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 import android.database.Observable;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 
 import com.stericson.RootShell.RootShell;
@@ -9,19 +10,23 @@ import com.stericson.RootShell.exceptions.RootDeniedException;
 import com.stericson.RootShell.execution.Command;
 import com.stericson.RootShell.execution.Shell;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
+import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 
-public class MountPoint implements Serializable {
+public class MountPoint {
+	private static String TAG = "MOUNT_POINT";
 	private static transient int commandCode = 0;
 
 	private String mPointName;
@@ -29,16 +34,15 @@ public class MountPoint implements Serializable {
 	private String mUserName;
 	private String mHost;
 	private short mPort;
-	private transient String mPassword;
-	private String mStoredPassword;
+	private String mPassword;
 	private boolean mStorePassword;
 	private String mRemotePath;
 	private String mLocalPath;
 	private String mOptions;
 	private String mRootDir;
 
-	private transient MountObservable mObservable = new MountObservable();
-	private transient boolean mIsMounted = false;
+	private MountObservable mObservable = new MountObservable();
+	private boolean mIsMounted = false;
 
 	final static String DEFAULT_OPTIONS =     "password_stdin,"
 											+ "UserKnownHostsFile=/dev/null,"
@@ -58,22 +62,11 @@ public class MountPoint implements Serializable {
 		mHost = "";
 		mPort = 22;
 		mPassword = "";
-		mStoredPassword = "";
 		mStorePassword = false;
 		mRemotePath = "";
 		mLocalPath = "";
 		mOptions = DEFAULT_OPTIONS;
 		mRootDir = "";
-	}
-
-	public void init() {
-		if (mPassword == null) {
-			mPassword = "";
-		}
-		if (mObservable == null) {
-			mObservable = new MountObservable();
-		}
-
 	}
 
 	public void setPointName(final String name) {
@@ -107,19 +100,10 @@ public class MountPoint implements Serializable {
 
 	public void setPassword(final String password) {
 		mPassword = password;
-		if (mStorePassword) {
-			mStoredPassword = mPassword;
-		}
 	}
 
 	public void setStorePassword(final boolean storePassword) {
 		mStorePassword = storePassword;
-		if (mStorePassword) {
-			mStoredPassword = mPassword;
-		}
-		else {
-			mStoredPassword = "";
-		}
 	}
 
 	public void setRemotePath(final String remotePath) {
@@ -164,12 +148,7 @@ public class MountPoint implements Serializable {
 	}
 
 	public String getPassword() {
-		if (mStorePassword) {
-			return mStoredPassword;
-		}
-		else {
-			return mPassword;
-		}
+		return mPassword;
 	}
 
 	public boolean getStorePassword() {
@@ -186,6 +165,49 @@ public class MountPoint implements Serializable {
 
 	public String getOptions() {
 		return mOptions;
+	}
+
+	public JSONObject json() {
+		JSONObject selfJson = new JSONObject();
+		try {
+			selfJson.put("PointName", mPointName);
+			selfJson.put("AutoMount", mAutoMount);
+			selfJson.put("UserName", mUserName);
+			selfJson.put("Host", mHost);
+			selfJson.put("Port", mPort);
+			if (mStorePassword) {
+				selfJson.put("Password", mPassword);
+			}
+			selfJson.put("RemotePath", mRemotePath);
+			selfJson.put("LocalPath", mLocalPath);
+			selfJson.put("Options", mOptions);
+			selfJson.put("RootDir", mRootDir);
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage());
+		}
+
+		return selfJson;
+	}
+
+	public void json(JSONObject selfJson) {
+		mPointName = selfJson.optString("PointName", mPointName);
+		mAutoMount = selfJson.optBoolean("AutoMount", mAutoMount);
+		mUserName = selfJson.optString("UserName", mUserName);
+		mHost = selfJson.optString("Host", mHost);
+		mPort = (short)selfJson.optInt("Port", mPort);
+		mStorePassword = selfJson.optBoolean("StorePassword", mStorePassword);
+		if (selfJson.has("Password")) {
+			mStorePassword = true;
+			mPassword = selfJson.optString("Password", mPassword);
+		}
+		else {
+			mStorePassword = false;
+			mPassword = "";
+		}
+		mRemotePath = selfJson.optString("RemotePath", mRemotePath);
+		mLocalPath = selfJson.optString("LocalPath", mLocalPath);
+		mOptions = selfJson.optString("Options", mOptions);
+		mRootDir = selfJson.optString("RootDir", mRootDir);
 	}
 
 	private String getHostIp() {
@@ -210,13 +232,13 @@ public class MountPoint implements Serializable {
 	}
 
 	public void mount() {
+		logMessage("mount");
 		new MountTask().execute();
 	}
 
 	public void umount() {
-		final StringBuilder command = new StringBuilder();
-		command.append("umount ").append(getLocalPath());
-		runCommand(command.toString());
+		logMessage("umount");
+		runCommand("umount " + getLocalPath());
 	}
 
 	public void registerObserver(final Observer observer) {
@@ -284,6 +306,7 @@ public class MountPoint implements Serializable {
 			logMessage(result.second);
 
 			mObservable.notifyChanged();
+			EasySSHFSActivity.showToast("state updated");
 		}
 	}
 
@@ -332,11 +355,7 @@ public class MountPoint implements Serializable {
 				}
 			};
 			shell.add(cmd);
-		} catch (RootDeniedException e) {
-			logMessage(e.getMessage());
-		} catch (TimeoutException e) {
-			logMessage(e.getMessage());
-		} catch (IOException e) {
+		} catch (RootDeniedException | TimeoutException | IOException e) {
 			logMessage(e.getMessage());
 		}
 	}

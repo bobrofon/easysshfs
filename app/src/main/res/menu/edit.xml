@@ -8,4 +8,10 @@
     <item android:id="@+id/action_delete"
           android:title="@string/action_delete"
           app:showAsAction="withText|ifRoom"/>
+    <item android:id="@+id/action_mount"
+          android:title="@string/mount"
+          app:showAsAction="never"/>
+    <item android:id="@+id/action_umount"
+          android:title="@string/umount"
+          app:showAsAction="never"/>
 </menu>

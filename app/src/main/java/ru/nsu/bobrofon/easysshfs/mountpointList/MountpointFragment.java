@@ -65,8 +65,7 @@ public class MountpointFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mountpoints
-			= MountPointsList.getIntent().load(getActivity());
+		mountpoints	= MountPointsList.getIntent(getActivity());
 		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints());
 	}
 
@@ -146,7 +145,7 @@ public class MountpointFragment extends Fragment
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnFragmentInteractionListener {
-		public void onFragmentInteraction(int id);
+		void onFragmentInteraction(int id);
 	}
 
 	@Override

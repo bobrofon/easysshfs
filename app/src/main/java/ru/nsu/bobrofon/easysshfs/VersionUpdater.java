@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
 
@@ -55,7 +56,7 @@ public class VersionUpdater {
 			Environment.getExternalStorageDirectory().getPath() + "/mnt"));
 		mountPoint.setRemotePath(settings.getString("remote_dir", ""));
 
-		final MountPointsList list = MountPointsList.getIntent().load(mContext);
+		final MountPointsList list = MountPointsList.getIntent(mContext);
 		list.getMountPoints().add(mountPoint);
 		list.save(mContext);
 	}
@@ -76,7 +77,9 @@ public class VersionUpdater {
 				in.close();
 
 				file = new File(home + "/" + localPath);
-				file.setExecutable(true);
+				if (!file.setExecutable(true)) {
+					LogSingleton.getLogModel().addMessage("Can't set executable bit on " + localPath);
+				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

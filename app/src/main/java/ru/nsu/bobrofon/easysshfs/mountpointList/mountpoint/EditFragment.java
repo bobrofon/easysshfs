@@ -71,14 +71,13 @@ public class EditFragment extends Fragment {
 		final View selfView = inflater.inflate(R.layout.fragment_edit, container, false);
 
 		final MountPointsList worker
-			= MountPointsList.getIntent().load(getActivity());
+			= MountPointsList.getIntent(getActivity());
 
 		if (worker.getMountPoints().size() > mMountPointId) {
 			mSelf = worker.getMountPoints().get(mMountPointId);
 		}
 		else {
 			mSelf = new MountPoint();
-			mSelf.init();
 			mSelf.setRootDir(getActivity().getFilesDir().getPath());
 			mSelf.setLocalPath(Environment.getExternalStorageDirectory().getPath() + "/mnt");
 		}
@@ -116,24 +115,28 @@ public class EditFragment extends Fragment {
 		}
 	}
 
+	private void grabMountPoint(final MountPoint mountPoint) {
+		mountPoint.setPointName(mName.getText().toString());
+		mountPoint.setAutoMount(mAuto.isChecked());
+		mountPoint.setUserName(mUsername.getText().toString());
+		mountPoint.setHost(mHost.getText().toString());
+		mountPoint.setPort(mPort.getText().toString());
+		mountPoint.setPassword(mPassword.getText().toString());
+		mountPoint.setStorePassword(mStorePassword.isChecked());
+		mountPoint.setRemotePath(mRemotePath.getText().toString());
+		mountPoint.setLocalPath(mLocalPath.getText().toString());
+		mountPoint.setOptions(mOptions.getText().toString());
+		mountPoint.setRootDir(getActivity().getFilesDir().getPath());
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 
 		if (id == R.id.action_save) {
-			mSelf.setPointName(mName.getText().toString());
-			mSelf.setAutoMount(mAuto.isChecked());
-			mSelf.setUserName(mUsername.getText().toString());
-			mSelf.setHost(mHost.getText().toString());
-			mSelf.setPort(mPort.getText().toString());
-			mSelf.setPassword(mPassword.getText().toString());
-			mSelf.setStorePassword(mStorePassword.isChecked());
-			mSelf.setRemotePath(mRemotePath.getText().toString());
-			mSelf.setLocalPath(mLocalPath.getText().toString());
-			mSelf.setOptions(mOptions.getText().toString());
+			grabMountPoint(mSelf);
 
-			final MountPointsList worker
-				= MountPointsList.getIntent().load(getActivity());
+			final MountPointsList worker = MountPointsList.getIntent(getActivity());
 
 			if (!worker.getMountPoints().contains(mSelf)) {
 				worker.getMountPoints().add(mSelf);
@@ -144,11 +147,21 @@ public class EditFragment extends Fragment {
 		}
 		else if (id == R.id.action_delete) {
 			final MountPointsList worker
-				= MountPointsList.getIntent().load(getActivity());
+				= MountPointsList.getIntent(getActivity());
 			worker.getMountPoints().remove(mSelf);
 			worker.save(getActivity());
 
 			return true;
+		}
+		else if (id == R.id.action_mount) {
+			MountPoint mountPoint = new MountPoint();
+			grabMountPoint(mountPoint);
+			mountPoint.mount();
+		}
+		else if (id == R.id.action_umount) {
+			MountPoint mountPoint = new MountPoint();
+			grabMountPoint(mountPoint);
+			mountPoint.umount();
 		}
 
 		return super.onOptionsItemSelected(item);
