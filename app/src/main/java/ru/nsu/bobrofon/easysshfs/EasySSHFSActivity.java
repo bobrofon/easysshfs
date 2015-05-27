@@ -113,9 +113,12 @@ public class EasySSHFSActivity extends ActionBarActivity
 
 	@Override
 	public void onFragmentInteraction(int id) {
+		EditFragment editFragment = EditFragment.newInstance(id);
+		editFragment.setDrawerStatus(mNavigationDrawerFragment);
+
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
-			.replace(R.id.container, EditFragment.newInstance(id))
+			.replace(R.id.container, editFragment)
 			.addToBackStack(null)
 			.commit();
 	}
