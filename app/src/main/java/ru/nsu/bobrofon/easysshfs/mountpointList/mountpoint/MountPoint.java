@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -270,7 +271,15 @@ public class MountPoint {
 			final StringBuilder mountLine = new StringBuilder();
 			mountLine.append(getUserName()).append('@');
 			mountLine.append(getHostIp()).append(':');
-			mountLine.append(getRemotePath()).append(' ').append(getLocalPath());
+
+			String canonicalLocalPath = getLocalPath();
+			try {
+				canonicalLocalPath = new File(canonicalLocalPath).getCanonicalPath();
+			} catch (IOException e) {
+				logMessage("Can't get canonical path of " + getLocalPath() + " : " + e.getMessage());
+			}
+
+			mountLine.append(getRemotePath()).append(' ').append(canonicalLocalPath);
 			mountLine.append(' ').append("fuse.sshfs").append(' ');
 
 			boolean result = false;
