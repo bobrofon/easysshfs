@@ -17,9 +17,6 @@ import android.widget.TextView;
 import ru.nsu.bobrofon.easysshfs.DrawerStatus;
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.R;
-import ru.nsu.bobrofon.easysshfs.log.LogFragment;
-import ru.nsu.bobrofon.easysshfs.log.LogModel;
-import ru.nsu.bobrofon.easysshfs.log.LogWorkerFragment;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 
 public class EditFragment extends Fragment {
@@ -28,8 +25,6 @@ public class EditFragment extends Fragment {
 	private int mMountPointId;
 	private DrawerStatus mDrawerStatus;
 	private MountPoint mSelf;
-
-	private LogModel mLog;
 
 	private TextView mName;
 	private CheckBox mAuto;
@@ -78,14 +73,12 @@ public class EditFragment extends Fragment {
 		final MountPointsList worker
 			= MountPointsList.getIntent().load(getActivity());
 
-		mLog = LogWorkerFragment.getLogModelByTag(getFragmentManager(), LogFragment.TAG_WORKER);
-
 		if (worker.getMountPoints().size() > mMountPointId) {
 			mSelf = worker.getMountPoints().get(mMountPointId);
 		}
 		else {
 			mSelf = new MountPoint();
-			mSelf.init(mLog);
+			mSelf.init();
 			mSelf.setRootDir(getActivity().getFilesDir().getPath());
 			mSelf.setLocalPath(Environment.getExternalStorageDirectory().getPath() + "/mnt");
 		}

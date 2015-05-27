@@ -2,9 +2,6 @@ package ru.nsu.bobrofon.easysshfs.mountpointList;
 
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,16 +11,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import ru.nsu.bobrofon.easysshfs.log.LogFragment;
-import ru.nsu.bobrofon.easysshfs.log.LogModel;
-import ru.nsu.bobrofon.easysshfs.log.LogWorkerFragment;
+import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
 
 public class MountPointsList {
 	public final static String TAG = "MOUNT_POINTS_LIST";
 	public final static String STORAGE_FILE = "mountpoints";
 
-	private LogModel mLog;
 	private List<MountPoint> mMountPoints;
 
 	private static final MountPointsList self = new MountPointsList();
@@ -75,7 +69,7 @@ public class MountPointsList {
 
 		for(Iterator<MountPoint> i = mMountPoints.iterator(); i.hasNext(); ) {
 			final MountPoint item = i.next();
-			item.init(mLog);
+			item.init();
 		}
 
 		return this;
@@ -93,9 +87,7 @@ public class MountPointsList {
 	}
 
 	private void log(final CharSequence message) {
-		if (mLog != null) {
-			mLog.addMessage(message);
-		}
+		LogSingleton.getLogModel().addMessage(message);
 	}
 
 	public static MountPointsList getIntent() {

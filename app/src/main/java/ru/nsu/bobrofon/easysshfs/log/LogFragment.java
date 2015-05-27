@@ -19,7 +19,6 @@ import ru.nsu.bobrofon.easysshfs.R;
 
 public class LogFragment extends Fragment implements LogModel.Observer {
 	private static final String TAG = "LogFragment";
-	public static final String TAG_WORKER = "TAG_LOG_WORKER";
 
 	private TextView mLogTextView;
 	private LogModel mLogModel;
@@ -45,7 +44,7 @@ public class LogFragment extends Fragment implements LogModel.Observer {
 
 		mLogTextView = (TextView) selfView.findViewById(R.id.log);
 
-		mLogModel = LogWorkerFragment.getLogModelByTag(getFragmentManager(), TAG_WORKER);
+		mLogModel = LogSingleton.getLogModel();
 
 		mLogModel.registerObserver(this);
 

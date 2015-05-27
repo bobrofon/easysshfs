@@ -17,10 +17,9 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import ru.nsu.bobrofon.easysshfs.log.LogModel;
+import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 
 public class MountPoint implements Serializable {
 	private static transient int commandCode = 0;
@@ -38,7 +37,6 @@ public class MountPoint implements Serializable {
 	private String mOptions;
 	private String mRootDir;
 
-	private transient LogModel mLog;
 	private transient MountObservable mObservable = new MountObservable();
 	private transient boolean mIsMounted = false;
 
@@ -68,11 +66,10 @@ public class MountPoint implements Serializable {
 		mRootDir = "";
 	}
 
-	public void init(final LogModel logModel) {
+	public void init() {
 		if (mPassword == null) {
 			mPassword = "";
 		}
-		mLog = logModel;
 		if (mObservable == null) {
 			mObservable = new MountObservable();
 		}
@@ -141,10 +138,6 @@ public class MountPoint implements Serializable {
 		mRootDir = rootDir;
 	}
 
-	public void setLog(final LogModel log) {
-		mLog = log;
-	}
-
 	public String getPointName() {
 		if (!mPointName.isEmpty()) {
 			return mPointName;
@@ -205,9 +198,7 @@ public class MountPoint implements Serializable {
 	}
 
 	private void logMessage(final String message) {
-		if (mLog != null) {
-			mLog.addMessage(message);
-		}
+		LogSingleton.getLogModel().addMessage(message);
 	}
 
 	public boolean isMounted() {
