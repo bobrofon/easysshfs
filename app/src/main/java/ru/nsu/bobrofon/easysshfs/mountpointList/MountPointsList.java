@@ -8,7 +8,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class MountPointsList {
 		}
 
 		SharedPreferences.Editor prefsEditor = settings.edit();
-		prefsEditor.putString(STORAGE_FILE, selJson.toString()).commit();
+		prefsEditor.putString(STORAGE_FILE, selJson.toString()).apply();
 	}
 
 	private void log(final CharSequence message) {

@@ -343,7 +343,7 @@ public class MountPoint {
 	private void runCommand(final String command) {
 		try {
 			Shell shell = RootShell.getShell(true);
-			Command cmd = new Command(commandCode++, 1000, command) {
+			Command cmd = new Command(commandCode++, command) {
 				@Override
 				public void commandOutput(int id, String line)
 				{

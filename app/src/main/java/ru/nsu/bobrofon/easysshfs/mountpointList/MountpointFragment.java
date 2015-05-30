@@ -83,7 +83,7 @@ public class MountpointFragment extends Fragment
 		mListView.setOnItemClickListener(this);
 
 		mountpoints.registerObserver(this);
-		mountpoints.autoMount();
+		// mountpoints.autoMount();
 
 		return view;
 	}

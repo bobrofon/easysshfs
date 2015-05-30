@@ -126,7 +126,7 @@ public class EasySSHFSActivity extends ActionBarActivity
 	public static void showToast(final CharSequence message) {
 		if (mContext != null) {
 			Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
-			toast.show();
+			// toast.show();
 		}
 	}
 
