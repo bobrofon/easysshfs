@@ -142,6 +142,7 @@ public class EditFragment extends Fragment {
 				worker.getMountPoints().add(mSelf);
 			}
 			worker.save(getActivity());
+			EasySSHFSActivity.showToast("saved");
 
 			return true;
 		}
@@ -150,6 +151,7 @@ public class EditFragment extends Fragment {
 				= MountPointsList.getIntent(getActivity());
 			worker.getMountPoints().remove(mSelf);
 			worker.save(getActivity());
+			EasySSHFSActivity.showToast("deleted");
 
 			return true;
 		}

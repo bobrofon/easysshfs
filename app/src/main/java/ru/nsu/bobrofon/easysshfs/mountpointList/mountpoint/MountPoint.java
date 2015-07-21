@@ -315,7 +315,6 @@ public class MountPoint {
 			logMessage(result.second);
 
 			mObservable.notifyChanged();
-			EasySSHFSActivity.showToast("state updated");
 		}
 	}
 

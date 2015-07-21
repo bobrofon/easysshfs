@@ -35,7 +35,6 @@ public class EasySSHFSActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mContext = getApplicationContext();
 		new VersionUpdater(getApplicationContext()).update();
 
 		mFragments = new Fragment[] {
@@ -56,6 +55,18 @@ public class EasySSHFSActivity extends ActionBarActivity
 
 		((MountpointFragment)mFragments[0]).setDrawerStatus(mNavigationDrawerFragment);
 		((LogFragment)mFragments[1]).setDrawerStatus(mNavigationDrawerFragment);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		mContext = getApplicationContext();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mContext = null;
 	}
 
 	@Override
@@ -126,7 +137,7 @@ public class EasySSHFSActivity extends ActionBarActivity
 	public static void showToast(final CharSequence message) {
 		if (mContext != null) {
 			Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
-			// toast.show();
+			toast.show();
 		}
 	}
 
