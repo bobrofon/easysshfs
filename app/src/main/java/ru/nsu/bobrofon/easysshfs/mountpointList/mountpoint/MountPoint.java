@@ -229,17 +229,29 @@ public class MountPoint {
 	}
 
 	public void checkMount() {
-		new CheckMountTask().execute();
+		checkMount(false);
+	}
+
+	public void checkMount(final boolean verbose) {
+		new CheckMountTask(verbose).execute();
 	}
 
 	public void mount() {
+		mount(false);
+	}
+
+	public void mount(boolean verbose) {
 		logMessage("mount");
-		new MountTask().execute();
+		new MountTask(verbose).execute();
 	}
 
 	public void umount() {
+		umount(false);
+	}
+
+	public void umount(final boolean verbose) {
 		logMessage("umount");
-		runCommand("umount " + getLocalPath());
+		runCommand("umount " + getLocalPath(), verbose);
 	}
 
 	public void registerObserver(final Observer observer) {
@@ -265,6 +277,11 @@ public class MountPoint {
 
 	private class CheckMountTask extends AsyncTask<Void, Void, Pair<Boolean, String>> {
 		private final String mMountFile = "/proc/mounts";
+		private final boolean mVerbose;
+
+		private CheckMountTask(boolean verbose) {
+			this.mVerbose = verbose;
+		}
 
 		@Override
 		protected Pair<Boolean, String> doInBackground(Void... params) {
@@ -315,10 +332,18 @@ public class MountPoint {
 			logMessage(result.second);
 
 			mObservable.notifyChanged();
+			if (mVerbose) {
+				EasySSHFSActivity.showToast("done");
+			}
 		}
 	}
 
 	private class MountTask extends AsyncTask<Void, Void, String> {
+		private final boolean mVerbose;
+
+		private MountTask(boolean verbose) {
+			this.mVerbose = verbose;
+		}
 
 		@Override
 		protected String doInBackground(Void... params) {
@@ -335,11 +360,11 @@ public class MountPoint {
 			command.append(getUserName()).append('@').append(hostIp).append(':');
 			command.append(getRemotePath()).append(' ').append(getLocalPath());
 
-			runCommand(command.toString());
+			runCommand(command.toString(), mVerbose);
 		}
 	}
 
-	private void runCommand(final String command) {
+	private void runCommand(final String command, final boolean verbose) {
 		try {
 			Shell shell = RootShell.getShell(true);
 			Command cmd = new Command(commandCode++, command) {
@@ -353,13 +378,13 @@ public class MountPoint {
 				public void commandTerminated(int id, String reason)
 				{
 					logMessage("Terminated: " + reason);
-					checkMount();
+					checkMount(verbose);
 				}
 				@Override
 				public void commandCompleted(int id, int exitCode)
 				{
 					logMessage("Completed with code " + exitCode);
-					checkMount();
+					checkMount(verbose);
 				}
 			};
 			shell.add(cmd);

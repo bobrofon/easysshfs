@@ -158,12 +158,12 @@ public class EditFragment extends Fragment {
 		else if (id == R.id.action_mount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.mount();
+			mountPoint.mount(true);
 		}
 		else if (id == R.id.action_umount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.umount();
+			mountPoint.umount(true);
 		}
 
 		return super.onOptionsItemSelected(item);
