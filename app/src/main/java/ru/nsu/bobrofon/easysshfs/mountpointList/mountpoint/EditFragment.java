@@ -61,6 +61,22 @@ public class EditFragment extends Fragment {
 		}
 	}
 
+	public static String sdcard()
+	{
+		if (isMultiUserEnvironment())
+		{
+			return "/data/media/0";
+		} else
+		{
+			return "/mnt/sdcard";
+		}
+	}
+
+	public static boolean isMultiUserEnvironment()
+	{
+		return android.os.Build.VERSION.SDK_INT >= 17;
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -79,7 +95,7 @@ public class EditFragment extends Fragment {
 		else {
 			mSelf = new MountPoint();
 			mSelf.setRootDir(getActivity().getFilesDir().getPath());
-			mSelf.setLocalPath(Environment.getExternalStorageDirectory().getPath() + "/mnt");
+			mSelf.setLocalPath(sdcard() + "/mnt");
 		}
 
 		mName = (TextView)selfView.findViewById(R.id.mount_point_name);

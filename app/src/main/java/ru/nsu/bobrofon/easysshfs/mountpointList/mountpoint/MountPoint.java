@@ -53,7 +53,7 @@ public class MountPoint {
 											+ "nosuid,"
 											+ "nodev,"
 											+ "noexec,"
-											+ "umask=0702,"
+											+ "umask=0,"
 											+ "allow_other";
 
 	public MountPoint() {
