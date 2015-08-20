@@ -31,7 +31,7 @@ public class MountPointsList {
 
 	public void autoMount() {
 		for (final MountPoint item : mMountPoints) {
-			if (item.getAutoMount() && !item.isMounted()) {
+			if (item.getAutoMount()/* && !item.isMounted()*/) {
 				item.mount();
 			}
 		}
