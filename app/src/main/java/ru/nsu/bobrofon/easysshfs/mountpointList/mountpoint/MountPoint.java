@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
@@ -213,7 +214,14 @@ public class MountPoint {
 
 	private String getHostIp() {
 		try {
-			return InetAddress.getByName(getHost()).getHostAddress();
+			InetAddress address = InetAddress.getByName(getHost());
+			if (address instanceof Inet6Address) {
+				if (!address.getHostAddress().startsWith("[")) {
+					return '[' + address.getHostAddress() + ']';
+				}
+			}
+			return address.getHostAddress();
+
 		} catch (UnknownHostException e) {
 			logMessage(e.getMessage());
 			return getHost();
