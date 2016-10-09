@@ -2,3 +2,6 @@
 
 # EasySSHFS
 SSHFS for anfroid.
+
+# Links
+* [EasySSHFS in Google Play Store](https://play.google.com/store/apps/details?id=ru.nsu.bobrofon.easysshfs&hl=en)
