@@ -1,3 +1,7 @@
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
+
 script:
   - wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar -xzf android-sdk_r24.4.1-linux.tgz
