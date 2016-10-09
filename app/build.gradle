@@ -24,8 +24,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 20
-        versionName "0.3.7"
+        versionCode 22
+        versionName "0.3.8"
     }
     buildTypes {
         release {
