@@ -2,6 +2,6 @@ script:
   - wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar -xzf android-sdk_r24.4.1-linux.tgz
   - export ANDROID_HOME=${PWD}/android-sdk-linux
-  - ./init
+  - ./init.sh
   - cd app
   - ./gradlew assembleRelease
