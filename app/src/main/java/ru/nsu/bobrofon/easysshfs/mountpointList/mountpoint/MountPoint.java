@@ -35,7 +35,7 @@ public class MountPoint {
 	private boolean mAutoMount;
 	private String mUserName;
 	private String mHost;
-	private short mPort;
+	private int mPort;
 	private String mPassword;
 	private boolean mStorePassword;
 	private String mRemotePath;
@@ -46,16 +46,17 @@ public class MountPoint {
 	private MountObservable mObservable = new MountObservable();
 	private boolean mIsMounted = false;
 
-	final static String DEFAULT_OPTIONS =     "password_stdin,"
-											+ "UserKnownHostsFile=/dev/null,"
-											+ "StrictHostKeyChecking=no,"
-											+ "rw,"
-											+ "dirsync,"
-											+ "nosuid,"
-											+ "nodev,"
-											+ "noexec,"
-											+ "umask=0,"
-											+ "allow_other";
+	private final static String DEFAULT_OPTIONS =
+		"password_stdin,"
+		+ "UserKnownHostsFile=/dev/null,"
+		+ "StrictHostKeyChecking=no,"
+		+ "rw,"
+		+ "dirsync,"
+		+ "nosuid,"
+		+ "nodev,"
+		+ "noexec,"
+		+ "umask=0,"
+		+ "allow_other";
 
 	public MountPoint() {
 		mPointName = "";
@@ -87,16 +88,20 @@ public class MountPoint {
 		mHost = host;
 	}
 
-	public void setPort(final short port) {
+	public void setPort(final int port) {
+		if (port < 0 || port > 65535) {
+			logMessage("Port " + port + " is out of range [0; 65535]");
+			return;
+		}
 		mPort = port;
 	}
 
 	public void setPort(final String port) {
 		try {
-			mPort = Short.parseShort(port);
+			setPort(Integer.parseInt(port));
 		}
 		catch (final NumberFormatException e) {
-			mPort = 22;
+			logMessage("'" + port + "' is invalid port value");
 		}
 	}
 
@@ -145,7 +150,7 @@ public class MountPoint {
 		return mHost;
 	}
 
-	public short getPort() {
+	public int getPort() {
 		return mPort;
 	}
 
@@ -196,7 +201,7 @@ public class MountPoint {
 		mAutoMount = selfJson.optBoolean("AutoMount", mAutoMount);
 		mUserName = selfJson.optString("UserName", mUserName);
 		mHost = selfJson.optString("Host", mHost);
-		mPort = (short)selfJson.optInt("Port", mPort);
+		mPort = selfJson.optInt("Port", mPort);
 		mStorePassword = selfJson.optBoolean("StorePassword", mStorePassword);
 		if (selfJson.has("Password")) {
 			mStorePassword = true;
