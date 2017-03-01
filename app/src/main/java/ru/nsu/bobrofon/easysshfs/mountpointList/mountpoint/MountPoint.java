@@ -366,7 +366,7 @@ public class MountPoint {
 		@Override
 		protected void onPostExecute(final String hostIp) {
 			final StringBuilder command = new StringBuilder();
-			command.append("echo ").append(getPassword()).append(" | ");
+			command.append("echo '").append(getPassword()).append("' | ");
 			command.append(mRootDir).append("/sshfs");
 			command.append(" -o 'ssh_command=").append(mRootDir).append("/ssh").append(',');
 			command.append(getOptions()).append(",port=").append(getPort()).append("' ");
