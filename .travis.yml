@@ -3,9 +3,9 @@ before_install:
   - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
 
 script:
-  - wget https://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-  - tar -xzf android-sdk_r24.4.1-linux.tgz
-  - export ANDROID_HOME=${PWD}/android-sdk-linux
+  - wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+  - unzip sdk-tools-linux-3859397.zip
+  - export ANDROID_HOME=${PWD}
   - ./init.sh
   - cd app
   - ./gradlew assembleRelease

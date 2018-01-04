@@ -1,9 +1,10 @@
 buildscript {
     repositories {
        jcenter()
-     }
+        google()
+    }
 dependencies {
-    classpath 'com.android.tools.build:gradle:1.5.0'
+    classpath 'com.android.tools.build:gradle:3.0.1'
 
   }}
 
@@ -11,21 +12,21 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        google()
     }
 }
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 26
 
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
-        minSdkVersion 11
-        targetSdkVersion 22
-        versionCode 24
-        versionName "0.3.9"
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 26
+        versionName "0.4.0"
     }
     buildTypes {
         release {
@@ -36,8 +37,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.github.Stericson:RootShell:c69dc82a0f'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.github.Stericson:RootShell:7a569589c0'
 }
