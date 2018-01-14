@@ -1,7 +1,7 @@
 package ru.nsu.bobrofon.easysshfs;
 
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +16,7 @@ import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.EditFragment;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountpointFragment;
 
 
-public class EasySSHFSActivity extends ActionBarActivity
+public class EasySSHFSActivity extends AppCompatActivity
 	implements NavigationDrawerFragment.NavigationDrawerCallbacks, MountpointFragment.OnFragmentInteractionListener {
 
 	/**
