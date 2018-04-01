@@ -263,8 +263,8 @@ public class MountPoint {
 	}
 
 	public void umount(final boolean verbose) {
-		logMessage("umount");
-		runCommand("umount " + getLocalPath(), verbose);
+		logMessage("umount -f");
+		runCommand("umount -f " + getLocalPath(), verbose);
 	}
 
 	public void registerObserver(final Observer observer) {

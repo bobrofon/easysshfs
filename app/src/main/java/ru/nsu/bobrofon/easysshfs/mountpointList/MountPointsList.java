@@ -37,6 +37,12 @@ public class MountPointsList {
 		}
 	}
 
+	public void umount() {
+		for (final MountPoint item: mMountPoints) {
+			item.umount(false);
+		}
+	}
+
 	public void registerObserver(final MountPoint.Observer observer) {
 		for (final MountPoint item : mMountPoints) {
 			item.registerObserver(observer);

@@ -19,6 +19,9 @@ public class InternetStateChangeReceiver extends BroadcastReceiver {
 			if(info.isConnected()) {
 				MountPointsList.getIntent(context).autoMount();
 			}
+			else if (!info.isConnectedOrConnecting()) {
+				MountPointsList.getIntent(context).umount();
+			}
 		}
 	}
 }
