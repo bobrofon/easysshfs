@@ -325,17 +325,17 @@ public class MountPoint {
 
 				br.close();
 			} catch (FileNotFoundException e) {
-				return new Pair(result, e.getMessage());
+				return new Pair<>(result, e.getMessage());
 			} catch (IOException e) {
-				return new Pair(result, e.getMessage());
+				return new Pair<>(result, e.getMessage());
 			}
 
 			mIsMounted = result;
 			if (result) {
-				return new Pair(result, "Pattern " + mountLine.toString() + " is in " + mMountFile);
+				return new Pair<>(result, "Pattern " + mountLine.toString() + " is in " + mMountFile);
 			}
 			else {
-				return new Pair(result, "Pattern " + mountLine.toString() + " is not in " + mMountFile);
+				return new Pair<>(result, "Pattern " + mountLine.toString() + " is not in " + mMountFile);
 			}
 		}
 
