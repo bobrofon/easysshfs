@@ -263,8 +263,12 @@ public class MountPoint {
 	}
 
 	public void umount(final boolean verbose) {
-		logMessage("umount -f");
-		runCommand("umount -f " + getLocalPath(), verbose);
+		String umountCommand = "umount";
+		if (RootShell.isBusyboxAvailable()) {
+			umountCommand = "busybox umount -f";
+		}
+		logMessage(umountCommand);
+		runCommand(umountCommand + getLocalPath(), verbose);
 	}
 
 	public void registerObserver(final Observer observer) {
