@@ -263,9 +263,9 @@ public class MountPoint {
 	}
 
 	public void umount(final boolean verbose) {
-		String umountCommand = "umount";
+		String umountCommand = "umount ";
 		if (RootShell.isBusyboxAvailable()) {
-			umountCommand = "busybox umount -f";
+			umountCommand = "busybox umount -f ";
 		}
 		logMessage(umountCommand);
 		runCommand(umountCommand + getLocalPath(), verbose);
