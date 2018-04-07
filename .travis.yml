@@ -7,5 +7,7 @@ script:
   - unzip sdk-tools-linux-3859397.zip
   - export ANDROID_HOME=${PWD}
   - ./init.sh
-  - cd app
-  - ./gradlew assembleRelease
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
