@@ -1,0 +1,3 @@
+[submodule "sshfs-world"]
+	path = sshfs-world
+	url = https://github.com/bobrofon/sshfs-world.git

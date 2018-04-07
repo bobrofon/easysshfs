@@ -29,9 +29,21 @@ android {
         versionName "0.4.1"
     }
     buildTypes {
-        release {
+        arm {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        x86 {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        if (output.name == "x86") {
+            output.versionCodeOverride = variant.versionCode + 1
         }
     }
 }
