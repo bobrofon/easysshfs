@@ -1,6 +1,7 @@
 package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,17 @@ public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 		mValues = values;
 	}
 
+	@NonNull
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 		final LayoutInflater inflater = (LayoutInflater) mContext
 			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		assert inflater != null;
 		final View rowView = inflater.inflate(R.layout.row_layout, parent, false);
 
-		final TextView nameView = (TextView) rowView.findViewById(R.id.mpNameView);
-		final TextView statusView = (TextView) rowView.findViewById(R.id.mpStatusView);
-		final Button mountButton = (Button) rowView.findViewById(R.id.mountButton);
+		final TextView nameView = rowView.findViewById(R.id.mpNameView);
+		final TextView statusView = rowView.findViewById(R.id.mpStatusView);
+		final Button mountButton = rowView.findViewById(R.id.mountButton);
 
 		final MountPoint self = mValues.get(position);
 
