@@ -158,7 +158,7 @@ public class EditFragment extends Fragment {
 				worker.getMountPoints().add(mSelf);
 			}
 			worker.save(getActivity());
-			EasySSHFSActivity.showToast("saved");
+			showToast("saved");
 
 			return true;
 		}
@@ -167,19 +167,19 @@ public class EditFragment extends Fragment {
 				= MountPointsList.getIntent(getActivity());
 			worker.getMountPoints().remove(mSelf);
 			worker.save(getActivity());
-			EasySSHFSActivity.showToast("deleted");
+			showToast("deleted");
 
 			return true;
 		}
 		else if (id == R.id.action_mount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.mount(true);
+			mountPoint.mount(true, getContext());
 		}
 		else if (id == R.id.action_umount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.umount(true);
+			mountPoint.umount(true, getContext());
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -190,4 +190,9 @@ public class EditFragment extends Fragment {
 		super.onAttach(activity);
 		((EasySSHFSActivity) activity).onSectionAttached(R.string.mount_point_title);
 	}
+
+	private void showToast(final String message) {
+		EasySSHFSActivity.showToast(message, getContext());
+	}
+
 }

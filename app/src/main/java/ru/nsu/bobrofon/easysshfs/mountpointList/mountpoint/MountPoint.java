@@ -1,5 +1,6 @@
 package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
+import android.content.Context;
 import android.database.Observable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -241,39 +242,39 @@ public class MountPoint {
 		return mIsMounted;
 	}
 
-	public void checkMount() {
-		checkMount(false);
+	public void checkMount(final Context context) {
+		checkMount(false, context);
 	}
 
-	public void checkMount(final boolean verbose) {
-		new CheckMountTask(verbose).execute();
+	public void checkMount(final boolean verbose, final Context context) {
+		new CheckMountTask(verbose, context).execute();
 	}
 
-	public void mount() {
-		mount(false);
+	public void mount(final Context context) {
+		mount(false, context);
 	}
 
-	public void mount(boolean verbose) {
+	public void mount(boolean verbose, final Context context) {
 		logMessage("mount");
-		new MountTask(verbose).execute();
+		new MountTask(verbose, context).execute();
 	}
 
-	public void umount() {
-		umount(false);
+	public void umount(final Context context) {
+		umount(false, context);
 	}
 
-	public void umount(final boolean verbose) {
+	public void umount(final boolean verbose, final Context context) {
 		String umountCommand = "umount ";
 		if (RootShell.isBusyboxAvailable()) {
 			umountCommand = "busybox umount -f ";
 		}
 		logMessage(umountCommand);
-		runCommand(umountCommand + getLocalPath(), verbose);
+		runCommand(umountCommand + getLocalPath(), verbose, context);
 	}
 
-	public void registerObserver(final Observer observer) {
+	public void registerObserver(final Observer observer, final Context context) {
 		mObservable.registerObserver(observer);
-		checkMount();
+		checkMount(context);
 	}
 
 	public void unregisterObserver(final Observer observer) {
@@ -295,9 +296,11 @@ public class MountPoint {
 	private class CheckMountTask extends AsyncTask<Void, Void, Pair<Boolean, String>> {
 		private final String mMountFile = "/proc/mounts";
 		private final boolean mVerbose;
+		private final Context mContext;
 
-		private CheckMountTask(boolean verbose) {
+		private CheckMountTask(final boolean verbose, final Context context) {
 			this.mVerbose = verbose;
+			this.mContext = context;
 		}
 
 		@Override
@@ -350,16 +353,18 @@ public class MountPoint {
 
 			mObservable.notifyChanged();
 			if (mVerbose) {
-				EasySSHFSActivity.showToast("done");
+				EasySSHFSActivity.showToast("done", mContext);
 			}
 		}
 	}
 
 	private class MountTask extends AsyncTask<Void, Void, String> {
 		private final boolean mVerbose;
+		private final Context mContext;
 
-		private MountTask(boolean verbose) {
+		private MountTask(boolean verbose, final Context context) {
 			this.mVerbose = verbose;
+			this.mContext = context;
 		}
 
 		@Override
@@ -377,11 +382,11 @@ public class MountPoint {
 			command.append(getUserName()).append('@').append(hostIp).append(':');
 			command.append(getRemotePath()).append(' ').append(getLocalPath());
 
-			runCommand(command.toString(), mVerbose);
+			runCommand(command.toString(), mVerbose, mContext);
 		}
 	}
 
-	private void runCommand(final String command, final boolean verbose) {
+	private void runCommand(final String command, final boolean verbose, final Context context) {
 		try {
 			Shell shell = RootShell.getShell(true);
 			Command cmd = new Command(commandCode++, command) {
@@ -395,13 +400,13 @@ public class MountPoint {
 				public void commandTerminated(int id, String reason)
 				{
 					logMessage("Terminated: " + reason);
-					checkMount(verbose);
+					checkMount(verbose, context);
 				}
 				@Override
 				public void commandCompleted(int id, int exitCode)
 				{
 					logMessage("Completed with code " + exitCode);
-					checkMount(verbose);
+					checkMount(verbose, context);
 				}
 			};
 			shell.add(cmd);

@@ -29,23 +29,23 @@ public class MountPointsList {
 		return mMountPoints;
 	}
 
-	public void autoMount() {
+	public void autoMount(final Context context) {
 		for (final MountPoint item : mMountPoints) {
 			if (item.getAutoMount()/* && !item.isMounted()*/) {
-				item.mount();
+				item.mount(context);
 			}
 		}
 	}
 
-	public void umount() {
+	public void umount(final Context context) {
 		for (final MountPoint item: mMountPoints) {
-			item.umount(false);
+			item.umount(false, context);
 		}
 	}
 
-	public void registerObserver(final MountPoint.Observer observer) {
+	public void registerObserver(final MountPoint.Observer observer, final Context context) {
 		for (final MountPoint item : mMountPoints) {
-			item.registerObserver(observer);
+			item.registerObserver(observer, context);
 		}
 	}
 

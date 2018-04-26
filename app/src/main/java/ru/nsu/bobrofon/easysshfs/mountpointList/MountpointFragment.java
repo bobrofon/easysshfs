@@ -82,7 +82,7 @@ public class MountpointFragment extends Fragment
 		// Set OnItemClickListener so we can be notified on item clicks
 		mListView.setOnItemClickListener(this);
 
-		mountpoints.registerObserver(this);
+		mountpoints.registerObserver(this, getContext());
 		// mountpoints.autoMount();
 
 		return view;

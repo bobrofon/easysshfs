@@ -29,7 +29,7 @@ public class EasySSHFSActivity extends AppCompatActivity
 	 */
 	private CharSequence mTitle;
 	private Fragment[] mFragments;
-	private static Context mContext;
+	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +134,9 @@ public class EasySSHFSActivity extends AppCompatActivity
 			.commit();
 	}
 
-	public static void showToast(final CharSequence message) {
-		if (mContext != null) {
-			Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+	public static void showToast(final CharSequence message, final Context context) {
+		if (context != null) {
+			Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 			toast.show();
 		}
 	}

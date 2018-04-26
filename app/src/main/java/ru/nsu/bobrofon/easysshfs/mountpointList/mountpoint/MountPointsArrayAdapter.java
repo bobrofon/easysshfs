@@ -41,7 +41,7 @@ public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 			mountButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					self.umount(true);
+					self.umount(true, mContext);
 				}
 			});
 		}
@@ -51,7 +51,7 @@ public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 			mountButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					self.mount(true);
+					self.mount(true, mContext);
 				}
 			});
 		}
