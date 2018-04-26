@@ -29,7 +29,6 @@ import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 
 public class MountPoint {
-	private static String TAG = "MOUNT_POINT";
 	private static transient int commandCode = 0;
 
 	private String mPointName;
@@ -191,6 +190,7 @@ public class MountPoint {
 			selfJson.put("Options", mOptions);
 			selfJson.put("RootDir", mRootDir);
 		} catch (JSONException e) {
+			String TAG = "MOUNT_POINT";
 			Log.e(TAG, e.getMessage());
 		}
 
@@ -242,11 +242,11 @@ public class MountPoint {
 		return mIsMounted;
 	}
 
-	public void checkMount(final Context context) {
+	private void checkMount(final Context context) {
 		checkMount(false, context);
 	}
 
-	public void checkMount(final boolean verbose, final Context context) {
+	private void checkMount(final boolean verbose, final Context context) {
 		new CheckMountTask(verbose, context).execute();
 	}
 
@@ -374,19 +374,18 @@ public class MountPoint {
 
 		@Override
 		protected void onPostExecute(final String hostIp) {
-			final StringBuilder command = new StringBuilder();
-			command.append("echo '").append(getPassword()).append("' | ");
-			command.append(mRootDir).append("/sshfs");
-			command.append(" -o 'ssh_command=").append(mRootDir).append("/ssh").append(',');
-			command.append(getOptions()).append(",port=").append(getPort()).append("' ");
-			command.append(getUserName()).append('@').append(hostIp).append(':');
-			command.append(getRemotePath()).append(' ').append(getLocalPath());
+			String command = "echo '" + getPassword() + "' | " +
+				mRootDir + "/sshfs" +
+				" -o 'ssh_command=" + mRootDir + "/ssh" + ',' +
+				getOptions() + ",port=" + getPort() + "' " +
+				getUserName() + '@' + hostIp + ':' +
+				getRemotePath() + ' ' + getLocalPath();
 
-			runCommand(command.toString(), mVerbose, mContext);
+			runCommand(command, mVerbose, mContext);
 		}
 	}
 
-	private void runCommand(final String command, final boolean verbose, final Context context) {
+	private void runCommand(final String command, final boolean verbose, final Context aContext) {
 		try {
 			Shell shell = RootShell.getShell(true);
 			Command cmd = new Command(commandCode++, command) {
@@ -400,13 +399,13 @@ public class MountPoint {
 				public void commandTerminated(int id, String reason)
 				{
 					logMessage("Terminated: " + reason);
-					checkMount(verbose, context);
+					checkMount(verbose, aContext);
 				}
 				@Override
 				public void commandCompleted(int id, int exitCode)
 				{
 					logMessage("Completed with code " + exitCode);
-					checkMount(verbose, context);
+					checkMount(verbose, aContext);
 				}
 			};
 			shell.add(cmd);
