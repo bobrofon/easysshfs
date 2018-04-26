@@ -14,6 +14,10 @@ public class InternetStateChangeReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		if (!WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
+			return;
+		}
+
 		NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		if(info != null) {
 			if(info.isConnected()) {
