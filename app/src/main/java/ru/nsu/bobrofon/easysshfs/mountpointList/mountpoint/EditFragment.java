@@ -3,7 +3,6 @@ package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 import ru.nsu.bobrofon.easysshfs.DrawerStatus;
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
@@ -98,22 +99,22 @@ public class EditFragment extends Fragment {
 			mSelf.setLocalPath(sdcard() + "/mnt");
 		}
 
-		mName = (TextView)selfView.findViewById(R.id.mount_point_name);
-		mAuto = (CheckBox)selfView.findViewById(R.id.automount);
-		mUsername = (TextView)selfView.findViewById(R.id.username);
-		mHost = (TextView)selfView.findViewById(R.id.host);
-		mPort = (TextView)selfView.findViewById(R.id.port);
-		mPassword = (TextView)selfView.findViewById(R.id.password);
-		mStorePassword = (CheckBox)selfView.findViewById(R.id.store_password);
-		mRemotePath = (TextView)selfView.findViewById(R.id.remote_path);
-		mLocalPath = (TextView)selfView.findViewById(R.id.local_path);
-		mOptions = (TextView)selfView.findViewById(R.id.sshfs_options);
+		mName = selfView.findViewById(R.id.mount_point_name);
+		mAuto = selfView.findViewById(R.id.automount);
+		mUsername = selfView.findViewById(R.id.username);
+		mHost = selfView.findViewById(R.id.host);
+		mPort = selfView.findViewById(R.id.port);
+		mPassword = selfView.findViewById(R.id.password);
+		mStorePassword = selfView.findViewById(R.id.store_password);
+		mRemotePath = selfView.findViewById(R.id.remote_path);
+		mLocalPath = selfView.findViewById(R.id.local_path);
+		mOptions = selfView.findViewById(R.id.sshfs_options);
 
 		mName.setText(mSelf.getPointName());
 		mAuto.setChecked(mSelf.getAutoMount());
 		mUsername.setText(mSelf.getUserName());
 		mHost.setText(mSelf.getHost());
-		mPort.setText(Integer.toString(mSelf.getPort()));
+		mPort.setText(String.format(Locale.getDefault(), "%d", mSelf.getPort()));
 		mPassword.setText(mSelf.getPassword());
 		mStorePassword.setChecked(mSelf.getStorePassword());
 		mRemotePath.setText(mSelf.getRemotePath());

@@ -9,7 +9,7 @@ public class LogModel {
 	private final LogObservable mObservable = new LogObservable();
 	private StringBuffer mLogBuffer = new StringBuffer();
 
-	public LogModel() {
+	LogModel() {
 		Log.i(TAG, "new Instance");
 	}
 
@@ -42,7 +42,7 @@ public class LogModel {
 	}
 
 	private class LogObservable extends Observable<Observer> {
-		public void notifyChanged() {
+		void notifyChanged() {
 			for (final Observer observer : mObservers) {
 				observer.onLogChanged(LogModel.this);
 			}
