@@ -15,8 +15,8 @@ import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
 
 public class MountPointsList {
-	public final static String TAG = "MOUNT_POINTS_LIST";
-	public final static String STORAGE_FILE = "mountpoints";
+	private final static String TAG = "MOUNT_POINTS_LIST";
+	private final static String STORAGE_FILE = "mountpoints";
 
 	private List<MountPoint> mMountPoints;
 
