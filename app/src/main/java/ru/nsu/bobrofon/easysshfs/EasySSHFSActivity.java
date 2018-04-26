@@ -29,7 +29,6 @@ public class EasySSHFSActivity extends AppCompatActivity
 	 */
 	private CharSequence mTitle;
 	private Fragment[] mFragments;
-	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +59,11 @@ public class EasySSHFSActivity extends AppCompatActivity
 	@Override
 	public void onResume() {
 		super.onResume();
-		mContext = getApplicationContext();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mContext = null;
 	}
 
 	@Override
