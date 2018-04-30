@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.topjohnwu.superuser.Shell;
+
 import ru.nsu.bobrofon.easysshfs.DrawerStatus;
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.R;
@@ -66,7 +68,8 @@ public class MountpointFragment extends Fragment
 		super.onCreate(savedInstanceState);
 
 		mountpoints	= MountPointsList.getIntent(getActivity());
-		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints());
+		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints(),
+			getShell());
 	}
 
 	@Override
@@ -159,4 +162,7 @@ public class MountpointFragment extends Fragment
 		mListView.invalidateViews();
 	}
 
+	private Shell getShell() {
+		return ((EasySSHFSActivity) getActivity()).getShell();
+	}
 }

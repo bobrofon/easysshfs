@@ -21,10 +21,12 @@ public class InternetStateChangeReceiver extends BroadcastReceiver {
 		NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		if(info != null) {
 			if(info.isConnected()) {
-				MountPointsList.getIntent(context).autoMount(context);
+				MountPointsList.getIntent(context).autoMount(context,
+					EasySSHFSActivity.initNewShell());
 			}
 			else if (!info.isConnectedOrConnecting()) {
-				MountPointsList.getIntent(context).umount(context);
+				MountPointsList.getIntent(context).umount(context,
+					EasySSHFSActivity.initNewShell());
 			}
 		}
 	}

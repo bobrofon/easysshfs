@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.topjohnwu.superuser.Shell;
+
 import ru.nsu.bobrofon.easysshfs.log.LogFragment;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.EditFragment;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountpointFragment;
@@ -29,10 +31,13 @@ public class EasySSHFSActivity extends AppCompatActivity
 	 */
 	private CharSequence mTitle;
 	private Fragment[] mFragments;
+	private Shell mShell;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		mShell = initNewShell();
 
 		new VersionUpdater(getApplicationContext()).update();
 
@@ -138,4 +143,12 @@ public class EasySSHFSActivity extends AppCompatActivity
 		}
 	}
 
+	public static Shell initNewShell() {
+		Shell.setFlags(Shell.FLAG_MOUNT_MASTER);
+		return Shell.getShell();
+	}
+
+	public Shell getShell() {
+		return mShell;
+	}
 }

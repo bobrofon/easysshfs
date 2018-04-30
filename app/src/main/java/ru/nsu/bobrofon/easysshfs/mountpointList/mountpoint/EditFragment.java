@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.topjohnwu.superuser.Shell;
+
 import java.util.Locale;
 
 import ru.nsu.bobrofon.easysshfs.DrawerStatus;
@@ -175,12 +177,12 @@ public class EditFragment extends Fragment {
 		else if (id == R.id.action_mount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.mount(true, getContext());
+			mountPoint.mount(true, getContext(), getShell());
 		}
 		else if (id == R.id.action_umount) {
 			MountPoint mountPoint = new MountPoint();
 			grabMountPoint(mountPoint);
-			mountPoint.umount(true, getContext());
+			mountPoint.umount(true, getContext(), getShell());
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -196,4 +198,7 @@ public class EditFragment extends Fragment {
 		EasySSHFSActivity.showToast(message, getContext());
 	}
 
+	private Shell getShell() {
+		return ((EasySSHFSActivity) getActivity()).getShell();
+	}
 }

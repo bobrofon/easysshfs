@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.topjohnwu.superuser.Shell;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -29,17 +31,17 @@ public class MountPointsList {
 		return mMountPoints;
 	}
 
-	public void autoMount(final Context context) {
+	public void autoMount(final Context context, final Shell shell) {
 		for (final MountPoint item : mMountPoints) {
 			if (item.getAutoMount()/* && !item.isMounted()*/) {
-				item.mount(context);
+				item.mount(context, shell);
 			}
 		}
 	}
 
-	public void umount(final Context context) {
+	public void umount(final Context context, final Shell shell) {
 		for (final MountPoint item: mMountPoints) {
-			item.umount(false, context);
+			item.umount(false, context, shell);
 		}
 	}
 

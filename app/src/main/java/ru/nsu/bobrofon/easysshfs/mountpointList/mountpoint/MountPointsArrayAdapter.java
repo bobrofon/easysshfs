@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.topjohnwu.superuser.Shell;
+
 import java.util.List;
 
 import ru.nsu.bobrofon.easysshfs.R;
@@ -16,11 +18,14 @@ import ru.nsu.bobrofon.easysshfs.R;
 public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 	private final Context mContext;
 	private final List<MountPoint> mValues;
+	private final Shell mShell;
 
-	public MountPointsArrayAdapter(final Context context, final List<MountPoint> values) {
+	public MountPointsArrayAdapter(final Context context, final List<MountPoint> values,
+	                               final Shell shell) {
 		super(context, R.layout.row_layout, values);
 		mContext = context;
 		mValues = values;
+		mShell = shell;
 	}
 
 	@NonNull
@@ -44,7 +49,7 @@ public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 			mountButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					self.umount(true, mContext);
+					self.umount(true, mContext, mShell);
 				}
 			});
 		}
@@ -54,7 +59,7 @@ public class MountPointsArrayAdapter extends ArrayAdapter<MountPoint> {
 			mountButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					self.mount(true, mContext);
+					self.mount(true, mContext, mShell);
 				}
 			});
 		}
