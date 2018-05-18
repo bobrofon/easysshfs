@@ -25,16 +25,18 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 32
-        versionName "0.4.1"
+        versionCode 34
+        versionName "0.4.2"
     }
     buildTypes {
         arm {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         x86 {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -52,5 +54,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
-    implementation 'com.github.Stericson:RootShell:7a569589c0'
+    implementation 'com.github.topjohnwu:libsu:1.1.1'
 }

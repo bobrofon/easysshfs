@@ -242,11 +242,9 @@ public class NavigationDrawerFragment extends Fragment implements DrawerStatus {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
+		return mDrawerToggle.onOptionsItemSelected(item)
+			|| super.onOptionsItemSelected(item);
 
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -267,7 +265,7 @@ public class NavigationDrawerFragment extends Fragment implements DrawerStatus {
 	/**
 	 * Callbacks interface that all activities using this fragment must implement.
 	 */
-	public static interface NavigationDrawerCallbacks {
+	public interface NavigationDrawerCallbacks {
 		/**
 		 * Called when an item in the navigation drawer is selected.
 		 */

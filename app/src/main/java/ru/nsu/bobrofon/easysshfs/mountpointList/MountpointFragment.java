@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.topjohnwu.superuser.Shell;
+
 import ru.nsu.bobrofon.easysshfs.DrawerStatus;
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.R;
@@ -66,7 +68,8 @@ public class MountpointFragment extends Fragment
 		super.onCreate(savedInstanceState);
 
 		mountpoints	= MountPointsList.getIntent(getActivity());
-		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints());
+		mAdapter = new MountPointsArrayAdapter(getActivity(), mountpoints.getMountPoints(),
+			getShell());
 	}
 
 	@Override
@@ -76,13 +79,13 @@ public class MountpointFragment extends Fragment
 		View view = inflater.inflate(R.layout.fragment_mountpoint, container, false);
 
 		// Set the adapter
-		mListView = (AbsListView) view.findViewById(android.R.id.list);
-		((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+		mListView = view.findViewById(android.R.id.list);
+		mListView.setAdapter(mAdapter);
 
 		// Set OnItemClickListener so we can be notified on item clicks
 		mListView.setOnItemClickListener(this);
 
-		mountpoints.registerObserver(this);
+		mountpoints.registerObserver(this, getContext());
 		// mountpoints.autoMount();
 
 		return view;
@@ -118,19 +121,6 @@ public class MountpointFragment extends Fragment
 			// Notify the active callbacks interface (the activity, if the
 			// fragment is attached to one) that an item has been selected.
 			mListener.onFragmentInteraction(position);
-		}
-	}
-
-	/**
-	 * The default content for this Fragment has a TextView that is shown when
-	 * the list is empty. If you would like to change the text, call this method
-	 * to supply the text it should use.
-	 */
-	public void setEmptyText(CharSequence emptyText) {
-		View emptyView = mListView.getEmptyView();
-
-		if (emptyView instanceof TextView) {
-			((TextView) emptyView).setText(emptyText);
 		}
 	}
 
@@ -172,4 +162,7 @@ public class MountpointFragment extends Fragment
 		mListView.invalidateViews();
 	}
 
+	private Shell getShell() {
+		return ((EasySSHFSActivity) getActivity()).getShell();
+	}
 }

@@ -1,14 +1,13 @@
 package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
+import android.content.Context;
 import android.database.Observable;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
-import com.stericson.RootShell.RootShell;
-import com.stericson.RootShell.exceptions.RootDeniedException;
-import com.stericson.RootShell.execution.Command;
-import com.stericson.RootShell.execution.Shell;
+import com.topjohnwu.superuser.Shell;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,15 +21,13 @@ import java.io.InputStreamReader;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.TimeoutException;
+import java.util.LinkedList;
+import java.util.List;
 
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 
 public class MountPoint {
-	private static String TAG = "MOUNT_POINT";
-	private static transient int commandCode = 0;
-
 	private String mPointName;
 	private boolean mAutoMount;
 	private String mUserName;
@@ -190,6 +187,7 @@ public class MountPoint {
 			selfJson.put("Options", mOptions);
 			selfJson.put("RootDir", mRootDir);
 		} catch (JSONException e) {
+			String TAG = "MOUNT_POINT";
 			Log.e(TAG, e.getMessage());
 		}
 
@@ -241,39 +239,39 @@ public class MountPoint {
 		return mIsMounted;
 	}
 
-	public void checkMount() {
-		checkMount(false);
+	private void checkMount(final Context context) {
+		checkMount(false, context);
 	}
 
-	public void checkMount(final boolean verbose) {
-		new CheckMountTask(verbose).execute();
+	private void checkMount(final boolean verbose, final Context context) {
+		new CheckMountTask(verbose, context).execute();
 	}
 
-	public void mount() {
-		mount(false);
+	public void mount(final Context context, final Shell shell) {
+		mount(false, context, shell);
 	}
 
-	public void mount(boolean verbose) {
+	public void mount(boolean verbose, final Context context, final Shell shell) {
 		logMessage("mount");
-		new MountTask(verbose).execute();
+		new MountTask(verbose, context, shell).execute();
 	}
 
-	public void umount() {
-		umount(false);
+	public void umount(final Context context, final Shell shell) {
+		umount(false, context, shell);
 	}
 
-	public void umount(final boolean verbose) {
+	public void umount(final boolean verbose, final Context context, final Shell shell) {
 		String umountCommand = "umount ";
-		if (RootShell.isBusyboxAvailable()) {
+		if (isBusyboxAvailable(shell)) {
 			umountCommand = "busybox umount -f ";
 		}
 		logMessage(umountCommand);
-		runCommand(umountCommand + getLocalPath(), verbose);
+		runCommand(umountCommand + getLocalPath(), verbose, context, shell);
 	}
 
-	public void registerObserver(final Observer observer) {
+	public void registerObserver(final Observer observer, final Context context) {
 		mObservable.registerObserver(observer);
-		checkMount();
+		checkMount(context);
 	}
 
 	public void unregisterObserver(final Observer observer) {
@@ -295,9 +293,11 @@ public class MountPoint {
 	private class CheckMountTask extends AsyncTask<Void, Void, Pair<Boolean, String>> {
 		private final String mMountFile = "/proc/mounts";
 		private final boolean mVerbose;
+		private final Context mContext;
 
-		private CheckMountTask(boolean verbose) {
+		private CheckMountTask(final boolean verbose, final Context context) {
 			this.mVerbose = verbose;
+			this.mContext = context;
 		}
 
 		@Override
@@ -350,16 +350,20 @@ public class MountPoint {
 
 			mObservable.notifyChanged();
 			if (mVerbose) {
-				EasySSHFSActivity.showToast("done");
+				EasySSHFSActivity.showToast("done", mContext);
 			}
 		}
 	}
 
 	private class MountTask extends AsyncTask<Void, Void, String> {
 		private final boolean mVerbose;
+		private final Context mContext;
+		private final Shell mShell;
 
-		private MountTask(boolean verbose) {
+		private MountTask(boolean verbose, final Context context, final Shell shell) {
 			this.mVerbose = verbose;
+			this.mContext = context;
+			this.mShell = shell;
 		}
 
 		@Override
@@ -369,45 +373,41 @@ public class MountPoint {
 
 		@Override
 		protected void onPostExecute(final String hostIp) {
-			final StringBuilder command = new StringBuilder();
-			command.append("echo '").append(getPassword()).append("' | ");
-			command.append(mRootDir).append("/sshfs");
-			command.append(" -o 'ssh_command=").append(mRootDir).append("/ssh").append(',');
-			command.append(getOptions()).append(",port=").append(getPort()).append("' ");
-			command.append(getUserName()).append('@').append(hostIp).append(':');
-			command.append(getRemotePath()).append(' ').append(getLocalPath());
+			String command = "echo '" + getPassword() + "' | " +
+				mRootDir + "/sshfs" +
+				" -o 'ssh_command=" + mRootDir + "/ssh" + ',' +
+				getOptions() + ",port=" + getPort() + "' " +
+				getUserName() + '@' + hostIp + ':' +
+				getRemotePath() + ' ' + getLocalPath();
 
-			runCommand(command.toString(), mVerbose);
+			runCommand(command, mVerbose, mContext, mShell);
 		}
 	}
 
-	private void runCommand(final String command, final boolean verbose) {
-		try {
-			Shell shell = RootShell.getShell(true);
-			Command cmd = new Command(commandCode++, command) {
-				@Override
-				public void commandOutput(int id, String line)
-				{
+	private void runCommand(final String command, final boolean verbose, final Context aContext, final Shell shell) {
+		final List<String> stdout = new LinkedList<>();
+		final List<String> stderr = new LinkedList<>();
+		shell.run(stdout, stderr, new Shell.Async.Callback() {
+			@Override
+			public void onTaskResult(@Nullable List<String> stdout, @Nullable List<String> stderr) {
+				logAll(stdout);
+				logAll(stderr);
+				checkMount(verbose, aContext);
+			}
+
+			private void logAll(@Nullable final List<String> stdio) {
+				if (stdio == null) {
+					return;
+				}
+				for (final String line: stdio) {
 					logMessage(line);
 				}
+			}
+		}, command);
+	}
 
-				@Override
-				public void commandTerminated(int id, String reason)
-				{
-					logMessage("Terminated: " + reason);
-					checkMount(verbose);
-				}
-				@Override
-				public void commandCompleted(int id, int exitCode)
-				{
-					logMessage("Completed with code " + exitCode);
-					checkMount(verbose);
-				}
-			};
-			shell.add(cmd);
-		} catch (RootDeniedException | TimeoutException | IOException e) {
-			logMessage(e.getMessage());
-		}
+	private boolean isBusyboxAvailable(final Shell _shell) {
+		return _shell.testCmd("busybox");
 	}
 
 }

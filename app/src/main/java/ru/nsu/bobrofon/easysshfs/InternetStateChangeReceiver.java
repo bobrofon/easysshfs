@@ -14,13 +14,19 @@ public class InternetStateChangeReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		if (!WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
+			return;
+		}
+
 		NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 		if(info != null) {
 			if(info.isConnected()) {
-				MountPointsList.getIntent(context).autoMount();
+				MountPointsList.getIntent(context).autoMount(context,
+					EasySSHFSActivity.initNewShell());
 			}
 			else if (!info.isConnectedOrConnecting()) {
-				MountPointsList.getIntent(context).umount();
+				MountPointsList.getIntent(context).umount(context,
+					EasySSHFSActivity.initNewShell());
 			}
 		}
 	}

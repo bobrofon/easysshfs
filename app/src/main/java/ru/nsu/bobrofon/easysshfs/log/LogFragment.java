@@ -42,7 +42,7 @@ public class LogFragment extends Fragment implements LogModel.Observer {
 		// Inflate the layout for this fragment
 		View selfView = inflater.inflate(R.layout.fragment_log, container, false);
 
-		mLogTextView = (TextView) selfView.findViewById(R.id.log);
+		mLogTextView = selfView.findViewById(R.id.log);
 
 		mLogModel = LogSingleton.getLogModel();
 
@@ -63,7 +63,7 @@ public class LogFragment extends Fragment implements LogModel.Observer {
 	public void onLogChanged(LogModel logModel) {
 		final String logHeader = getString(R.string.debug_log_header);
 		final String logBody = logModel.getLog();
-		mLogTextView.setText(logHeader + logBody);
+		mLogTextView.setText(String.format("%s%s", logHeader, logBody));
 	}
 
 	@Override

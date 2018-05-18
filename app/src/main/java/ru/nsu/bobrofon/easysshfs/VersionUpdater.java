@@ -15,9 +15,9 @@ import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
 
 public class VersionUpdater {
-	public final Context mContext;
+	private final Context mContext;
 
-	public VersionUpdater(final Context context) {
+	VersionUpdater(final Context context) {
 		mContext = context;
 	}
 
@@ -35,10 +35,10 @@ public class VersionUpdater {
 
 		SharedPreferences.Editor prefsEditor = settings.edit();
 		prefsEditor.putInt("version", currentVersion);
-		prefsEditor.commit();
+		prefsEditor.apply();
 	}
 
-	public void update02to03() {
+	private void update02to03() {
 		final SharedPreferences settings = mContext.getSharedPreferences("sshfs_cmd_global", 0);
 		if (!settings.contains("host")) {
 			return;

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.topjohnwu.superuser.Shell;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -15,8 +17,8 @@ import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
 
 public class MountPointsList {
-	public final static String TAG = "MOUNT_POINTS_LIST";
-	public final static String STORAGE_FILE = "mountpoints";
+	private final static String TAG = "MOUNT_POINTS_LIST";
+	private final static String STORAGE_FILE = "mountpoints";
 
 	private List<MountPoint> mMountPoints;
 
@@ -29,23 +31,23 @@ public class MountPointsList {
 		return mMountPoints;
 	}
 
-	public void autoMount() {
+	public void autoMount(final Context context, final Shell shell) {
 		for (final MountPoint item : mMountPoints) {
 			if (item.getAutoMount()/* && !item.isMounted()*/) {
-				item.mount();
+				item.mount(context, shell);
 			}
 		}
 	}
 
-	public void umount() {
+	public void umount(final Context context, final Shell shell) {
 		for (final MountPoint item: mMountPoints) {
-			item.umount(false);
+			item.umount(false, context, shell);
 		}
 	}
 
-	public void registerObserver(final MountPoint.Observer observer) {
+	public void registerObserver(final MountPoint.Observer observer, final Context context) {
 		for (final MountPoint item : mMountPoints) {
-			item.registerObserver(observer);
+			item.registerObserver(observer, context);
 		}
 	}
 
