@@ -53,7 +53,9 @@ public class MountPoint {
 		+ "nodev,"
 		+ "noexec,"
 		+ "umask=0,"
-		+ "allow_other";
+		+ "allow_other,"
+		+ "uid=9997,"
+		+ "gid=9997";
 
 	public MountPoint() {
 		mPointName = "";
