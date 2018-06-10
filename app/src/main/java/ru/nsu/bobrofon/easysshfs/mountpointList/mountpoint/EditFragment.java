@@ -38,6 +38,7 @@ public class EditFragment extends Fragment {
 	private CheckBox mStorePassword;
 	private TextView mRemotePath;
 	private TextView mLocalPath;
+	private CheckBox mForcePermissions;
 	private TextView mOptions;
 
 	public void setDrawerStatus(final DrawerStatus drawerStatus) {
@@ -110,6 +111,7 @@ public class EditFragment extends Fragment {
 		mStorePassword = selfView.findViewById(R.id.store_password);
 		mRemotePath = selfView.findViewById(R.id.remote_path);
 		mLocalPath = selfView.findViewById(R.id.local_path);
+		mForcePermissions = selfView.findViewById(R.id.force_permissions);
 		mOptions = selfView.findViewById(R.id.sshfs_options);
 
 		mName.setText(mSelf.getPointName());
@@ -121,6 +123,7 @@ public class EditFragment extends Fragment {
 		mStorePassword.setChecked(mSelf.getStorePassword());
 		mRemotePath.setText(mSelf.getRemotePath());
 		mLocalPath.setText(mSelf.getLocalPath());
+		mForcePermissions.setChecked(mSelf.getForcePermissions());
 		mOptions.setText(mSelf.getOptions());
 
 		return selfView;
@@ -144,6 +147,7 @@ public class EditFragment extends Fragment {
 		mountPoint.setStorePassword(mStorePassword.isChecked());
 		mountPoint.setRemotePath(mRemotePath.getText().toString());
 		mountPoint.setLocalPath(mLocalPath.getText().toString());
+		mountPoint.setForcePermissions(mForcePermissions.isChecked());
 		mountPoint.setOptions(mOptions.getText().toString());
 		mountPoint.setRootDir(getActivity().getFilesDir().getPath());
 	}
