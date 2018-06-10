@@ -131,8 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/sshfs_options"
-                android:hint="@string/sshfs_options_hint"
-                android:inputType="textLongMessage"/>
+                android:hint="@string/sshfs_options_hint"/>
         </LinearLayout>
     </ScrollView>
 

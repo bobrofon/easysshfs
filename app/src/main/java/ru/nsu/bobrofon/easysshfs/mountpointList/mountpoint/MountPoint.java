@@ -401,9 +401,9 @@ public class MountPoint {
 			if (!getForcePermissions()) {
 				return "";
 			}
-			return "mkdir -p " + getLocalPath() + " && " +
-				"chmod 777 " + getLocalPath() + " && " +
-				"chown 9997:9997 " + getLocalPath() + " && ";
+			return "mkdir -p " + getLocalPath() + " ; " +
+				"chmod 777 " + getLocalPath() + " ; " +
+				"chown 9997:9997 " + getLocalPath() + " ; ";
 		}
 	}
 
