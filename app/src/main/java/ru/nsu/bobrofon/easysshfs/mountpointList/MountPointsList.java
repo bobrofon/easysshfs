@@ -27,6 +27,21 @@ public class MountPointsList {
 	private MountPointsList() {
 	}
 
+	public void checkMount(final Context context) {
+		for (final MountPoint mountPoint : mMountPoints) {
+			mountPoint.checkMount(context);
+		}
+	}
+
+	public Boolean needAutomount() {
+		for (final MountPoint mountPoint : mMountPoints) {
+			if (mountPoint.getAutoMount() && !mountPoint.isMounted()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public List<MountPoint> getMountPoints() {
 		return mMountPoints;
 	}

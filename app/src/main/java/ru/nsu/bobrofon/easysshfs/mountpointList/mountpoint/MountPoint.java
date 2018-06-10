@@ -241,7 +241,7 @@ public class MountPoint {
 		return mIsMounted;
 	}
 
-	private void checkMount(final Context context) {
+	public void checkMount(final Context context) {
 		checkMount(false, context);
 	}
 
