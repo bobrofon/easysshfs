@@ -68,7 +68,7 @@ public class MountPoint {
 		mStorePassword = false;
 		mRemotePath = "";
 		mLocalPath = "";
-		mForcePermissions = true;
+		mForcePermissions = false;
 		mOptions = DEFAULT_OPTIONS;
 		mRootDir = "";
 	}

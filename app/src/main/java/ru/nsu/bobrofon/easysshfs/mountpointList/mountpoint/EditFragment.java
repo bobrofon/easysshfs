@@ -1,15 +1,26 @@
 package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.provider.DocumentFile;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -22,8 +33,11 @@ import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity;
 import ru.nsu.bobrofon.easysshfs.R;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 
+import static android.app.Activity.RESULT_OK;
+
 public class EditFragment extends Fragment {
 	private static final String MOUNT_POINT_ID = "MOUNT_POINT_ID";
+	private static final int PICKDIR_REQUEST_CODE = 1;
 
 	private int mMountPointId;
 	private DrawerStatus mDrawerStatus;
@@ -82,7 +96,7 @@ public class EditFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		setHasOptionsMenu(true);
@@ -113,6 +127,18 @@ public class EditFragment extends Fragment {
 		mLocalPath = selfView.findViewById(R.id.local_path);
 		mForcePermissions = selfView.findViewById(R.id.force_permissions);
 		mOptions = selfView.findViewById(R.id.sshfs_options);
+		Button mSelectLocalDir = selfView.findViewById(R.id.select_dir);
+		mSelectLocalDir.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					selectLocalDir();
+				}
+			}
+		});
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			mSelectLocalDir.setEnabled(false);
+		}
 
 		mName.setText(mSelf.getPointName());
 		mAuto.setChecked(mSelf.getAutoMount());
@@ -204,5 +230,24 @@ public class EditFragment extends Fragment {
 
 	private Shell getShell() {
 		return ((EasySSHFSActivity) getActivity()).getShell();
+	}
+
+	@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+	private void selectLocalDir() {
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		startActivityForResult(intent, PICKDIR_REQUEST_CODE);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == PICKDIR_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				final Uri localUrl = data.getData();
+				mLocalPath.setText(FileUtil.getFullPathFromTreeUri(localUrl, getContext()));
+			}
+		}
+		else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 }
