@@ -99,18 +99,40 @@
                 android:hint="@string/remote_path_hint"
                 android:inputType="text"/>
 
-            <EditText
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/local_path"
-                android:hint="@string/local_path_hint"
-                android:inputType="text"/>
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/local_path"
+                    android:hint="@string/local_path_hint"
+                    android:layout_weight="9"
+                    android:inputType="text"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_dir"
+                    android:layout_weight="1"
+                    android:id="@+id/select_dir"/>
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/force_permissions"
+                    android:id="@+id/force_permissions"
+                    android:layout_weight="1"/>
+            </LinearLayout>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/sshfs_options"
-                android:hint="@string/sshfs_options_hint"/>
+                android:hint="@string/sshfs_options_hint"
+                android:inputType="textLongMessage"/>
         </LinearLayout>
     </ScrollView>
 

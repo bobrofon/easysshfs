@@ -37,6 +37,7 @@ public class MountPoint {
 	private boolean mStorePassword;
 	private String mRemotePath;
 	private String mLocalPath;
+	private boolean mForcePermissions;
 	private String mOptions;
 	private String mRootDir;
 
@@ -67,6 +68,7 @@ public class MountPoint {
 		mStorePassword = false;
 		mRemotePath = "";
 		mLocalPath = "";
+		mForcePermissions = false;
 		mOptions = DEFAULT_OPTIONS;
 		mRootDir = "";
 	}
@@ -120,6 +122,10 @@ public class MountPoint {
 		mLocalPath = localPath;
 	}
 
+	public void setForcePermissions(final boolean forcePermissions) {
+		mForcePermissions = forcePermissions;
+	}
+
 	public void setOptions(final String options) {
 		mOptions = options;
 	}
@@ -169,6 +175,10 @@ public class MountPoint {
 		return mLocalPath;
 	}
 
+	public boolean getForcePermissions() {
+		return mForcePermissions;
+	}
+
 	public String getOptions() {
 		return mOptions;
 	}
@@ -186,6 +196,7 @@ public class MountPoint {
 			}
 			selfJson.put("RemotePath", mRemotePath);
 			selfJson.put("LocalPath", mLocalPath);
+			selfJson.put("ForcePermissions", mForcePermissions);
 			selfJson.put("Options", mOptions);
 			selfJson.put("RootDir", mRootDir);
 		} catch (JSONException e) {
@@ -213,6 +224,7 @@ public class MountPoint {
 		}
 		mRemotePath = selfJson.optString("RemotePath", mRemotePath);
 		mLocalPath = selfJson.optString("LocalPath", mLocalPath);
+		mForcePermissions = selfJson.optBoolean("ForcePermissions", mForcePermissions);
 		mOptions = selfJson.optString("Options", mOptions);
 		mRootDir = selfJson.optString("RootDir", mRootDir);
 	}
@@ -375,7 +387,7 @@ public class MountPoint {
 
 		@Override
 		protected void onPostExecute(final String hostIp) {
-			String command = "echo '" + getPassword() + "' | " +
+			String command = fixLocalPath() + "echo '" + getPassword() + "' | " +
 				mRootDir + "/sshfs" +
 				" -o 'ssh_command=" + mRootDir + "/ssh" + ',' +
 				getOptions() + ",port=" + getPort() + "' " +
@@ -383,6 +395,15 @@ public class MountPoint {
 				getRemotePath() + ' ' + getLocalPath();
 
 			runCommand(command, mVerbose, mContext, mShell);
+		}
+
+		private String fixLocalPath() {
+			if (!getForcePermissions()) {
+				return "";
+			}
+			return "mkdir -p " + getLocalPath() + " && " +
+				"chmod 777 " + getLocalPath() + " && " +
+				"chown 9997:9997 " + getLocalPath() + " && ";
 		}
 	}
 
