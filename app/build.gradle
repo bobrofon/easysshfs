@@ -3,10 +3,10 @@ buildscript {
        jcenter()
         google()
     }
-dependencies {
-    classpath 'com.android.tools.build:gradle:3.1.3'
-
-  }}
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.3'
+    }
+}
 
 allprojects {
     repositories {
@@ -26,8 +26,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 44
-        versionName "0.4.5"
+        versionCode 46
+        versionName "0.5.1"
     }
     buildTypes {
         arm {

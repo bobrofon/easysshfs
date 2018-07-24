@@ -38,4 +38,6 @@
     <string name="not_mounted">not mounted</string>
     <string name="force_permissions">force</string>
     <string name="select_dir">select</string>
+    <string name="identity_file_hint">IdentityFile</string>
+    <string name="identity_file_select">select</string>
 </resources>

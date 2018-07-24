@@ -92,6 +92,27 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:id="@+id/identity_file"
+                    android:layout_weight="9"
+                    android:hint="@string/identity_file_hint"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/identity_file_select"
+                    android:layout_weight="1"
+                    android:id="@+id/identity_file_select"/>
+            </LinearLayout>
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
