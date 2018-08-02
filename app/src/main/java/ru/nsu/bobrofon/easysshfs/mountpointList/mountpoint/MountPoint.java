@@ -40,6 +40,7 @@ public class MountPoint {
 	private boolean mForcePermissions;
 	private String mOptions;
 	private String mRootDir;
+	private String mIdentityFile;
 
 	private MountObservable mObservable = new MountObservable();
 	private boolean mIsMounted = false;
@@ -71,6 +72,15 @@ public class MountPoint {
 		mForcePermissions = false;
 		mOptions = DEFAULT_OPTIONS;
 		mRootDir = "";
+		mIdentityFile = "";
+	}
+
+	public void setIdentityFile(final String path) {
+		mIdentityFile = path;
+	}
+
+	public String getIdentityFile() {
+		return mIdentityFile;
 	}
 
 	public void setPointName(final String name) {
@@ -199,6 +209,7 @@ public class MountPoint {
 			selfJson.put("ForcePermissions", mForcePermissions);
 			selfJson.put("Options", mOptions);
 			selfJson.put("RootDir", mRootDir);
+			selfJson.put("IdentityFile", mIdentityFile);
 		} catch (JSONException e) {
 			String TAG = "MOUNT_POINT";
 			Log.e(TAG, e.getMessage());
@@ -227,6 +238,7 @@ public class MountPoint {
 		mForcePermissions = selfJson.optBoolean("ForcePermissions", mForcePermissions);
 		mOptions = selfJson.optString("Options", mOptions);
 		mRootDir = selfJson.optString("RootDir", mRootDir);
+		mIdentityFile = selfJson.optString("IdentityFile", mIdentityFile);
 	}
 
 	private String getHostIp() {
@@ -390,11 +402,18 @@ public class MountPoint {
 			String command = fixLocalPath() + "echo '" + getPassword() + "' | " +
 				mRootDir + "/sshfs" +
 				" -o 'ssh_command=" + mRootDir + "/ssh" + ',' +
-				getOptions() + ",port=" + getPort() + "' " +
+				getOptions() + identity() + ",port=" + getPort() + "' " +
 				getUserName() + '@' + hostIp + ':' +
 				getRemotePath() + ' ' + getLocalPath();
 
 			runCommand(command, mVerbose, mContext, mShell);
+		}
+
+		private String identity() {
+			if (getIdentityFile().isEmpty()) {
+				return "";
+			}
+			return ",IdentityFile=" + getIdentityFile();
 		}
 
 		private String fixLocalPath() {
@@ -408,6 +427,7 @@ public class MountPoint {
 	}
 
 	private void runCommand(final String command, final boolean verbose, final Context aContext, final Shell shell) {
+		Log.i("shell", command);
 		final List<String> stdout = new LinkedList<>();
 		final List<String> stderr = new LinkedList<>();
 		shell.run(stdout, stderr, new Shell.Async.Callback() {

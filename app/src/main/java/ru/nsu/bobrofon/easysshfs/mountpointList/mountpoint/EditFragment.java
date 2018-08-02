@@ -1,19 +1,14 @@
 package ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint;
 
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.support.v4.provider.DocumentFile;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +33,7 @@ import static android.app.Activity.RESULT_OK;
 public class EditFragment extends Fragment {
 	private static final String MOUNT_POINT_ID = "MOUNT_POINT_ID";
 	private static final int PICKDIR_REQUEST_CODE = 1;
+	private static final int PICK_IDENTITY_FILE_CODE = 2;
 
 	private int mMountPointId;
 	private DrawerStatus mDrawerStatus;
@@ -50,6 +46,7 @@ public class EditFragment extends Fragment {
 	private TextView mPort;
 	private TextView mPassword;
 	private CheckBox mStorePassword;
+	private TextView mIdentityFile;
 	private TextView mRemotePath;
 	private TextView mLocalPath;
 	private CheckBox mForcePermissions;
@@ -127,8 +124,8 @@ public class EditFragment extends Fragment {
 		mLocalPath = selfView.findViewById(R.id.local_path);
 		mForcePermissions = selfView.findViewById(R.id.force_permissions);
 		mOptions = selfView.findViewById(R.id.sshfs_options);
-		Button mSelectLocalDir = selfView.findViewById(R.id.select_dir);
-		mSelectLocalDir.setOnClickListener(new View.OnClickListener() {
+		Button selectLocalDir = selfView.findViewById(R.id.select_dir);
+		selectLocalDir.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -137,8 +134,16 @@ public class EditFragment extends Fragment {
 			}
 		});
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			mSelectLocalDir.setEnabled(false);
+			selectLocalDir.setEnabled(false);
 		}
+		mIdentityFile = selfView.findViewById(R.id.identity_file);
+		final Button selectIdentityFile = selfView.findViewById(R.id.identity_file_select);
+		selectIdentityFile.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				selectIdentityFile();
+			}
+		});
 
 		mName.setText(mSelf.getPointName());
 		mAuto.setChecked(mSelf.getAutoMount());
@@ -151,6 +156,7 @@ public class EditFragment extends Fragment {
 		mLocalPath.setText(mSelf.getLocalPath());
 		mForcePermissions.setChecked(mSelf.getForcePermissions());
 		mOptions.setText(mSelf.getOptions());
+		mIdentityFile.setText(mSelf.getIdentityFile());
 
 		return selfView;
 	}
@@ -171,6 +177,7 @@ public class EditFragment extends Fragment {
 		mountPoint.setPort(mPort.getText().toString());
 		mountPoint.setPassword(mPassword.getText().toString());
 		mountPoint.setStorePassword(mStorePassword.isChecked());
+		mountPoint.setIdentityFile(mIdentityFile.getText().toString());
 		mountPoint.setRemotePath(mRemotePath.getText().toString());
 		mountPoint.setLocalPath(mLocalPath.getText().toString());
 		mountPoint.setForcePermissions(mForcePermissions.isChecked());
@@ -238,16 +245,43 @@ public class EditFragment extends Fragment {
 		startActivityForResult(intent, PICKDIR_REQUEST_CODE);
 	}
 
+	private void selectIdentityFile() {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType("*/*");
+		startActivityForResult(Intent.createChooser(intent, "Select IdentityFile"),
+			PICK_IDENTITY_FILE_CODE);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == PICKDIR_REQUEST_CODE) {
-			if (resultCode == RESULT_OK) {
-				final Uri localUrl = data.getData();
-				mLocalPath.setText(FileUtil.getFullPathFromTreeUri(localUrl, getContext()));
-			}
+		switch (requestCode) {
+			case PICKDIR_REQUEST_CODE:
+				if (resultCode == RESULT_OK) {
+					final Uri localUrl = data.getData();
+					mLocalPath.setText(FileUtil.getFullPathFromTreeUri(localUrl, getContext()));
+				}
+				break;
+			case PICK_IDENTITY_FILE_CODE:
+				if (resultCode == RESULT_OK) {
+					final Uri localUrl = data.getData();
+					final String path = FileUtil.getPath(getContext(), localUrl);
+					replaceIdentityFile(path);
+				}
+				break;
+			default:
+				super.onActivityResult(requestCode, resultCode, data);
 		}
-		else {
-			super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void replaceIdentityFile(final String path) {
+		if (path == null || path.isEmpty()) {
+			return;
 		}
+		String options = mOptions.getText().toString();
+		options = options.replaceAll(",?IdentityFile=[^,]*,?", ",")
+			.replaceAll(",$|^,", "");
+		mOptions.setText(options);
+		mIdentityFile.setText(path);
 	}
 }

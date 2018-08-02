@@ -4,8 +4,10 @@ package ru.nsu.bobrofon.easysshfs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,8 @@ import java.io.InputStream;
 import ru.nsu.bobrofon.easysshfs.log.LogSingleton;
 import ru.nsu.bobrofon.easysshfs.mountpointList.MountPointsList;
 import ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.MountPoint;
+
+import static android.content.ContentValues.TAG;
 
 public class VersionUpdater {
 	private final Context mContext;
@@ -22,12 +26,12 @@ public class VersionUpdater {
 	}
 
 	public void update() {
-		copyAssets("ssh", "ssh");
-		copyAssets("sshfs", "sshfs");
-
 		int currentVersion = BuildConfig.VERSION_CODE;
 		final SharedPreferences settings = mContext.getSharedPreferences("sshfs", 0);
 		int lastVersion = settings.getInt("version", 0);
+
+		copyAssets("ssh", "ssh", lastVersion != currentVersion);
+		copyAssets("sshfs", "sshfs", lastVersion != currentVersion);
 
 		if (lastVersion < 9) {
 			update02to03();
@@ -61,13 +65,13 @@ public class VersionUpdater {
 		list.save(mContext);
 	}
 
-	private void copyAssets(final String assetPath, final String localPath) {
+	private void copyAssets(final String assetPath, final String localPath, final boolean force) {
 		try {
 			final String home = mContext.getFilesDir().getPath();
 			File file = new File(home + "/" + localPath);
-			if(!file.exists()) {
+			if(!file.exists() || force) {
 				InputStream in = mContext.getAssets().open(assetPath);
-				FileOutputStream out = new FileOutputStream(home + "/" + localPath);
+				FileOutputStream out = mContext.openFileOutput(localPath, 0);
 				int read;
 				byte[] buffer = new byte[4096];
 				while ((read = in.read(buffer)) > 0) {
@@ -82,7 +86,7 @@ public class VersionUpdater {
 				}
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			Log.w(TAG, "copyAssets: ", e);
 		}
 	}
 }
