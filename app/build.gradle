@@ -25,8 +25,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 46
-        versionName "0.5.1"
+        versionCode 48
+        versionName "0.5.2"
     }
     buildTypes {
         arm {
@@ -39,13 +39,30 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        arm64v8a {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        x86_64 {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
+
 }
 
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
         if (output.name == "x86") {
             output.versionCodeOverride = variant.versionCode + 1
+        }
+        if (output.name == "arm64v8a") {
+            output.versionCodeOverride = variant.versionCode + 2
+        }
+        if (output.name == "x86_64") {
+            output.versionCodeOverride = variant.versionCode + 3
         }
     }
 }
