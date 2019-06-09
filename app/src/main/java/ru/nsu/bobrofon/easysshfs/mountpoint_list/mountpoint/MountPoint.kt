@@ -234,16 +234,10 @@ class MountPoint {
             var result = false
 
             try {
-                val fstream = FileInputStream(mMountFile)
-                val br = BufferedReader(InputStreamReader(fstream))
-
-                var line: String?
-                do {
-                    line = br.readLine()
-                    result = line.contains(mountLine.toString())
-                } while (!result && line != null)
-
-                br.close()
+                val procmount = File(mMountFile)
+                result = procmount.useLines { lines ->
+                    lines.any { line -> line.contains(mountLine.toString()) }
+                }
             } catch (e: FileNotFoundException) {
                 return Pair<Boolean, String>(result, e.message)
             } catch (e: IOException) {
