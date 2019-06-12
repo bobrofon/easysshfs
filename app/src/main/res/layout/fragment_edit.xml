@@ -2,7 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="ru.nsu.bobrofon.easysshfs.mountpointList.mountpoint.EditFragment">
+             tools:context="ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.EditFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
