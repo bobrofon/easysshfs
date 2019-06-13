@@ -1,10 +1,10 @@
 package ru.nsu.bobrofon.easysshfs
 
 import android.support.v7.app.AppCompatActivity
-import android.app.Activity
+import android.content.Context
 import android.support.v7.app.ActionBar
 import android.support.v4.app.Fragment
-import android.support.v4.app.ActionBarDrawerToggle
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.content.res.Configuration
@@ -111,7 +111,6 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
         mDrawerToggle = object : ActionBarDrawerToggle(
                 activity!!, /* host Activity */
                 mDrawerLayout, /* DrawerLayout object */
-                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
                 R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
                 R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -121,7 +120,7 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
                     return
                 }
 
-                activity!!.supportInvalidateOptionsMenu() // calls onPrepareOptionsMenu()
+                activity!!.invalidateOptionsMenu() // calls onPrepareOptionsMenu()
             }
 
             override fun onDrawerOpened(drawerView: View) {
@@ -139,7 +138,7 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
                 }
 
-                activity!!.supportInvalidateOptionsMenu() // calls onPrepareOptionsMenu()
+                activity!!.invalidateOptionsMenu() // calls onPrepareOptionsMenu()
             }
         }
 
@@ -152,7 +151,7 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout!!.post { mDrawerToggle!!.syncState() }
 
-        mDrawerLayout!!.setDrawerListener(mDrawerToggle)
+        mDrawerLayout!!.addDrawerListener(mDrawerToggle!!)
     }
 
     private fun selectItem(position: Int) {
@@ -168,8 +167,8 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
         }
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         try {
             mCallbacks = activity as NavigationDrawerCallbacks?
         } catch (e: ClassCastException) {
@@ -215,7 +214,6 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
     private fun showGlobalContextActionBar() {
         val actionBar = actionBar
         actionBar!!.setDisplayShowTitleEnabled(true)
-        actionBar.navigationMode = ActionBar.NAVIGATION_MODE_STANDARD
         actionBar.setTitle(R.string.app_name)
     }
 

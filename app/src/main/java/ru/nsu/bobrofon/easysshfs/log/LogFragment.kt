@@ -2,6 +2,7 @@ package ru.nsu.bobrofon.easysshfs.log
 
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -58,8 +59,8 @@ class LogFragment : Fragment(), LogModel.Observer {
         mLogTextView!!.text = String.format("%s%s", logHeader, logBody)
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         (activity as EasySSHFSActivity).onSectionAttached(R.string.debug_log_title)
     }
 

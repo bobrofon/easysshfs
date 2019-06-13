@@ -1,6 +1,6 @@
 package ru.nsu.bobrofon.easysshfs.mountpoint_list
 
-import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -63,21 +63,18 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         mDrawerStatus = drawerStatus
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val activity = activity ?: return
-        val shell = shell ?: return
-
-        val list = MountPointsList.getIntent(activity)
-        mountpoints = list
-        mAdapter = MountPointsArrayAdapter(activity, list.mountPoints,
-                shell)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_mountpoint, container, false)
+
+        val context = context ?: return view
+        val shell = shell ?: return view
+
+        val list = MountPointsList.getIntent(activity as EasySSHFSActivity)
+        mountpoints = list
+        mAdapter = MountPointsArrayAdapter(activity as EasySSHFSActivity, list.mountPoints,
+                shell)
 
         // Set the adapter
         mListView = view.findViewById(android.R.id.list)
@@ -86,7 +83,6 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         // Set OnItemClickListener so we can be notified on item clicks
         mListView!!.setOnItemClickListener(this)
 
-        val context = context ?: return view
         mountpoints!!.registerObserver(this, context)
         // mountpoints.autoMount();
 
@@ -98,11 +94,11 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         super.onDestroyView()
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         (activity as EasySSHFSActivity).onSectionAttached(R.string.mount_point_list_title)
         try {
-            mListener = activity
+            mListener = activity as EasySSHFSActivity
         } catch (e: ClassCastException) {
             throw ClassCastException("$activity must implement OnFragmentInteractionListener")
         }

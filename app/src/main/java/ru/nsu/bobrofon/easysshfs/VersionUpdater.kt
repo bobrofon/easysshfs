@@ -40,7 +40,7 @@ class VersionUpdater internal constructor(private val mContext: Context) {
         }
 
         val mountPoint = MountPoint()
-        mountPoint.setRootDir(settings.getString("root_dir", mContext.filesDir.path))
+        mountPoint.setRootDir(settings.getString("root_dir", mContext.filesDir.path)!!)
         mountPoint.options = settings.getString("sshfs_opts",
                 "password_stdin,UserKnownHostsFile=/dev/null,StrictHostKeyChecking=no" + ",rw,dirsync,nosuid,nodev,noexec,umask=0702,allow_other")
         mountPoint.userName = settings.getString("username", "")

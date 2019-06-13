@@ -23,7 +23,7 @@ class InternetStateChangeReceiver : BroadcastReceiver() {
                 if (mountpointList.needAutomount()!!) {
                     mountpointList.autoMount(context, EasySSHFSActivity.initNewShell())
                 }
-            } else if (!info.isConnectedOrConnecting) {
+            } else {
                 MountPointsList.getIntent(context).umount(context,
                         EasySSHFSActivity.initNewShell())
             }

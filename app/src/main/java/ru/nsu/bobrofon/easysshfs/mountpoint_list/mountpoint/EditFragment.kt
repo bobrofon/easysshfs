@@ -27,6 +27,7 @@ import ru.nsu.bobrofon.easysshfs.R
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountPointsList
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 
 class EditFragment : Fragment() {
 
@@ -187,8 +188,8 @@ class EditFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         (activity as EasySSHFSActivity).onSectionAttached(R.string.mount_point_title)
     }
 
@@ -218,7 +219,7 @@ class EditFragment : Fragment() {
                 mLocalPath!!.text = FileUtil.getFullPathFromTreeUri(localUrl, context)
             }
             PICK_IDENTITY_FILE_CODE -> if (resultCode == RESULT_OK) {
-                val localUrl = data!!.data
+                val localUrl = data!!.data ?: return
                 val path = FileUtil.getPath(context, localUrl)
                 replaceIdentityFile(path)
             }

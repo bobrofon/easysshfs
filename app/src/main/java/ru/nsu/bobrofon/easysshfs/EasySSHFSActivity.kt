@@ -86,8 +86,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     }
 
     private fun restoreActionBar() {
-        val actionBar = supportActionBar
-        actionBar!!.navigationMode = ActionBar.NAVIGATION_MODE_STANDARD
+        val actionBar = supportActionBar!!
         actionBar.setDisplayShowTitleEnabled(true)
         actionBar.title = mTitle
     }

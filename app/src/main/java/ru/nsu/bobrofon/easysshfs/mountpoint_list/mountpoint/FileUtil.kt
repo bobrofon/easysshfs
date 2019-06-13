@@ -139,7 +139,8 @@ object FileUtil {
                         storageDefinition = "SECONDARY_STORAGE"
                     }
 
-                    return System.getenv(storageDefinition) + "/" + split[1]
+                    val storage = System.getenv(storageDefinition) ?: ""
+                    return storage + "/" + split[1]
                 }
 
             } else if (isDownloadsDocument(uri)) {// DownloadsProvider
