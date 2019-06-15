@@ -11,21 +11,19 @@ import com.topjohnwu.superuser.Shell
 import org.json.JSONException
 import org.json.JSONObject
 
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.io.InputStreamReader
 import java.net.Inet6Address
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.LinkedList
 
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
-import ru.nsu.bobrofon.easysshfs.log.LogSingleton
+import ru.nsu.bobrofon.easysshfs.log.AppLog
 
 class MountPoint {
+    private val mAppLog = AppLog.instance()
     private var mPointName: String? = null
     var autoMount: Boolean = false
     var userName: String? = null
@@ -159,7 +157,7 @@ class MountPoint {
     }
 
     private fun logMessage(message: String) {
-        LogSingleton.logModel.addMessage(message)
+        mAppLog.addMessage(message)
     }
 
     fun checkMount(context: Context) {

@@ -1,21 +1,21 @@
 package ru.nsu.bobrofon.easysshfs.mountpoint_list
 
+import java.util.concurrent.atomic.AtomicReference
+import java.util.LinkedList
 
 import android.content.Context
 import android.util.Log
 
-import com.topjohnwu.superuser.Shell
-
 import org.json.JSONArray
 import org.json.JSONException
 
-import java.util.LinkedList
+import com.topjohnwu.superuser.Shell
 
-import ru.nsu.bobrofon.easysshfs.log.LogSingleton
+import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
-import java.util.concurrent.atomic.AtomicReference
 
 class MountPointsList private constructor() {
+    private val mAppLog = AppLog.instance()
 
     private val mMountPoints: MutableList<MountPoint> = LinkedList()
 
@@ -95,7 +95,7 @@ class MountPointsList private constructor() {
     }
 
     private fun log(message: CharSequence) {
-        LogSingleton.logModel.addMessage(message)
+        mAppLog.addMessage(message)
     }
 
     companion object {

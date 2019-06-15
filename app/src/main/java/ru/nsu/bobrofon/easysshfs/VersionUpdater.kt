@@ -8,13 +8,14 @@ import android.util.Log
 import java.io.File
 import java.io.IOException
 
-import ru.nsu.bobrofon.easysshfs.log.LogSingleton
+import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
 
 import android.content.ContentValues.TAG
 
 class VersionUpdater internal constructor(private val mContext: Context) {
+    private val mAppLog = AppLog.instance()
 
     fun update() {
         val currentVersion = BuildConfig.VERSION_CODE
@@ -68,7 +69,7 @@ class VersionUpdater internal constructor(private val mContext: Context) {
 
                 file = File("$home/$localPath")
                 if (!file.setExecutable(true)) {
-                    LogSingleton.logModel.addMessage("Can't set executable bit on $localPath")
+                    mAppLog.addMessage("Can't set executable bit on $localPath")
                 }
             }
         } catch (e: IOException) {
