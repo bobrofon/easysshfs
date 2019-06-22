@@ -215,7 +215,7 @@ class EditFragment : Fragment() {
         val context = context ?: return
         when (requestCode) {
             PICKDIR_REQUEST_CODE -> if (resultCode == RESULT_OK) {
-                val localUrl = data!!.data
+                val localUrl = data!!.data ?: return
                 mLocalPath!!.text = FileUtil.getFullPathFromTreeUri(localUrl, context)
             }
             PICK_IDENTITY_FILE_CODE -> if (resultCode == RESULT_OK) {
