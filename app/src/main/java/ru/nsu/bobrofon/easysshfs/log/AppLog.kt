@@ -6,8 +6,8 @@ import android.util.Log
 
 private const val TAG = "AppLog"
 
-class AppLog private constructor() : LogView {
-    private val mLogBuffer = StringBuffer()
+class AppLog(private val mLogBuffer: StringBuffer = StringBuffer()) : LogView {
+
     private val mObservable = LogObservable(this)
 
     init {
