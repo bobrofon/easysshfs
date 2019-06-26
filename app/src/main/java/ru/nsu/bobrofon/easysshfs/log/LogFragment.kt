@@ -21,11 +21,11 @@ private const val TAG = "LogFragment"
 
 class LogFragment : EasySSHFSFragment(), LogChangeObserver {
 
-    private val mAppLog = AppLog.instance()
-    private lateinit var mDrawerStatus: DrawerStatus
+    private val appLog = AppLog.instance()
+    private lateinit var drawerStatus: DrawerStatus
 
-    fun setDrawerStatus(drawerStatus: DrawerStatus) {
-        mDrawerStatus = drawerStatus
+    fun setDrawerStatus(status: DrawerStatus) {
+        drawerStatus = status
     }
 
     override fun onCreateView(
@@ -40,12 +40,12 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAppLog.registerObserver(this)
+        appLog.registerObserver(this)
     }
 
     override fun onDestroyView() {
         Log.i(TAG, "onDestroyView")
-        mAppLog.unregisterObserver(this)
+        appLog.unregisterObserver(this)
         super.onDestroyView()
     }
 
@@ -63,7 +63,7 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
-        if (!mDrawerStatus.isDrawerOpen) {
+        if (!drawerStatus.isDrawerOpen) {
             inflater?.inflate(R.menu.log, menu)
         }
     }
@@ -72,7 +72,7 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
         val id = item?.itemId
 
         if (id == R.id.action_clean) {
-            mAppLog.clean()
+            appLog.clean()
             return true
         }
 

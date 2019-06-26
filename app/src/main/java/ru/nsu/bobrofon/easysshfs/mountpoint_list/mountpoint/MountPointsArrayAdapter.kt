@@ -26,15 +26,15 @@ class MountPointsArrayAdapter(private val mContext: Context, private val mValues
 
         val self = mValues[position]
 
-        nameView.text = self.pointName
+        nameView.text = self.visiblePointName
         if (self.isMounted) {
             statusView.text = mContext.getString(R.string.mounted)
             mountButton.text = mContext.getString(R.string.umount)
-            mountButton.setOnClickListener { self.umount(true, mContext, mShell) }
+            mountButton.setOnClickListener { self.umount(mShell, mContext) }
         } else {
             statusView.text = mContext.getString(R.string.not_mounted)
             mountButton.text = mContext.getString(R.string.mount)
-            mountButton.setOnClickListener { self.mount(true, mContext, mShell) }
+            mountButton.setOnClickListener { self.mount(mShell, mContext) }
         }
 
         return rowView

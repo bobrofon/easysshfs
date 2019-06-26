@@ -1,7 +1,6 @@
 package ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -77,7 +76,7 @@ class EditFragment : Fragment() {
             mSelf = worker.mountPoints[mMountPointId]
         } else {
             mSelf = MountPoint()
-            mSelf!!.setRootDir(activity.filesDir.path)
+            mSelf!!.rootDir = activity.filesDir.path
             mSelf!!.localPath = sdcard() + "/mnt"
         }
 
@@ -105,7 +104,7 @@ class EditFragment : Fragment() {
         val selectIdentityFile = selfView.findViewById<Button>(R.id.identity_file_select)
         selectIdentityFile.setOnClickListener { selectIdentityFile() }
 
-        mName!!.text = mSelf!!.pointName
+        mName!!.text = mSelf!!.visiblePointName
         mAuto!!.isChecked = mSelf!!.autoMount
         mUsername!!.text = mSelf!!.userName
         mHost!!.text = mSelf!!.host
@@ -141,7 +140,7 @@ class EditFragment : Fragment() {
         mountPoint.localPath = mLocalPath!!.text.toString()
         mountPoint.forcePermissions = mForcePermissions!!.isChecked
         mountPoint.options = mOptions!!.text.toString()
-        mountPoint.setRootDir(activity!!.filesDir.path)
+        mountPoint.rootDir = activity!!.filesDir.path
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -176,12 +175,12 @@ class EditFragment : Fragment() {
             R.id.action_mount -> {
                 val mountPoint = MountPoint()
                 grabMountPoint(mountPoint)
-                mountPoint.mount(true, context, shell)
+                mountPoint.mount(shell, context)
             }
             R.id.action_umount -> {
                 val mountPoint = MountPoint()
                 grabMountPoint(mountPoint)
-                mountPoint.umount(true, context, shell)
+                mountPoint.umount(shell, context)
             }
         }
 

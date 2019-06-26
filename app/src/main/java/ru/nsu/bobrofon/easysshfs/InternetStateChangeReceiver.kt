@@ -19,13 +19,12 @@ class InternetStateChangeReceiver : BroadcastReceiver() {
         if (info != null) {
             if (info.isConnected) {
                 val mountpointList = MountPointsList.getIntent(context)
-                mountpointList.checkMount(context)
+                mountpointList.checkMount()
                 if (mountpointList.needAutomount()!!) {
-                    mountpointList.autoMount(context, EasySSHFSActivity.initNewShell())
+                    mountpointList.autoMount(EasySSHFSActivity.initNewShell())
                 }
             } else {
-                MountPointsList.getIntent(context).umount(context,
-                        EasySSHFSActivity.initNewShell())
+                MountPointsList.getIntent(context).umount(EasySSHFSActivity.initNewShell())
             }
         }
     }

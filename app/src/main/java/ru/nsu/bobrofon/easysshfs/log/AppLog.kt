@@ -6,42 +6,42 @@ import android.util.Log
 
 private const val TAG = "AppLog"
 
-class AppLog(private val mLogBuffer: StringBuffer = StringBuffer()) : LogView {
+class AppLog(private val logBuffer: StringBuffer = StringBuffer()) : LogView {
 
-    private val mObservable = LogObservable(this)
+    private val observable = LogObservable(this)
 
     init {
         Log.i(TAG, "new instance")
     }
 
-    override fun toString(): String = mLogBuffer.toString()
+    override fun toString(): String = logBuffer.toString()
 
     fun addMessage(message: CharSequence) {
         Log.i(TAG, "new message: $message")
-        mLogBuffer.append(">_ ").append(message).append("\n")
-        mObservable.notifyChanged()
+        logBuffer.append(">_ ").append(message).append("\n")
+        observable.notifyChanged()
     }
 
     fun clean() {
-        mLogBuffer.setLength(0)
-        mObservable.notifyChanged()
+        logBuffer.setLength(0)
+        observable.notifyChanged()
     }
 
     fun registerObserver(logChangeObserver: LogChangeObserver) =
-        mObservable.registerObserver(logChangeObserver)
+        observable.registerObserver(logChangeObserver)
 
     fun unregisterObserver(logChangeObserver: LogChangeObserver) =
-        mObservable.unregisterObserver(logChangeObserver)
+        observable.unregisterObserver(logChangeObserver)
 
     companion object {
-        private var mInstance = WeakReference<AppLog>(null)
+        private var instance = WeakReference<AppLog>(null)
 
         @Synchronized
         fun instance(): AppLog {
-            val oldInstance = mInstance.get()
+            val oldInstance = instance.get()
             if (oldInstance == null) {
                 val newInstance = AppLog()
-                mInstance = WeakReference(newInstance)
+                instance = WeakReference(newInstance)
                 return newInstance
             }
             return oldInstance

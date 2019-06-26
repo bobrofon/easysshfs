@@ -21,6 +21,7 @@ import ru.nsu.bobrofon.easysshfs.R
 
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPointsArrayAdapter
+import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountStateChangeObserver
 
 /**
  * A fragment representing a list of Items.
@@ -37,7 +38,7 @@ import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPointsArrayAdap
  * Mandatory empty constructor for the fragment manager to instantiate the
  * fragment (e.g. upon screen orientation changes).
  */
-class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoint.Observer {
+class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountStateChangeObserver {
 
     private var mListener: OnFragmentInteractionListener? = null
 
@@ -68,7 +69,6 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_mountpoint, container, false)
 
-        val context = context ?: return view
         val shell = shell ?: return view
 
         val list = MountPointsList.getIntent(activity as EasySSHFSActivity)
@@ -83,7 +83,7 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         // Set OnItemClickListener so we can be notified on item clicks
         mListView!!.setOnItemClickListener(this)
 
-        mountpoints!!.registerObserver(this, context)
+        mountpoints!!.registerObserver(this)
         // mountpoints.autoMount();
 
         return view
@@ -149,7 +149,7 @@ class MountpointFragment : Fragment(), AdapterView.OnItemClickListener, MountPoi
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onMountStateChanged(mountPoint: MountPoint) {
+    override fun onMountStateChanged() {
         mListView!!.invalidateViews()
     }
 }

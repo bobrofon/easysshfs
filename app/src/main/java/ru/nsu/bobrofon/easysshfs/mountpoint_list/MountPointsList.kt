@@ -13,6 +13,8 @@ import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
+import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPointObservable
+import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountStateChangeObserver
 
 class MountPointsList private constructor() {
     private val mAppLog = AppLog.instance()
@@ -22,9 +24,9 @@ class MountPointsList private constructor() {
     val mountPoints: MutableList<MountPoint>
         get() = mMountPoints
 
-    fun checkMount(context: Context) {
+    fun checkMount() {
         for (mountPoint in mMountPoints) {
-            mountPoint.checkMount(context)
+            mountPoint.checkMount()
         }
     }
 
@@ -37,27 +39,27 @@ class MountPointsList private constructor() {
         return false
     }
 
-    fun autoMount(context: Context, shell: Shell) {
+    fun autoMount(shell: Shell) {
         for (item in mMountPoints) {
             if (item.autoMount/* && !item.isMounted()*/) {
-                item.mount(context, shell)
+                item.mount(shell)
             }
         }
     }
 
-    fun umount(context: Context, shell: Shell) {
+    fun umount(shell: Shell) {
         for (item in mMountPoints) {
-            item.umount(false, context, shell)
+            item.umount(shell)
         }
     }
 
-    fun registerObserver(observer: MountPoint.Observer, context: Context) {
+    fun registerObserver(observer: MountStateChangeObserver) {
         for (item in mMountPoints) {
-            item.registerObserver(observer, context)
+            item.registerObserver(observer)
         }
     }
 
-    fun unregisterObserver(observer: MountPoint.Observer) {
+    fun unregisterObserver(observer: MountStateChangeObserver) {
         for (item in mMountPoints) {
             item.unregisterObserver(observer)
         }

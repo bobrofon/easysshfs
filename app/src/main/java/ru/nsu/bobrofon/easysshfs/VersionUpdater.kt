@@ -41,15 +41,15 @@ class VersionUpdater internal constructor(private val mContext: Context) {
         }
 
         val mountPoint = MountPoint()
-        mountPoint.setRootDir(settings.getString("root_dir", mContext.filesDir.path)!!)
+        mountPoint.rootDir = settings.getString("root_dir", mContext.filesDir.path) ?: ""
         mountPoint.options = settings.getString("sshfs_opts",
-                "password_stdin,UserKnownHostsFile=/dev/null,StrictHostKeyChecking=no" + ",rw,dirsync,nosuid,nodev,noexec,umask=0702,allow_other")
-        mountPoint.userName = settings.getString("username", "")
-        mountPoint.host = settings.getString("host", "")
+                "password_stdin,UserKnownHostsFile=/dev/null,StrictHostKeyChecking=no" + ",rw,dirsync,nosuid,nodev,noexec,umask=0702,allow_other") ?: ""
+        mountPoint.userName = settings.getString("username", "") ?: ""
+        mountPoint.host = settings.getString("host", "") ?: ""
         mountPoint.setPort(Integer.toString(settings.getInt("port", 22)))
         mountPoint.localPath = settings.getString("local_dir",
-                Environment.getExternalStorageDirectory().path + "/mnt")
-        mountPoint.remotePath = settings.getString("remote_dir", "")
+                Environment.getExternalStorageDirectory().path + "/mnt") ?: ""
+        mountPoint.remotePath = settings.getString("remote_dir", "") ?: ""
 
         val list = MountPointsList.getIntent(mContext)
         list.mountPoints.add(mountPoint)
