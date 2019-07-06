@@ -2,7 +2,6 @@ package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
-import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -28,7 +27,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
      * Used to store the last screen title. For use in [.restoreActionBar].
      */
     private lateinit var screenTitle: CharSequence
-    private lateinit var fragments: Array<Fragment>
+    private lateinit var fragments: Array<EasySSHFSFragment>
 
     lateinit var shell: Shell
         private set
@@ -39,6 +38,8 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         shell = initNewShell()
 
         VersionUpdater(applicationContext).update()
+
+        fragments = arrayOf(MountpointFragment(), LogFragment())
 
         setContentView(R.layout.activity_easy_sshfs)
 
@@ -51,9 +52,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             findViewById<View>(R.id.drawer_layout) as DrawerLayout
         )
 
-        fragments =
-            arrayOf(MountpointFragment().apply { setDrawerStatus(navigationDrawerFragment) },
-                LogFragment().apply { setDrawerStatus(navigationDrawerFragment) })
+        fragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
     }
 
     override fun onNavigationDrawerItemSelected(position: Int) {

@@ -13,7 +13,6 @@ import android.view.ViewGroup
 
 import kotlinx.android.synthetic.main.fragment_log.log as logTextView
 
-import ru.nsu.bobrofon.easysshfs.DrawerStatus
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
 
@@ -22,11 +21,6 @@ private const val TAG = "LogFragment"
 class LogFragment : EasySSHFSFragment(), LogChangeObserver {
 
     private val appLog = AppLog.instance()
-    private lateinit var drawerStatus: DrawerStatus
-
-    fun setDrawerStatus(status: DrawerStatus) {
-        drawerStatus = status
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

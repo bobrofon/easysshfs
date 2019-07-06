@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.fragment_edit.select_dir as selectLocalDir
 import kotlinx.android.synthetic.main.fragment_edit.identity_file as identityFile
 import kotlinx.android.synthetic.main.fragment_edit.identity_file_select as selectIdentityFile
 
-import ru.nsu.bobrofon.easysshfs.DrawerStatus
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
@@ -38,13 +37,8 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 class EditFragment : EasySSHFSFragment() {
 
     private var mountPointId: Int = 0
-    private lateinit var drawerStatus: DrawerStatus
     private lateinit var mountPointsList: MountPointsList
     private lateinit var self: MountPoint
-
-    fun setDrawerStatus(status: DrawerStatus) {
-        drawerStatus = status
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -12,7 +12,6 @@ import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListAdapter
 
-import ru.nsu.bobrofon.easysshfs.DrawerStatus
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
 
@@ -29,12 +28,7 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
     private var onFragmentInteractionListener: OnFragmentInteractionListener? = null
     private lateinit var listView: AbsListView
     private lateinit var listAdapter: ListAdapter
-    private lateinit var drawerStatus: DrawerStatus
     private lateinit var mountPointsList: MountPointsList
-
-    fun setDrawerStatus(status: DrawerStatus) {
-        drawerStatus = status
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

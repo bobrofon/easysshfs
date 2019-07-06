@@ -159,8 +159,12 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
 
     private fun selectItem(position: Int) {
         currentSelectedPosition = position
-        drawerListView.setItemChecked(position, true)
-        drawerLayout.closeDrawer(fragmentContainerView)
+        if (this::drawerListView.isInitialized) {
+            drawerListView.setItemChecked(position, true)
+        }
+        if (this::drawerLayout.isInitialized) {
+            drawerLayout.closeDrawer(fragmentContainerView)
+        }
         navigationDrawerCallbacks?.onNavigationDrawerItemSelected(position)
     }
 
