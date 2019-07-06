@@ -138,7 +138,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
                     userLearnedDrawer = true
-                    val sp = PreferenceManager.getDefaultSharedPreferences(activity)
+                    val sp = PreferenceManager.getDefaultSharedPreferences(context)
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
                 }
 

@@ -16,19 +16,21 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 
 
-class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks, MountpointFragment.OnFragmentInteractionListener {
+class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks,
+    MountpointFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private var mNavigationDrawerFragment: NavigationDrawerFragment? = null
+    private lateinit var navigationDrawerFragment: NavigationDrawerFragment
 
     /**
      * Used to store the last screen title. For use in [.restoreActionBar].
      */
-    private var mTitle: CharSequence? = null
-    private var mFragments: Array<Fragment>? = null
-    var shell: Shell? = null
+    private lateinit var screenTitle: CharSequence
+    private lateinit var fragments: Array<Fragment>
+
+    lateinit var shell: Shell
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,28 +40,20 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
         VersionUpdater(applicationContext).update()
 
-        mFragments = arrayOf(MountpointFragment(), LogFragment())
-
         setContentView(R.layout.activity_easy_sshfs)
 
-        mNavigationDrawerFragment = supportFragmentManager.findFragmentById(R.id.navigation_drawer) as NavigationDrawerFragment
-        mTitle = title
+        screenTitle = title
 
-        // Set up the drawer.
-        mNavigationDrawerFragment!!.setUp(
-                R.id.navigation_drawer,
-                findViewById<View>(R.id.drawer_layout) as DrawerLayout)
+        navigationDrawerFragment =
+            supportFragmentManager.findFragmentById(R.id.navigation_drawer) as NavigationDrawerFragment
+        navigationDrawerFragment.setUp(
+            R.id.navigation_drawer,
+            findViewById<View>(R.id.drawer_layout) as DrawerLayout
+        )
 
-        mNavigationDrawerFragment?.let((mFragments!![0] as MountpointFragment)::setDrawerStatus)
-        mNavigationDrawerFragment?.let((mFragments!![1] as LogFragment)::setDrawerStatus)
-    }
-
-    public override fun onResume() {
-        super.onResume()
-    }
-
-    public override fun onPause() {
-        super.onPause()
+        fragments =
+            arrayOf(MountpointFragment().apply { setDrawerStatus(navigationDrawerFragment) },
+                LogFragment().apply { setDrawerStatus(navigationDrawerFragment) })
     }
 
     override fun onNavigationDrawerItemSelected(position: Int) {
@@ -71,9 +65,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
                 fragmentManager.popBackStack()
             }
 
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, mFragments!![position])
-                    .commit()
+            fragmentManager.beginTransaction().replace(R.id.container, fragments[position]).commit()
         } catch (e: ArrayIndexOutOfBoundsException) {
             finish()
         }
@@ -81,18 +73,18 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     }
 
     fun onSectionAttached(titleId: Int) {
-        mTitle = getString(titleId)
+        screenTitle = getString(titleId)
     }
 
     private fun restoreActionBar() {
         val actionBar = supportActionBar!!
         actionBar.setDisplayShowTitleEnabled(true)
-        actionBar.title = mTitle
+        actionBar.title = screenTitle
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (!mNavigationDrawerFragment!!.isDrawerOpen) {
+        if (!navigationDrawerFragment.isDrawerOpen) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -104,13 +96,11 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
     override fun onFragmentInteraction(id: Int) {
         val editFragment = EditFragment.newInstance(id)
-        mNavigationDrawerFragment?.let(editFragment::setDrawerStatus)
+        editFragment.setDrawerStatus(navigationDrawerFragment)
 
         val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, editFragment)
-                .addToBackStack(null)
-                .commit()
+        fragmentManager.beginTransaction().replace(R.id.container, editFragment)
+            .addToBackStack(null).commit()
     }
 
     companion object {
