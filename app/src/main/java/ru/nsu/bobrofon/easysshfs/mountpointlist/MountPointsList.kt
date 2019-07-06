@@ -1,4 +1,4 @@
-package ru.nsu.bobrofon.easysshfs.mountpoint_list
+package ru.nsu.bobrofon.easysshfs.mountpointlist
 
 import java.util.concurrent.atomic.AtomicReference
 import java.util.LinkedList
@@ -12,9 +12,8 @@ import org.json.JSONException
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPointObservable
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountStateChangeObserver
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
 
 class MountPointsList private constructor() {
     private val mAppLog = AppLog.instance()

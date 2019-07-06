@@ -1,4 +1,4 @@
-package ru.nsu.bobrofon.easysshfs.mountpoint_list
+package ru.nsu.bobrofon.easysshfs.mountpointlist
 
 import android.content.Context
 import android.os.Bundle
@@ -19,9 +19,8 @@ import ru.nsu.bobrofon.easysshfs.DrawerStatus
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.R
 
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPointsArrayAdapter
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountStateChangeObserver
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPointsArrayAdapter
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
 
 /**
  * A fragment representing a list of Items.

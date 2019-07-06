@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="ru.nsu.bobrofon.easysshfs.mountpoint_list.MountpointFragment">
+             tools:context="ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment">
 
     <ListView
         android:id="@android:id/list"

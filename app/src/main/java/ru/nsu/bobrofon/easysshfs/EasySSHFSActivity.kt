@@ -2,7 +2,6 @@ package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.ActionBar
 import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.view.Menu
@@ -13,8 +12,8 @@ import android.widget.Toast
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.EditFragment
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountpointFragment
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 
 
 class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks, MountpointFragment.OnFragmentInteractionListener {

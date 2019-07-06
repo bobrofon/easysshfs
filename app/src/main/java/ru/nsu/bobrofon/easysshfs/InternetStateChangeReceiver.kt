@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountPointsList
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 
 class InternetStateChangeReceiver : BroadcastReceiver() {
 

@@ -9,8 +9,8 @@ import java.io.File
 import java.io.IOException
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountPointsList
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
 
 import android.content.ContentValues.TAG
 

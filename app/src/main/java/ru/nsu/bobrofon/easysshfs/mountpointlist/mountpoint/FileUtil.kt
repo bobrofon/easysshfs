@@ -1,4 +1,4 @@
-package ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint
+package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
 import java.io.File
 import java.lang.reflect.Array as JArray
@@ -81,7 +81,7 @@ object FileUtil {
     private fun splitId(id: String): Array<String> =
         id.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-    fun getPath(context: Context, uri: Uri): String? =
+    fun getPath(uri: Uri, context: Context): String? =
         when {
             isDocumentUri(context, uri) -> getDocumentProviderPath(context, uri)
             isMediaStoreUri(uri) -> getRemoteAddress(context, uri)

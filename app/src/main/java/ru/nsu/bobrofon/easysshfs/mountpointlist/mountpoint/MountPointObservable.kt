@@ -1,4 +1,4 @@
-package ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint
+package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
 import android.database.Observable
 
