@@ -17,14 +17,15 @@ class InternetStateChangeReceiver : BroadcastReceiver() {
 
         val info = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO)
         if (info != null) {
+            val mountPointsList = MountPointsList.instance(context)
+
             if (info.isConnected) {
-                val mountpointList = MountPointsList.getIntent(context)
-                mountpointList.checkMount()
-                if (mountpointList.needAutomount()!!) {
-                    mountpointList.autoMount(EasySSHFSActivity.initNewShell())
+                mountPointsList.checkMount()
+                if (mountPointsList.needAutomount()) {
+                    mountPointsList.autoMount(EasySSHFSActivity.initNewShell())
                 }
             } else {
-                MountPointsList.getIntent(context).umount(EasySSHFSActivity.initNewShell())
+                mountPointsList.umount(EasySSHFSActivity.initNewShell())
             }
         }
     }

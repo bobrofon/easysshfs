@@ -39,6 +39,7 @@ class EditFragment : EasySSHFSFragment() {
 
     private var mountPointId: Int = 0
     private lateinit var drawerStatus: DrawerStatus
+    private lateinit var mountPointsList: MountPointsList
     private lateinit var self: MountPoint
 
     fun setDrawerStatus(status: DrawerStatus) {
@@ -60,10 +61,10 @@ class EditFragment : EasySSHFSFragment() {
 
         val context = context!!
 
-        val worker = MountPointsList.getIntent(context)
+        mountPointsList = MountPointsList.instance(context)
 
-        self = if (worker.mountPoints.size > mountPointId) {
-            worker.mountPoints[mountPointId]
+        self = if (mountPointsList.mountPoints.size > mountPointId) {
+            mountPointsList.mountPoints[mountPointId]
         } else {
             MountPoint().apply {
                 rootDir = context.filesDir.path
@@ -153,20 +154,18 @@ class EditFragment : EasySSHFSFragment() {
 
         grabMountPoint(self)
 
-        val worker = MountPointsList.getIntent(context)
-        if (!worker.mountPoints.contains(self)) {
-            worker.mountPoints.add(self)
+        if (!mountPointsList.mountPoints.contains(self)) {
+            mountPointsList.mountPoints.add(self)
         }
-        worker.save(context)
+        mountPointsList.save(context)
         showToast("saved")
     }
 
     private fun deleteAction() {
         val context = context!!
 
-        val worker = MountPointsList.getIntent(context)
-        worker.mountPoints.remove(self)
-        worker.save(context)
+        mountPointsList.mountPoints.remove(self)
+        mountPointsList.save(context)
         showToast("deleted")
     }
 

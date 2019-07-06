@@ -34,7 +34,7 @@ class AppLog(private val logBuffer: StringBuffer = StringBuffer()) : LogView {
         observable.unregisterObserver(logChangeObserver)
 
     companion object {
-        private var instance = WeakReference<AppLog>(null)
+        private var instance = WeakReference<AppLog?>(null)
 
         @Synchronized
         fun instance(): AppLog {

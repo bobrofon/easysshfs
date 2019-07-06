@@ -51,7 +51,7 @@ class VersionUpdater internal constructor(private val mContext: Context) {
                 Environment.getExternalStorageDirectory().path + "/mnt") ?: ""
         mountPoint.remotePath = settings.getString("remote_dir", "") ?: ""
 
-        val list = MountPointsList.getIntent(mContext)
+        val list = MountPointsList.instance(mContext)
         list.mountPoints.add(mountPoint)
         list.save(mContext)
     }
