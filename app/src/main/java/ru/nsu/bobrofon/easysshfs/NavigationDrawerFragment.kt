@@ -1,10 +1,8 @@
 package ru.nsu.bobrofon.easysshfs
 
-import android.support.v7.app.AppCompatActivity
-import android.app.Activity
+import android.content.Context
 import android.support.v7.app.ActionBar
-import android.support.v4.app.Fragment
-import android.support.v4.app.ActionBarDrawerToggle
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.content.res.Configuration
@@ -22,50 +20,48 @@ import android.widget.ListView
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
- * See the [
- * design guidelines](https://developer.android.com/design/patterns/navigation-drawer.html#Interaction) for a complete explanation of the behaviors implemented here.
  */
-class NavigationDrawerFragment : Fragment(), DrawerStatus {
+class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
 
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
-    private var mCallbacks: NavigationDrawerCallbacks? = null
+    private var navigationDrawerCallbacks: NavigationDrawerCallbacks? = null
 
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
-    private var mDrawerToggle: ActionBarDrawerToggle? = null
+    private lateinit var drawerToggle: ActionBarDrawerToggle
 
-    private var mDrawerLayout: DrawerLayout? = null
-    private var mDrawerListView: ListView? = null
-    private var mFragmentContainerView: View? = null
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerListView: ListView
+    private lateinit var fragmentContainerView: View
 
-    private var mCurrentSelectedPosition = 0
-    private var mFromSavedInstanceState: Boolean = false
-    private var mUserLearnedDrawer: Boolean = false
+    private var currentSelectedPosition = 0
+    private var fromSavedInstanceState: Boolean = false
+    private var userLearnedDrawer: Boolean = false
 
     override val isDrawerOpen: Boolean
-        get() = mDrawerLayout != null && mDrawerLayout!!.isDrawerOpen(mFragmentContainerView!!)
+        get() = drawerLayout.isDrawerOpen(fragmentContainerView)
 
     private val actionBar: ActionBar?
-        get() = (activity as AppCompatActivity).supportActionBar
+        get() = appActivity?.supportActionBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
-        val sp = PreferenceManager.getDefaultSharedPreferences(activity)
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false)
+        // drawer.
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false)
 
         if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION)
-            mFromSavedInstanceState = true
+            currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION)
+            fromSavedInstanceState = true
         }
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition)
+        selectItem(currentSelectedPosition)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,46 +70,54 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        mDrawerListView = inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false) as ListView
-        mDrawerListView!!.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ -> selectItem(position) }
-        mDrawerListView!!.adapter = ArrayAdapter(
-                actionBar!!.themedContext,
-                android.R.layout.simple_list_item_1,
-                android.R.id.text1,
-                arrayOf(getString(R.string.title_section1), getString(R.string.title_section2), getString(R.string.title_section3)))
-        mDrawerListView!!.setItemChecked(mCurrentSelectedPosition, true)
-        return mDrawerListView
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        drawerListView =
+            inflater.inflate(R.layout.fragment_navigation_drawer, container, false) as ListView
+        drawerListView.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ -> selectItem(position) }
+        drawerListView.adapter = ArrayAdapter(
+            actionBar!!.themedContext,
+            android.R.layout.simple_list_item_1,
+            android.R.id.text1,
+            arrayOf(
+                getString(R.string.title_section1),
+                getString(R.string.title_section2),
+                getString(R.string.title_section3)
+            )
+        )
+        drawerListView.setItemChecked(currentSelectedPosition, true)
+        return drawerListView
     }
 
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
      *
      * @param fragmentId   The android:id of this fragment in its activity's layout.
-     * @param drawerLayout The DrawerLayout containing this fragment's UI.
+     * @param layout The DrawerLayout containing this fragment's UI.
      */
-    fun setUp(fragmentId: Int, drawerLayout: DrawerLayout) {
-        mFragmentContainerView = activity!!.findViewById(fragmentId)
-        mDrawerLayout = drawerLayout
+    fun setUp(fragmentId: Int, layout: DrawerLayout) {
+        fragmentContainerView = activity?.findViewById(fragmentId)!!
+        drawerLayout = layout
 
         // set a custom shadow that overlays the main content when the drawer opens
-        mDrawerLayout!!.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
         // set up the drawer's list view with items and click listener
 
-        val actionBar = actionBar
-        actionBar!!.setDisplayHomeAsUpEnabled(true)
+        val actionBar = actionBar!!
+        actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeButtonEnabled(true)
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
-        mDrawerToggle = object : ActionBarDrawerToggle(
-                activity!!, /* host Activity */
-                mDrawerLayout, /* DrawerLayout object */
-                R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
+        drawerToggle = object : ActionBarDrawerToggle(
+            activity, /* host Activity */
+            drawerLayout, /* DrawerLayout object */
+            R.string.navigation_drawer_open, /* "open drawer" description for accessibility */
+            R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
         ) {
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
@@ -121,7 +125,7 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
                     return
                 }
 
-                activity!!.supportInvalidateOptionsMenu() // calls onPrepareOptionsMenu()
+                activity?.invalidateOptionsMenu() // calls onPrepareOptionsMenu()
             }
 
             override fun onDrawerOpened(drawerView: View) {
@@ -130,82 +134,72 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
                     return
                 }
 
-                if (!mUserLearnedDrawer) {
+                if (!userLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
-                    mUserLearnedDrawer = true
-                    val sp = PreferenceManager
-                            .getDefaultSharedPreferences(activity)
+                    userLearnedDrawer = true
+                    val sp = PreferenceManager.getDefaultSharedPreferences(context)
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
                 }
 
-                activity!!.supportInvalidateOptionsMenu() // calls onPrepareOptionsMenu()
+                activity?.invalidateOptionsMenu() // calls onPrepareOptionsMenu()
             }
         }
 
         // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
         // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout!!.openDrawer(mFragmentContainerView!!)
+        if (!userLearnedDrawer && !fromSavedInstanceState) {
+            drawerLayout.openDrawer(fragmentContainerView)
         }
 
         // Defer code dependent on restoration of previous instance state.
-        mDrawerLayout!!.post { mDrawerToggle!!.syncState() }
-
-        mDrawerLayout!!.setDrawerListener(mDrawerToggle)
+        drawerLayout.post { drawerToggle.syncState() }
+        drawerLayout.addDrawerListener(drawerToggle)
     }
 
     private fun selectItem(position: Int) {
-        mCurrentSelectedPosition = position
-        if (mDrawerListView != null) {
-            mDrawerListView!!.setItemChecked(position, true)
+        currentSelectedPosition = position
+        if (this::drawerListView.isInitialized) {
+            drawerListView.setItemChecked(position, true)
         }
-        if (mDrawerLayout != null) {
-            mDrawerLayout!!.closeDrawer(mFragmentContainerView!!)
+        if (this::drawerLayout.isInitialized) {
+            drawerLayout.closeDrawer(fragmentContainerView)
         }
-        if (mCallbacks != null) {
-            mCallbacks!!.onNavigationDrawerItemSelected(position)
-        }
+        navigationDrawerCallbacks?.onNavigationDrawerItemSelected(position)
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
-        try {
-            mCallbacks = activity as NavigationDrawerCallbacks?
-        } catch (e: ClassCastException) {
-            throw ClassCastException("Activity must implement NavigationDrawerCallbacks.")
-        }
-
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        navigationDrawerCallbacks = appActivity!!
     }
 
     override fun onDetach() {
+        navigationDrawerCallbacks = null
         super.onDetach()
-        mCallbacks = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition)
+        outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         // Forward the new configuration the drawer toggle component.
-        mDrawerToggle!!.onConfigurationChanged(newConfig)
+        drawerToggle.onConfigurationChanged(newConfig)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
         // If the drawer is open, show the global app actions in the action bar. See also
         // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (mDrawerLayout != null && isDrawerOpen) {
+        if (isDrawerOpen) {
             showGlobalContextActionBar()
         }
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return mDrawerToggle!!.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
-
+        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
     }
 
     /**
@@ -213,9 +207,8 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
      * 'context', rather than just what's in the current screen.
      */
     private fun showGlobalContextActionBar() {
-        val actionBar = actionBar
-        actionBar!!.setDisplayShowTitleEnabled(true)
-        actionBar.navigationMode = ActionBar.NAVIGATION_MODE_STANDARD
+        val actionBar = actionBar!!
+        actionBar.setDisplayShowTitleEnabled(true)
         actionBar.setTitle(R.string.app_name)
     }
 
@@ -234,12 +227,8 @@ class NavigationDrawerFragment : Fragment(), DrawerStatus {
         /**
          * Remember the position of the selected item.
          */
-        private val STATE_SELECTED_POSITION = "selected_navigation_drawer_position"
+        private const val STATE_SELECTED_POSITION = "selected_navigation_drawer_position"
 
-        /**
-         * Per the design guidelines, you should show the drawer on launch until the user manually
-         * expands it. This shared preference tracks this.
-         */
-        private val PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned"
+        private const val PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned"
     }
 }

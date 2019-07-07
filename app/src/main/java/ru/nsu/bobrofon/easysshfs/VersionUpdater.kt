@@ -1,24 +1,26 @@
 package ru.nsu.bobrofon.easysshfs
 
+import java.io.File
+import java.io.IOException
 
 import android.content.Context
 import android.os.Environment
 import android.util.Log
 
-import java.io.File
-import java.io.IOException
+import ru.nsu.bobrofon.easysshfs.log.AppLog
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
 
-import ru.nsu.bobrofon.easysshfs.log.LogSingleton
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.MountPointsList
-import ru.nsu.bobrofon.easysshfs.mountpoint_list.mountpoint.MountPoint
+private const val TAG = "VersionUpdater"
 
-import android.content.ContentValues.TAG
-
-class VersionUpdater internal constructor(private val mContext: Context) {
+class VersionUpdater(
+    private val context: Context,
+    private val appLog: AppLog = AppLog.instance()
+) {
 
     fun update() {
         val currentVersion = BuildConfig.VERSION_CODE
-        val settings = mContext.getSharedPreferences("sshfs", 0)
+        val settings = context.getSharedPreferences("sshfs", 0)
         val lastVersion = settings.getInt("version", 0)
 
         copyAssets("ssh", "ssh", lastVersion != currentVersion)
@@ -34,46 +36,48 @@ class VersionUpdater internal constructor(private val mContext: Context) {
     }
 
     private fun update02to03() {
-        val settings = mContext.getSharedPreferences("sshfs_cmd_global", 0)
+        val settings = context.getSharedPreferences("sshfs_cmd_global", 0)
         if (!settings.contains("host")) {
             return
         }
 
         val mountPoint = MountPoint()
-        mountPoint.setRootDir(settings.getString("root_dir", mContext.filesDir.path))
-        mountPoint.options = settings.getString("sshfs_opts",
-                "password_stdin,UserKnownHostsFile=/dev/null,StrictHostKeyChecking=no" + ",rw,dirsync,nosuid,nodev,noexec,umask=0702,allow_other")
-        mountPoint.userName = settings.getString("username", "")
-        mountPoint.host = settings.getString("host", "")
+        mountPoint.rootDir = settings.getString("root_dir", context.filesDir.path) ?: ""
+        mountPoint.options = settings.getString(
+            "sshfs_opts",
+            "password_stdin,UserKnownHostsFile=/dev/null,StrictHostKeyChecking=no" +
+                    ",rw,dirsync,nosuid,nodev,noexec,umask=0702,allow_other"
+        ) ?: ""
+        mountPoint.userName = settings.getString("username", "") ?: ""
+        mountPoint.host = settings.getString("host", "") ?: ""
         mountPoint.setPort(Integer.toString(settings.getInt("port", 22)))
-        mountPoint.localPath = settings.getString("local_dir",
-                Environment.getExternalStorageDirectory().path + "/mnt")
-        mountPoint.remotePath = settings.getString("remote_dir", "")
+        mountPoint.localPath =
+            settings.getString("local_dir", Environment.getExternalStorageDirectory().path + "/mnt")
+                ?: ""
+        mountPoint.remotePath = settings.getString("remote_dir", "") ?: ""
 
-        val list = MountPointsList.getIntent(mContext)
+        val list = MountPointsList.instance(context)
         list.mountPoints.add(mountPoint)
-        list.save(mContext)
+        list.save(context)
     }
 
     private fun copyAssets(assetPath: String, localPath: String, force: Boolean) {
         try {
-            val home = mContext.filesDir.path
-            var file = File("$home/$localPath")
+            val home = context.filesDir.path
+            val file = File("$home/$localPath")
             if (!file.exists() || force) {
-                val `in` = mContext.assets.open(assetPath)
-                val out = mContext.openFileOutput(localPath, 0)
-                `in`.copyTo(out, 4096)
-                out.close()
-                `in`.close()
+                context.assets.open(assetPath).use { inputStream ->
+                    context.openFileOutput(localPath, 0).use { outputStream ->
+                        inputStream.copyTo(outputStream, 4096)
+                    }
+                }
 
-                file = File("$home/$localPath")
                 if (!file.setExecutable(true)) {
-                    LogSingleton.logModel.addMessage("Can't set executable bit on $localPath")
+                    appLog.addMessage("Can't set executable bit on $localPath")
                 }
             }
         } catch (e: IOException) {
             Log.w(TAG, "copyAssets: ", e)
         }
-
     }
 }
