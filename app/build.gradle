@@ -30,7 +30,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 28
         versionCode 60
-        versionName "0.5.3-x"
+        versionName "0.5.4"
     }
     buildTypes {
         arm {
