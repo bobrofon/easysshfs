@@ -53,6 +53,11 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        armv7a {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
 }
@@ -67,6 +72,9 @@ android.applicationVariants.all { variant ->
         }
         if (output.name == "x86_64") {
             output.versionCodeOverride = variant.versionCode + 3
+        }
+        if (output.name == "armv7a") {
+            output.versionCodeOverride = variant.versionCode + 4
         }
     }
 }
