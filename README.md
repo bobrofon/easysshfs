@@ -4,7 +4,7 @@
 SSHFS for android.
 
 # Binary components
-https://github.com/bobrofon/sshfs-world/tree/master/stable
+https://github.com/bobrofon/buildroot/releases
 
 # Links
 * [EasySSHFS in Google Play Store](https://play.google.com/store/apps/details?id=ru.nsu.bobrofon.easysshfs&hl=en)
