@@ -29,8 +29,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 14
         targetSdkVersion 29
-        versionCode 60
-        versionName "0.5.4"
+        versionCode 70
+        versionName "0.5.5"
     }
     buildTypes {
         arm {
@@ -64,16 +64,16 @@ android {
 
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
-        if (output.name == "x86") {
+        if (output.name == "armv7a") {
             output.versionCodeOverride = variant.versionCode + 1
         }
-        if (output.name == "arm64v8a") {
+        if (output.name == "x86") {
             output.versionCodeOverride = variant.versionCode + 2
         }
-        if (output.name == "x86_64") {
+        if (output.name == "arm64v8a") {
             output.versionCodeOverride = variant.versionCode + 3
         }
-        if (output.name == "armv7a") {
+        if (output.name == "x86_64") {
             output.versionCodeOverride = variant.versionCode + 4
         }
     }
