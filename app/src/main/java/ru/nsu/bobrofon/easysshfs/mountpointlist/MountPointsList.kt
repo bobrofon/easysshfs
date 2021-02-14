@@ -56,7 +56,7 @@ class MountPointsList(
                 mountPoints.add(mountPoint)
             }
         } catch (e: JSONException) {
-            Log.e(TAG, e.message)
+            Log.e(TAG, e.message ?: "")
             log(e.message.orEmpty())
         }
     }

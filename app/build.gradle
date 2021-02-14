@@ -23,14 +23,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 60
-        versionName "0.5.4"
+        targetSdkVersion 29
+        versionCode 70
+        versionName "0.5.5"
     }
     buildTypes {
         arm {
@@ -64,16 +64,16 @@ android {
 
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
-        if (output.name == "x86") {
+        if (output.name == "armv7a") {
             output.versionCodeOverride = variant.versionCode + 1
         }
-        if (output.name == "arm64v8a") {
+        if (output.name == "x86") {
             output.versionCodeOverride = variant.versionCode + 2
         }
-        if (output.name == "x86_64") {
+        if (output.name == "arm64v8a") {
             output.versionCodeOverride = variant.versionCode + 3
         }
-        if (output.name == "armv7a") {
+        if (output.name == "x86_64") {
             output.versionCodeOverride = variant.versionCode + 4
         }
     }
@@ -81,8 +81,8 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.github.topjohnwu:libsu:1.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

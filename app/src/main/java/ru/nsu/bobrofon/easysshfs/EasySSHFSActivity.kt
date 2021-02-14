@@ -1,11 +1,11 @@
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.support.v4.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
 
 import com.topjohnwu.superuser.Shell

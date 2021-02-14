@@ -103,7 +103,7 @@ class MountPoint(
             selfJson.put("RootDir", rootDir)
             selfJson.put("IdentityFile", identityFile)
         } catch (e: JSONException) {
-            Log.e(TAG, e.message)
+            Log.e(TAG, e.message ?: "")
         }
 
         return selfJson
