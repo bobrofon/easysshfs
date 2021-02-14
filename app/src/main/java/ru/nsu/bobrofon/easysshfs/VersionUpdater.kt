@@ -50,7 +50,7 @@ class VersionUpdater(
         ) ?: ""
         mountPoint.userName = settings.getString("username", "") ?: ""
         mountPoint.host = settings.getString("host", "") ?: ""
-        mountPoint.setPort(Integer.toString(settings.getInt("port", 22)))
+        mountPoint.setPort(settings.getInt("port", 22).toString())
         mountPoint.localPath =
             settings.getString("local_dir", Environment.getExternalStorageDirectory().path + "/mnt")
                 ?: ""

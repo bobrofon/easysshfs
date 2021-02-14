@@ -1,10 +1,10 @@
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
-import android.support.v7.app.ActionBar
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -99,7 +99,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param layout The DrawerLayout containing this fragment's UI.
      */
-    fun setUp(fragmentId: Int, layout: DrawerLayout) {
+    fun setUp(fragmentId: Int, layout: androidx.drawerlayout.widget.DrawerLayout) {
         fragmentContainerView = activity?.findViewById(fragmentId)!!
         drawerLayout = layout
 
@@ -168,7 +168,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         navigationDrawerCallbacks?.onNavigationDrawerItemSelected(position)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         navigationDrawerCallbacks = appActivity!!
     }
@@ -183,13 +183,13 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         outState.putInt(STATE_SELECTED_POSITION, currentSelectedPosition)
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         // Forward the new configuration the drawer toggle component.
         drawerToggle.onConfigurationChanged(newConfig)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         // If the drawer is open, show the global app actions in the action bar. See also
         // showGlobalContextActionBar, which controls the top-left area of the action bar.
@@ -198,7 +198,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
     }
 

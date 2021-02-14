@@ -3,7 +3,7 @@ package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -98,10 +98,10 @@ class EditFragment : EasySSHFSFragment() {
         selector.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         if (!drawerStatus.isDrawerOpen) {
-            inflater?.inflate(R.menu.edit, menu)
+            inflater.inflate(R.menu.edit, menu)
         }
     }
 
@@ -123,7 +123,7 @@ class EditFragment : EasySSHFSFragment() {
         mountPoint.rootDir = context.filesDir.path
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_save -> {
             saveAction()
             true
@@ -179,7 +179,7 @@ class EditFragment : EasySSHFSFragment() {
         mountPoint.umount(shell, context)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         appActivity?.onSectionAttached(R.string.mount_point_title)
     }

@@ -42,7 +42,7 @@ object FileUtil {
             val getUuid = storageVolumeClazz.getMethod("getUuid")
             val getPath = storageVolumeClazz.getMethod("getPath")
             val isPrimary = storageVolumeClazz.getMethod("isPrimary")
-            val result = getVolumeList.invoke(mStorageManager)
+            val result = getVolumeList.invoke(mStorageManager) ?: return null
 
             val length = JArray.getLength(result)
             for (i in 0 until length) {

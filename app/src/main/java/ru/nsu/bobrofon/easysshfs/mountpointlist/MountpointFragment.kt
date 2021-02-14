@@ -59,7 +59,7 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         super.onDestroyView()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         appActivity?.onSectionAttached(R.string.mount_point_list_title)
         onFragmentInteractionListener = appActivity
@@ -87,15 +87,15 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         fun onFragmentInteraction(id: Int)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         if (!drawerStatus.isDrawerOpen) {
-            inflater?.inflate(R.menu.list, menu)
+            inflater.inflate(R.menu.list, menu)
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.action_new_mount_point) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_new_mount_point) {
             onFragmentInteractionListener?.onFragmentInteraction(listAdapter.count)
             return true
         }
