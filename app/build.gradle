@@ -33,48 +33,40 @@ android {
         versionName "0.5.5"
     }
     buildTypes {
-        arm {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        x86 {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        arm64v8a {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        x86_64 {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-        armv7a {
+        release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
-}
+    flavorDimensions 'abi'
 
-android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-        if (output.name == "armv7a") {
-            output.versionCodeOverride = variant.versionCode + 1
+    productFlavors {
+        arm {
+            dimension "abi"
+            ndk.abiFilters 'armeabi-v7a'
+            versionCode android.defaultConfig.versionCode
         }
-        if (output.name == "x86") {
-            output.versionCodeOverride = variant.versionCode + 2
+        x86 {
+            dimension "abi"
+            ndk.abiFilters 'x86'
+            versionCode android.defaultConfig.versionCode + 2
         }
-        if (output.name == "arm64v8a") {
-            output.versionCodeOverride = variant.versionCode + 3
+        arm64v8a {
+            dimension "abi"
+            ndk.abiFilters 'arm64-v8a'
+            versionCode android.defaultConfig.versionCode + 3
         }
-        if (output.name == "x86_64") {
-            output.versionCodeOverride = variant.versionCode + 4
+        x86_64 {
+            dimension "abi"
+            ndk.abiFilters 'x86_64'
+            versionCode android.defaultConfig.versionCode + 4
+        }
+        armv7a {
+            dimension "abi"
+            ndk.abiFilters 'armeabi-v7a'
+            versionCode android.defaultConfig.versionCode + 1
         }
     }
 }

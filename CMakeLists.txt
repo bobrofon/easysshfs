@@ -52,11 +52,11 @@ add_custom_command(
 
 add_custom_command(
 	OUTPUT
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/app-arm-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/app-armv7a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/app-arm64v8a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/app-x86-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/app-x86_64-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/release/app-arm-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/release/app-armv7a-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/release/app-arm64v8a-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/release/app-x86-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/release/app-x86_64-release-unsigned.apk
 	DEPENDS ${SRC} sshfs-static
 		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/jniLibs/armeabi/libfake.so
 		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/ssh
@@ -74,7 +74,7 @@ add_custom_command(
 		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/ssh
 		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/sshfs
 
-	COMMAND ./gradlew assembleArm assembleArmv7a assembleX86 assembleArm64v8a assembleX86_64
+	COMMAND ./gradlew assembleArmRelease assembleArmv7aRelease assembleX86Release assembleArm64v8aRelease assembleX86_64Release
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/app
 	VERBATIM
 	)
@@ -82,9 +82,9 @@ add_custom_command(
 add_custom_target(
 	${PROJECT_NAME} ALL
 	DEPENDS
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/app-arm-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/app-armv7a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/app-arm64v8a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/app-x86-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/app-x86_64-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/release/app-arm-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/release/app-armv7a-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/release/app-arm64v8a-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/release/app-x86-release-unsigned.apk
+		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/release/app-x86_64-release-unsigned.apk
 	)
