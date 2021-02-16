@@ -10,6 +10,7 @@ import com.topjohnwu.superuser.ShellUtils
 import org.json.JSONException
 import org.json.JSONObject
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
+import ru.nsu.bobrofon.easysshfs.IpResolver
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import java.io.File
 import java.io.FileNotFoundException
@@ -55,24 +56,7 @@ class MountPoint(
             field = value
         }
 
-    private val hostIp: String by lazy { resolveHostIp() }
-
-    private fun resolveHostIp(): String {
-        try {
-            val address = InetAddress.getByName(host)
-            if (address is Inet6Address) {
-                if (!address.getHostAddress().startsWith("[")) {
-                    return "[" + address.getHostAddress() + "]"
-                }
-            }
-            return address.hostAddress
-
-        } catch (e: UnknownHostException) {
-            logMessage(e.message.orEmpty())
-            return host
-        }
-
-    }
+    private val hostIp get() = IpResolver.resolve(host)
 
     fun setPort(value: String) {
         try {
@@ -266,7 +250,7 @@ class MountPoint(
             override fun doInBackground(vararg params: Void): String = mountPoint.hostIp
 
             override fun onPostExecute(hostIp: String) {
-                val command = "${fixLocalPath()} echo '${mountPoint.password}' | " +
+                val command = "${ensureLocalPath()} echo '${mountPoint.password}' | " +
                         "${mountPoint.rootDir}/sshfs" +
                         " -o 'ssh_command=${mountPoint.rootDir}/ssh," +
                         "${mountPoint.options}${identity()},port=${mountPoint.port}' " +
@@ -282,12 +266,16 @@ class MountPoint(
                 } else ",IdentityFile=${mountPoint.identityFile}"
             }
 
-            private fun fixLocalPath(): String {
-                return if (!mountPoint.forcePermissions) {
-                    ""
-                } else "mkdir -p ${mountPoint.localPath} ; " +
-                        "chmod 777 ${mountPoint.localPath} ; " +
-                        "chown 9997:9997 ${mountPoint.localPath} ; "
+            private fun ensureLocalPath(): String {
+                if (context.get() == null) {
+                    return "ls ${mountPoint.localPath} && "
+                }
+                if (mountPoint.forcePermissions) {
+                    return "mkdir -p ${mountPoint.localPath} ; " +
+                            "chmod 777 ${mountPoint.localPath} ; " +
+                            "chown 9997:9997 ${mountPoint.localPath} ; "
+                }
+                return ""
             }
         }
     }

@@ -22,6 +22,8 @@ class MountPointsList(
     var mountPoints: MutableList<MountPoint> = mountPoints
         private set
 
+    private val autoMountObservable = AutoMountObservable()
+
     fun checkMount() = mountPoints.forEach { it.checkMount() }
 
     fun needAutomount(): Boolean = mountPoints.any {
@@ -29,19 +31,29 @@ class MountPointsList(
     }
 
     fun autoMount(shell: Shell) = mountPoints.forEach {
-        if (it.autoMount/* && !it.isMounted()*/) {
+        if (it.autoMount && !it.isMounted) {
             it.mount(shell)
         }
     }
 
+    val isAutoMountEnabled get() = mountPoints.any { it.autoMount }
+
     fun umount(shell: Shell) = mountPoints.forEach { it.umount(shell) }
 
-    fun registerObserver(observer: MountStateChangeObserver) = mountPoints.forEach {
+    fun registerMountObserver(observer: MountStateChangeObserver) = mountPoints.forEach {
         it.registerObserver(observer)
     }
 
-    fun unregisterObserver(observer: MountStateChangeObserver) = mountPoints.forEach {
+    fun unregisterMountObserver(observer: MountStateChangeObserver) = mountPoints.forEach {
         it.unregisterObserver(observer)
+    }
+
+    fun registerAutoMountObserver(observer: AutoMountChangeObserver) {
+        autoMountObservable.registerObserver(observer, isAutoMountEnabled)
+    }
+
+    fun unregisterAutoMountObserver(observer: AutoMountChangeObserver) {
+        autoMountObservable.unregisterObserver(observer)
     }
 
     private fun load(context: Context) {
@@ -71,6 +83,7 @@ class MountPointsList(
 
         val prefsEditor = settings.edit()
         prefsEditor.putString(STORAGE_FILE, selJson.toString()).apply()
+        autoMountObservable.notifyChanged(isAutoMountEnabled)
     }
 
     private fun log(message: CharSequence) {

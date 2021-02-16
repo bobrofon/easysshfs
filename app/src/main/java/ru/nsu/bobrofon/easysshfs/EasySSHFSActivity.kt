@@ -3,6 +3,7 @@ package ru.nsu.bobrofon.easysshfs
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,8 @@ import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
+import ru.nsu.bobrofon.easysshfs.mountpointlist.AutoMountChangeObserver
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 
@@ -25,7 +28,7 @@ private const val TAG = "EasySSHFSActivity"
 private const val PERMISSION_REQUEST_CODE = 1
 
 class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks,
-    MountpointFragment.OnFragmentInteractionListener {
+    MountpointFragment.OnFragmentInteractionListener, AutoMountChangeObserver {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -64,6 +67,12 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         fragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
 
         ensureAllPermissionsGranted()
+        MountPointsList.instance(applicationContext).registerAutoMountObserver(this)
+    }
+
+    override fun onDestroy() {
+        MountPointsList.instance(applicationContext).unregisterAutoMountObserver(this)
+        super.onDestroy()
     }
 
     private fun ensureAllPermissionsGranted() {
@@ -71,10 +80,14 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             Manifest.permission.INTERNET,
             Manifest.permission.ACCESS_WIFI_STATE,
             Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECEIVE_BOOT_COMPLETED,
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            allPermissions.add(Manifest.permission.FOREGROUND_SERVICE)
         }
 
         val permissions = allPermissions.filter {
@@ -179,6 +192,20 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
                     .setFlags(Shell.FLAG_MOUNT_MASTER)
                     .setInitializers(BusyBoxInstaller::class::java.get())
             )
+        }
+    }
+
+    override fun onAutoMountChanged(isAutoMountRequired: Boolean) {
+        if (isAutoMountRequired) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                applicationContext.startForegroundService(
+                    Intent(applicationContext, EasySSHFSService::class.java))
+            } else {
+                applicationContext.startService(
+                    Intent(applicationContext, EasySSHFSService::class.java))
+            }
+        } else {
+            stopService(Intent(applicationContext, EasySSHFSService::class.java))
         }
     }
 }

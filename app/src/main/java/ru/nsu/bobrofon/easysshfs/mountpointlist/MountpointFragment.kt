@@ -48,14 +48,14 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         listView.adapter = listAdapter
         listView.onItemClickListener = this
 
-        mountPointsList.registerObserver(this)
+        mountPointsList.registerMountObserver(this)
         // mountPointsList.autoMount();
 
         return view
     }
 
     override fun onDestroyView() {
-        mountPointsList.unregisterObserver(this)
+        mountPointsList.unregisterMountObserver(this)
         super.onDestroyView()
     }
 
