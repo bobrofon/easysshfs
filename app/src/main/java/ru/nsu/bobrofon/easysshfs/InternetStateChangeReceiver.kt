@@ -18,6 +18,8 @@ class InternetStateChangeReceiver(
     private val handler: Handler
 ) : BroadcastReceiver() {
 
+    private val shell: Shell by lazy { EasySSHFSActivity.initNewShell() }
+
     override fun onReceive(context: Context, intent: Intent) {
         if (WifiManager.NETWORK_STATE_CHANGED_ACTION != intent.action) {
             return
@@ -27,7 +29,6 @@ class InternetStateChangeReceiver(
 
         val info = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO) ?: return
         val mountPointsList = MountPointsList.instance(context)
-        val shell = EasySSHFSActivity.initNewShell()
 
         handler.removeCallbacksAndMessages(null) // ignore repeated intents
         if (info.isConnected) {

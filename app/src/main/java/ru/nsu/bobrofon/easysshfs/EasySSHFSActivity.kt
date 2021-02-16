@@ -24,7 +24,7 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 
 
 private const val TAG = "EasySSHFSActivity"
-private const val PERMISSION_REQUEST_CODE = 1;
+private const val PERMISSION_REQUEST_CODE = 1
 
 class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks,
     MountpointFragment.OnFragmentInteractionListener, AutoMountChangeObserver {
@@ -40,13 +40,10 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     private lateinit var screenTitle: CharSequence
     private lateinit var fragments: Array<EasySSHFSFragment>
 
-    lateinit var shell: Shell
-        private set
+    val shell: Shell by lazy { initNewShell() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        shell = initNewShell()
 
         VersionUpdater(applicationContext).update()
 
