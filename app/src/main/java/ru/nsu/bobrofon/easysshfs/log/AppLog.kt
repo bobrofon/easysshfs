@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference
 import android.util.Log
 
 private const val TAG = "AppLog"
+private const val SIZE_LIMIT = 4 * 1024 * 1024
 
 class AppLog(private val logBuffer: StringBuffer = StringBuffer()) : LogView {
 
@@ -17,6 +18,9 @@ class AppLog(private val logBuffer: StringBuffer = StringBuffer()) : LogView {
     override fun toString(): String = logBuffer.toString()
 
     fun addMessage(message: CharSequence) {
+        if (logBuffer.length > SIZE_LIMIT) {
+            logBuffer.setLength(0)
+        }
         Log.i(TAG, "new message: $message")
         logBuffer.append(">_ ").append(message).append("\n")
         observable.notifyChanged()
