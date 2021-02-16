@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 
@@ -15,6 +20,9 @@ import ru.nsu.bobrofon.easysshfs.log.LogFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 
+
+private const val TAG = "EasySSHFSActivity"
+private const val PERMISSION_REQUEST_CODE = 1
 
 class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks,
     MountpointFragment.OnFragmentInteractionListener {
@@ -54,6 +62,54 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         )
 
         fragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
+
+        ensureAllPermissionsGranted()
+    }
+
+    private fun ensureAllPermissionsGranted() {
+        val allPermissions = arrayListOf(
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+        val permissions = allPermissions.filter {
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissions.isEmpty()) {
+            Log.d(TAG, "all permissions are granted")
+        } else {
+            permissions.forEach {
+                Log.i(TAG, "$it permission is missed")
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(permissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            for (i in permissions.indices) {
+                Log.d(
+                    TAG,
+                    "${permissions[i]} is ${if (grantResults[i] != PackageManager.PERMISSION_GRANTED) "not " else ""}granted"
+                )
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
     override fun onNavigationDrawerItemSelected(position: Int) {
