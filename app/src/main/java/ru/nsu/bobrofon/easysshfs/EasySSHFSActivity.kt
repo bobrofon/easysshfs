@@ -41,13 +41,10 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     private lateinit var screenTitle: CharSequence
     private lateinit var fragments: Array<EasySSHFSFragment>
 
-    lateinit var shell: Shell
-        private set
+    val shell: Shell by lazy { initNewShell() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        shell = initNewShell()
 
         VersionUpdater(applicationContext).update()
 
