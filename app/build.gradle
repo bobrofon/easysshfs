@@ -20,7 +20,6 @@ allprojects {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
@@ -68,6 +67,10 @@ android {
             ndk.abiFilters 'armeabi-v7a'
             versionCode android.defaultConfig.versionCode + 1
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
