@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.log
-
 
 import android.content.Context
 import android.os.Bundle
@@ -11,16 +11,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
-import kotlinx.android.synthetic.main.fragment_log.log as logTextView
-
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
+import ru.nsu.bobrofon.easysshfs.databinding.FragmentLogBinding
 
 private const val TAG = "LogFragment"
 
 class LogFragment : EasySSHFSFragment(), LogChangeObserver {
 
     private val appLog = AppLog.instance()
+
+    private var _binding: FragmentLogBinding? = null
+    private val binding get() = _binding!!
+    private val logTextView get() = binding.log
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +33,8 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
         Log.i(TAG, "onCreateView")
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_log, container, false)
+        _binding = FragmentLogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,6 +46,7 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
         Log.i(TAG, "onDestroyView")
         appLog.unregisterObserver(this)
         super.onDestroyView()
+        _binding = null
     }
 
 

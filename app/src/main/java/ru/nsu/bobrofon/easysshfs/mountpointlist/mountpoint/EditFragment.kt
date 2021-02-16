@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
 import android.content.Intent
@@ -14,24 +15,10 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.net.Uri
 
-import kotlinx.android.synthetic.main.fragment_edit.mount_point_name as name
-import kotlinx.android.synthetic.main.fragment_edit.automount as auto
-import kotlinx.android.synthetic.main.fragment_edit.username
-import kotlinx.android.synthetic.main.fragment_edit.host as hostname
-import kotlinx.android.synthetic.main.fragment_edit.port
-import kotlinx.android.synthetic.main.fragment_edit.password
-import kotlinx.android.synthetic.main.fragment_edit.store_password as storePassword
-import kotlinx.android.synthetic.main.fragment_edit.remote_path as remotePath
-import kotlinx.android.synthetic.main.fragment_edit.local_path as localPath
-import kotlinx.android.synthetic.main.fragment_edit.force_permissions as forcePermissions
-import kotlinx.android.synthetic.main.fragment_edit.sshfs_options as options
-import kotlinx.android.synthetic.main.fragment_edit.select_dir as selectLocalDir
-import kotlinx.android.synthetic.main.fragment_edit.identity_file as identityFile
-import kotlinx.android.synthetic.main.fragment_edit.identity_file_select as selectIdentityFile
-
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
+import ru.nsu.bobrofon.easysshfs.databinding.FragmentEditBinding
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 
 class EditFragment : EasySSHFSFragment() {
@@ -39,6 +26,23 @@ class EditFragment : EasySSHFSFragment() {
     private var mountPointId: Int = 0
     private lateinit var mountPointsList: MountPointsList
     private lateinit var self: MountPoint
+
+    private var _binding: FragmentEditBinding? = null
+    private val binding get() = _binding!!
+    private val name get() = binding.mountPointName
+    private val auto get() = binding.automount
+    private val username get() = binding.username
+    private val hostname get() = binding.host
+    private val port get() = binding.port
+    private val password get() = binding.password
+    private val storePassword get() = binding.storePassword
+    private val remotePath get() = binding.remotePath
+    private val localPath get() = binding.localPath
+    private val forcePermissions get() = binding.forcePermissions
+    private val options get() = binding.sshfsOptions
+    private val identityFile get() = binding.identityFile
+    private val selectLocalDir get() = binding.selectDir
+    private val selectIdentityFile get() = binding.identityFile
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +70,13 @@ class EditFragment : EasySSHFSFragment() {
             }
         }
 
-        return inflater.inflate(R.layout.fragment_edit, container, false)
+        _binding = FragmentEditBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
