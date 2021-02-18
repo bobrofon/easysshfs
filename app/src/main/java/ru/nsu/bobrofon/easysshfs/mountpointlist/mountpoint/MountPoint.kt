@@ -127,6 +127,11 @@ class MountPoint(
     }
 
     fun umount(shell: Shell, context: Context? = null) {
+        if (context == null && !isMounted) {
+            Log.d(TAG, "skip umount because we are in the background and it is not mounted")
+            return
+        }
+
         val umountCommand = "umount -l "
         logMessage(umountCommand)
         runCommand(umountCommand + localPath, shell, context)

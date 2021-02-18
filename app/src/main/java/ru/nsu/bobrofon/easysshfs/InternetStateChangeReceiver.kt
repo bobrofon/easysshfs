@@ -42,7 +42,6 @@ class InternetStateChangeReceiver(
 
     private fun autoMount(mountPointsList: MountPointsList, shell: Shell) {
         Log.d(TAG, "check auto-mount")
-        mountPointsList.checkMount()
         if (mountPointsList.needAutomount()) {
             Log.d(TAG, "auto-mount required")
             mountPointsList.autoMount(shell)
