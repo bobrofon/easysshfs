@@ -24,8 +24,6 @@ class MountPointsList(
 
     private val autoMountObservable = AutoMountObservable()
 
-    fun checkMount() = mountPoints.forEach { it.checkMount() }
-
     fun needAutomount(): Boolean = mountPoints.any {
         it.autoMount && !it.isMounted
     }
