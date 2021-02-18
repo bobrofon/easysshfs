@@ -6,27 +6,20 @@ import java.net.InetAddress
 import java.net.UnknownHostException
 
 private const val TAG = "IpResolver"
-private const val RETRIES = 5
-private const val HOT_CACHE_MILLISECONDS = 10000
 
 object IpResolver {
     private val cache = HashMap<String, String>()
-    private var lastCheck = System.currentTimeMillis()
 
-    fun resolve(host: String): String {
-        val now = System.currentTimeMillis()
-        val elapsed = now - lastCheck
-
+    fun resolve(host: String, refreshCache: Boolean = true): String {
         val cachedIp = cache.getOrElse(host, {null})
 
-        if (cachedIp != null && elapsed < HOT_CACHE_MILLISECONDS) {
+        if (cachedIp != null && !refreshCache) {
             return cachedIp
         }
 
-        val resolvedIp = tryResolve(host)
+        val resolvedIp = tryResolveOnce(host)
         if (resolvedIp != null) {
             cache[host] = resolvedIp
-            lastCheck = now
             return resolvedIp
         }
 
@@ -35,16 +28,6 @@ object IpResolver {
         }
 
         return host
-    }
-
-    private fun tryResolve(host: String): String? {
-        for (i in 0 until RETRIES) {
-            val ip = tryResolveOnce(host)
-            if (ip != null) {
-                return ip
-            }
-        }
-        return null
     }
 
     private fun tryResolveOnce(host: String): String? {

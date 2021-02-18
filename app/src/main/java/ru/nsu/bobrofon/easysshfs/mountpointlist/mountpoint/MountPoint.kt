@@ -56,7 +56,7 @@ class MountPoint(
             field = value
         }
 
-    private val hostIp get() = IpResolver.resolve(host)
+    private fun hostIp(foreground: Boolean = true) = IpResolver.resolve(host, foreground)
 
     fun setPort(value: String) {
         try {
@@ -190,8 +190,9 @@ class MountPoint(
                     this(mountPoint, WeakReference(context))
 
             override fun doInBackground(vararg params: Void): Pair<Boolean?, String> {
+                val fromForeground = context.get() != null
                 val mountLine = StringBuilder()
-                mountLine.append("${mountPoint.userName}@${mountPoint.hostIp}:")
+                mountLine.append("${mountPoint.userName}@${mountPoint.hostIp(fromForeground)}:")
 
                 val canonicalLocalPath: String
                 try {
@@ -247,7 +248,10 @@ class MountPoint(
             constructor(mountPoint: MountPoint, shell: Shell, context: Context?) :
                     this(mountPoint, shell, WeakReference(context))
 
-            override fun doInBackground(vararg params: Void): String = mountPoint.hostIp
+            override fun doInBackground(vararg params: Void): String {
+                val fromForeground = context.get() != null
+                return mountPoint.hostIp(fromForeground)
+            }
 
             override fun onPostExecute(hostIp: String) {
                 val command = "${ensureLocalPath()} echo '${mountPoint.password}' | " +
