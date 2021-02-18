@@ -23,8 +23,6 @@ class EasySSHFSService : Service() {
     private val notification: Notification by lazy {
         Notification.Builder(applicationContext).apply {
             setSmallIcon(R.mipmap.ic_launcher)
-            setContentTitle("EasySSHFS")
-            setContentText("managing automount")
 
             val notificationIntent = Intent(applicationContext, EasySSHFSActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(
@@ -40,7 +38,7 @@ class EasySSHFSService : Service() {
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel(NotificationChannel(
-                    CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_NONE))
+                    CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
             }
         }
     }
