@@ -3,88 +3,63 @@ project(easysshfs LANGUAGES NONE)
 
 add_subdirectory(sshfs-static)
 
-file(GLOB_RECURSE SRC ${CMAKE_CURRENT_SOURCE_DIR}/app/src/*)
+set(EASYSSHFS_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
+set(EASYSSHFS_APK_DIR ${EASYSSHFS_APP_DIR}/build/outputs/apk)
+file(GLOB_RECURSE EASYSSHFS_APP_SRC_FILES ${EASYSSHFS_APP_DIR}/src/*)
 
-add_custom_command(
-	OUTPUT
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/jniLibs/armeabi/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/jniLibs/armeabi-v7a/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/jniLibs/x86/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/jniLibs/arm64-v8a/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/jniLibs/x86_64/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/sshfs
+set(EASYSSHFS_SUPPORTED_ARCHS arm armv7a arm64v8a x86 x86_64)
 
-	DEPENDS sshfs-static
-	COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/jniLibs/armeabi
-	COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/jniLibs/armeabi-v7a
-	COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/jniLibs/arm64-v8a
-	COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/jniLibs/x86
-	COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/jniLibs/x86_64
+set(EASYSSHFS_ABI_arm armeabi)
+set(EASYSSHFS_ABI_armv7a armeabi-v7a)
+set(EASYSSHFS_ABI_arm64v8a arm64-v8a)
+set(EASYSSHFS_ABI_x86 x86)
+set(EASYSSHFS_ABI_x86_64 x86_64)
 
-	COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/jniLibs/armeabi/libfake.so
-	COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/jniLibs/armeabi-v7a/libfake.so
-	COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/jniLibs/arm64-v8a/libfake.so
-	COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/jniLibs/x86/libfake.so
-	COMMAND cmake -E touch ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/jniLibs/x86_64/libfake.so
+set(EASYSSHFS_APK_arm Arm)
+set(EASYSSHFS_APK_armv7a Armv7a)
+set(EASYSSHFS_APK_arm64v8a Arm64v8a)
+set(EASYSSHFS_APK_x86 X86)
+set(EASYSSHFS_APK_x86_64 X86_64)
 
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-armeabi/target/usr/bin/ssh ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/ssh
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-armeabi/target/usr/bin/sshfs ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/sshfs
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-armeabi-v7a/target/usr/bin/ssh ${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/ssh
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-armeabi-v7a/target/usr/bin/sshfs ${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/sshfs
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-x86/target/usr/bin/ssh ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/ssh
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-x86/target/usr/bin/sshfs ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/sshfs
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-arm64-v8a/target/usr/bin/ssh ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/ssh
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-arm64-v8a/target/usr/bin/sshfs ${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/sshfs
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-x86_64/target/usr/bin/ssh ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/ssh
-	COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-x86_64/target/usr/bin/sshfs ${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/sshfs
+function(add_apk_target arch)
+	set(apk_target ${PROJECT_NAME}-${arch})
+	set(apk_path ${EASYSSHFS_APK_DIR}/${arch}/app-${arch}-unsigned.apk)
+	set(src_dir ${EASYSSHFS_APP_DIR}/src/${arch})
+	set(abi ${EASYSSHFS_ABI_${arch}})
+	set(jni_dir ${src_dir}/${abi})
+	set(libfake_path ${jni_dir}/libfake.so)
+	set(assets_dir ${src_dir}/assets)
+	set(ssh_asset_path ${assets_dir}/ssh)
+	set(sshfs_asset_path ${assets_dir}/sshfs)
+	set(bin_dir ${CMAKE_CURRENT_BINARY_DIR}/sshfs-static/sshfs-static-${abi}/target/usr/bin)
+	set(ssh_bin_path ${bin_dir}/ssh)
+	set(sshfs_bin_path ${bin_dir}/sshfs)
 
-	VERBATIM
+	add_custom_command(
+		OUTPUT ${libfake_path} ${ssh_asset_path} ${sshfs_asset_path}
+		DEPENDS sshfs-static-${abi}
+		COMMAND mkdir -p ${jni_dir}
+		COMMAND cmake -E touch ${libfake_path}
+		COMMAND cmake -E copy ${ssh_bin_path} ${ssh_asset_path}
+		COMMAND cmake -E copy ${sshfs_bin_path} ${sshfs_asset_path}
+		COMMENT Creating native assets for ${arch}
+		VERBATIM
+	)
+	add_custom_command(
+		OUTPUT ${apk_path}
+		DEPENDS ${EASYSSHFS_APP_SRC_FILES} ${libfake_path} ${ssh_asset_path} ${sshfs_asset_path}
+		COMMAND ./gradlew assemble${EASYSSHFS_APK_${arch}}
+		WORKING_DIRECTORY ${EASYSSHFS_APP_DIR}
+		COMMENT Creating apk for ${arch}
+		VERBATIM
 	)
 
-add_custom_command(
-	OUTPUT
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/app-arm-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/app-armv7a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/app-arm64v8a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/app-x86-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/app-x86_64-unsigned.apk
-	DEPENDS ${SRC} sshfs-static
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/jniLibs/armeabi/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/jniLibs/armeabi-v7a/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/armv7a/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/jniLibs/x86/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/jniLibs/arm64-v8a/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/arm64v8a/assets/sshfs
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/jniLibs/x86_64/libfake.so
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/ssh
-		${CMAKE_CURRENT_SOURCE_DIR}/app/src/x86_64/assets/sshfs
+	add_custom_target(${apk_target}	DEPENDS ${apk_path})
+endfunction()
 
-	COMMAND ./gradlew assembleArm assembleArmv7a assembleX86 assembleArm64v8a assembleX86_64
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/app
-	VERBATIM
-	)
+add_custom_target(${PROJECT_NAME} ALL)
 
-add_custom_target(
-	${PROJECT_NAME} ALL
-	DEPENDS
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm/app-arm-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/armv7a/app-armv7a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/arm64v8a/app-arm64v8a-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86/app-x86-unsigned.apk
-		${CMAKE_CURRENT_SOURCE_DIR}/app/build/outputs/apk/x86_64/app-x86_64-unsigned.apk
-	)
+foreach(arch IN LISTS EASYSSHFS_SUPPORTED_ARCHS)
+	add_apk_target(${arch})
+	add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-${arch})
+endforeach()
