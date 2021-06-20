@@ -1,4 +1,4 @@
-name: Build
+name: Build APKs
 on:
   push:
     branches: [master]
@@ -8,11 +8,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Linux machine is required because of Buildroot dependency
     steps:
-      - uses: actions/checkout@v2
+      - name: Clone the repository
+        uses: actions/checkout@v2
         with:
           submodules: true
-      - uses: seanmiddleditch/gha-setup-ninja@v3
-      - run: cmake -S . -B build -GNinja
-      - run: cmake --build build
+      - name: Assemble release APKs
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: assembleRelease
+          build-root-directory: app
+          wrapper-directory: app
+      - name: Upload APKs
+        uses: actions/upload-artifact@v2
+        with:
+          name: apks
+          path: app/build/outputs/apk/release/*.apk

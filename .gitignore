@@ -1,3 +1,6 @@
-build
-release.sh
+# Release artifacts.
+/release.sh
 *.apk
+
+# IDE project files.
+/.vscode/

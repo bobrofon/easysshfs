@@ -1,15 +1,18 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
-import java.io.File
-import java.io.IOException
-
+import android.annotation.TargetApi
 import android.content.Context
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
+
+import java.io.File
+import java.io.IOException
 
 private const val TAG = "VersionUpdater"
 
@@ -66,7 +69,8 @@ class VersionUpdater(
             val home = context.filesDir.path
             val file = File("$home/$localPath")
             if (!file.exists() || force) {
-                context.assets.open(assetPath).use { inputStream ->
+                val selectedAssetPath = selectAssetByDeviceABI(assetPath)
+                context.assets.open(selectedAssetPath).use { inputStream ->
                     context.openFileOutput(localPath, 0).use { outputStream ->
                         inputStream.copyTo(outputStream, 4096)
                     }
@@ -78,6 +82,65 @@ class VersionUpdater(
             }
         } catch (e: IOException) {
             Log.w(TAG, "copyAssets: ", e)
+        }
+    }
+
+    /**
+     * Returns path to assetPath preferred by current device depends on its ABI.
+     */
+    private fun selectAssetByDeviceABI(assetPath: String): String {
+        val abi = supportedABIs.firstOrNull { abi ->
+            context.assets.list(abi).orEmpty().contains(assetPath)
+        }
+        return if (abi != null) {
+            "$abi/$assetPath"
+        } else {
+            // There is no asset variant for supported architectures. It may be a common file for
+            // all ABIs. Even if it's not, a caller code should handle this situation anyway. So it
+            // is fine to return original assetPath here even if it doesn't exist.
+            assetPath
+        }
+    }
+
+    companion object {
+        /**
+         * An ordered list of ABIs supported by this device.
+         * The most preferred ABI is the first element in the list.
+         */
+        private val supportedABIs: Array<String>
+            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Build.SUPPORTED_ABIS
+            } else {
+                arrayOf(Deprecated.Build.CPU_ABI, Deprecated.Build.CPU_ABI2)
+            }
+
+        /**
+         * Set of deprecated Android APIs which are still used in the application, because
+         * minSdKVersion not allows to replace them with something else.
+         */
+        private object Deprecated {
+            /**
+             * android.os.Build
+             */
+            object Build {
+                /**
+                 * Added in API level 4
+                 * Deprecated in API level 21
+                 */
+                val CPU_ABI: String
+                    @TargetApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
+                    @Suppress("DEPRECATION")
+                    get() = android.os.Build.CPU_ABI
+
+                /**
+                 * Added in API level 4
+                 * Deprecated in API level 21
+                 */
+                val CPU_ABI2: String
+                    @TargetApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
+                    @Suppress("DEPRECATION")
+                    get() = android.os.Build.CPU_ABI2
+            }
         }
     }
 }
