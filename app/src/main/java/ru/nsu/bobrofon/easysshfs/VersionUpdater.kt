@@ -5,6 +5,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
 import android.os.Environment
+import android.system.Os
 import android.util.Log
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
@@ -13,6 +14,7 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
 
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 
 private const val TAG = "VersionUpdater"
 
@@ -26,8 +28,10 @@ class VersionUpdater(
         val settings = context.getSharedPreferences("sshfs", 0)
         val lastVersion = settings.getInt("version", 0)
 
-        copyAssets("ssh", "ssh", lastVersion != currentVersion)
-        copyAssets("sshfs", "sshfs", lastVersion != currentVersion)
+        // The only reason of those symlinks is to make executable files paths compatible with
+        // legacy code. TODO(bobrofon): Use real paths in old code and remove symlinks.
+        makeLibrarySymlink("ssh", "ssh")
+        makeLibrarySymlink("sshfs", "sshfs")
 
         if (lastVersion < 9) {
             update02to03()
@@ -64,82 +68,59 @@ class VersionUpdater(
         list.save(context)
     }
 
-    private fun copyAssets(assetPath: String, localPath: String, force: Boolean) {
-        try {
-            val home = context.filesDir.path
-            val file = File("$home/$localPath")
-            if (!file.exists() || force) {
-                val selectedAssetPath = selectAssetByDeviceABI(assetPath)
-                context.assets.open(selectedAssetPath).use { inputStream ->
-                    context.openFileOutput(localPath, 0).use { outputStream ->
-                        inputStream.copyTo(outputStream, 4096)
-                    }
-                }
-
-                if (!file.setExecutable(true)) {
-                    appLog.addMessage("Can't set executable bit on $localPath")
-                }
-            }
-        } catch (e: IOException) {
-            Log.w(TAG, "copyAssets: ", e)
-        }
-    }
-
     /**
-     * Returns path to assetPath preferred by current device depends on its ABI.
+     * @param libName source library name (without 'lib' prefix and '.so' extension)
+     * @param exeName destination executable file name (relative to the application's 'file' dir)
+     * @param forceUpdate override symlink if already exists
      */
-    private fun selectAssetByDeviceABI(assetPath: String): String {
-        val abi = supportedABIs.firstOrNull { abi ->
-            context.assets.list(abi).orEmpty().contains(assetPath)
-        }
-        return if (abi != null) {
-            "$abi/$assetPath"
-        } else {
-            // There is no asset variant for supported architectures. It may be a common file for
-            // all ABIs. Even if it's not, a caller code should handle this situation anyway. So it
-            // is fine to return original assetPath here even if it doesn't exist.
-            assetPath
+    private fun makeLibrarySymlink(libName: String, exeName: String) {
+        val library = File(context.applicationInfo.nativeLibraryDir, "lib$libName.so")
+        val link = File(context.filesDir.path, exeName)
+
+        try {
+            // There is no way to check if symlink exist before API 26. Always delete it.
+            if (!link.delete()) {
+                appLog.addMessage("Cannot delete old $exeName")
+            }
+            makeSymlink(library.path, link.path)
+        } catch (e: IOException) {
+            Log.w(TAG, "symlink update failed", e)
         }
     }
 
     companion object {
-        /**
-         * An ordered list of ABIs supported by this device.
-         * The most preferred ABI is the first element in the list.
-         */
-        private val supportedABIs: Array<String>
-            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Build.SUPPORTED_ABIS
-            } else {
-                arrayOf(Deprecated.Build.CPU_ABI, Deprecated.Build.CPU_ABI2)
+        private fun makeSymlink(originalPath: String, linkPath: String) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Os.symlink(originalPath, linkPath)
+                } else {
+                    Reflected.Os.symlink(originalPath, linkPath)
+                }
+            } catch (e: Exception) {
+                // ErrnoException is only available since API 21
+                throw IOException(e)
             }
+        }
 
         /**
-         * Set of deprecated Android APIs which are still used in the application, because
-         * minSdKVersion not allows to replace them with something else.
+         * Set of Android APIs which can be accessible only via reflection, because
+         * minSdKVersion not allows to use them directly.
          */
-        private object Deprecated {
-            /**
-             * android.os.Build
-             */
-            object Build {
+        private object Reflected {
+            object Os {
                 /**
-                 * Added in API level 4
-                 * Deprecated in API level 21
+                 * Added in API level 21
                  */
-                val CPU_ABI: String
-                    @TargetApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
-                    @Suppress("DEPRECATION")
-                    get() = android.os.Build.CPU_ABI
-
-                /**
-                 * Added in API level 4
-                 * Deprecated in API level 21
-                 */
-                val CPU_ABI2: String
-                    @TargetApi(android.os.Build.VERSION_CODES.KITKAT_WATCH)
-                    @Suppress("DEPRECATION")
-                    get() = android.os.Build.CPU_ABI2
+                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                fun symlink(oldPath: String, newPath: String) {
+                    val libCoreClass = Class.forName("libcore.io.Libcore")
+                    val osField = libCoreClass.getDeclaredField("os")
+                    osField.isAccessible = true
+                    val os = osField.get(null)
+                    val method =
+                        os.javaClass.getMethod("symlink", String::class.java, String::class.java)
+                    method.invoke(os, oldPath, newPath)
+                }
             }
         }
     }

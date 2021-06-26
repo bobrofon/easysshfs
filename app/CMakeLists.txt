@@ -2,8 +2,8 @@
 cmake_minimum_required(VERSION 3.10.2)
 
 # The project generates following files:
-#   * assets/${ANDROID_ABI}/ssh
-#   * assets/${ANDROID_ABI}/sshfs
+#   * lib/${ANDROID_ABI}/libssh.so
+#   * lib/${ANDROID_ABI}/libsshfs.so
 #   * lib/${ANDROID_ABI}/libstub.so
 project(assets LANGUAGES NONE)
 
@@ -15,28 +15,24 @@ project(assets LANGUAGES NONE)
 set(SSHFS_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../sshfs-static")
 # import 'ssh-static-${ANDROID_ABI}-target' and 'sshfs-static-${ANDROID_ABI}-target' targets
 add_subdirectory(../sshfs-static "${SSHFS_BINARY_DIR}")
-# import 'stub' library
+# import 'stub' library. externalNativeBuild requires sume sources to generate compile_commands.json
+# TODO(bobrofon): report issue
 add_subdirectory(src/main/cpp)
 
-set(ASSETS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/main/assets/${ANDROID_ABI}")
 set(ASSETS_EXECUTABLES ssh sshfs)
 
 foreach(exe IN LISTS ASSETS_EXECUTABLES)
     set(src_path "${SSHFS_BINARY_DIR}/${exe}-static-${ANDROID_ABI}")
-    set(dst_path "${ASSETS_PATH}/${exe}")
+    # By default only 'lib*.so' files are packaging.
+    set(dst_path "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib${exe}.so")
     add_custom_command(
         OUTPUT "${dst_path}"
         DEPENDS ${exe}-static-${ANDROID_ABI}-target
         COMMAND cmake -E copy "${src_path}" "${dst_path}"
         VERBATIM
     )
-    add_custom_target("${exe}-target"
+    add_custom_target(${exe}
         DEPENDS "${dst_path}"
         VERBATIM
     )
-    # 'stub' is just a dummy library and there are no actual dependencies between 'stub' and assets
-    # files. But because of lack of CMake support in Android build system there is no way to tell
-    # Gradle to build custom CMake targets as an externalNativeBuild. So the only way to build the
-    # assets with CMake is to make them the dependencies of the 'stub' library.
-    add_dependencies(stub "${exe}-target")
 endforeach()
