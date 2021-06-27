@@ -7,14 +7,12 @@ import android.os.Build
 import android.os.Environment
 import android.system.Os
 import android.util.Log
-
+import androidx.annotation.RequiresApi
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
-
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 
 private const val TAG = "VersionUpdater"
 
@@ -28,10 +26,10 @@ class VersionUpdater(
         val settings = context.getSharedPreferences("sshfs", 0)
         val lastVersion = settings.getInt("version", 0)
 
-        // The only reason of those symlinks is to make executable files paths compatible with
-        // legacy code. TODO(bobrofon): Use real paths in old code and remove symlinks.
-        makeLibrarySymlink("ssh", "ssh")
-        makeLibrarySymlink("sshfs", "sshfs")
+        // End user can replace those symlinks with third-party executables. If application will
+        // directly use .so files, it will be not possible.
+        makeLibrarySymlink("ssh", "ssh", lastVersion != currentVersion)
+        makeLibrarySymlink("sshfs", "sshfs", lastVersion != currentVersion)
 
         if (lastVersion < 9) {
             update02to03()
@@ -73,15 +71,23 @@ class VersionUpdater(
      * @param exeName destination executable file name (relative to the application's 'file' dir)
      * @param forceUpdate override symlink if already exists
      */
-    private fun makeLibrarySymlink(libName: String, exeName: String) {
+    private fun makeLibrarySymlink(libName: String, exeName: String, forceUpdate: Boolean) {
         val library = File(context.applicationInfo.nativeLibraryDir, "lib$libName.so")
         val link = File(context.filesDir.path, exeName)
 
         try {
-            // There is no way to check if symlink exist before API 26. Always delete it.
-            if (!link.delete()) {
-                appLog.addMessage("Cannot delete old $exeName")
+            if (fileExists(link.path)) {
+                if (forceUpdate) {
+                    Log.i(TAG, "deleting old $exeName")
+                    if (!link.delete()) {
+                        appLog.addMessage("Cannot delete old $exeName")
+                    }
+                } else {
+                    Log.d(TAG, "using old $exeName")
+                    return
+                }
             }
+            Log.i(TAG, "installing new $exeName")
             makeSymlink(library.path, link.path)
         } catch (e: IOException) {
             Log.w(TAG, "symlink update failed", e)
@@ -103,23 +109,51 @@ class VersionUpdater(
         }
 
         /**
+         * @return true if file or directory or symlink exists.
+         */
+        private fun fileExists(path: String): Boolean {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Os.lstat(path) // ignore result, check exceptions instead
+                } else {
+                    Reflected.Os.lstat(path)
+                }
+            } catch (e: Exception) {
+                // ErrnoException is only available since API 21
+                return false
+            }
+            return true
+        }
+
+        /**
          * Set of Android APIs which can be accessible only via reflection, because
          * minSdKVersion not allows to use them directly.
          */
         private object Reflected {
             object Os {
-                /**
-                 * Added in API level 21
-                 */
+                private val self: Any
+                    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                    @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+                    get() {
+                        val libCoreClass = Class.forName("libcore.io.Libcore")
+                        val osField = libCoreClass.getDeclaredField("os")
+                        osField.isAccessible = true
+                        return osField.get(null)!!
+                    }
+
                 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                 fun symlink(oldPath: String, newPath: String) {
-                    val libCoreClass = Class.forName("libcore.io.Libcore")
-                    val osField = libCoreClass.getDeclaredField("os")
-                    osField.isAccessible = true
-                    val os = osField.get(null)
                     val method =
-                        os.javaClass.getMethod("symlink", String::class.java, String::class.java)
-                    method.invoke(os, oldPath, newPath)
+                        self.javaClass.getMethod("symlink", String::class.java, String::class.java)
+                    method.invoke(self, oldPath, newPath)
+                }
+
+                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+                fun lstat(path: String): Any {
+                    val method = self.javaClass.getMethod("lstat", String::class.java)
+                    return method.invoke(self, path)!!
                 }
             }
         }
