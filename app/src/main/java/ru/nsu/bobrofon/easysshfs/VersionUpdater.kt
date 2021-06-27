@@ -1,15 +1,20 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
-import java.io.File
-import java.io.IOException
-
+import android.annotation.TargetApi
 import android.content.Context
+import android.os.Build
 import android.os.Environment
+import android.system.Os
 import android.util.Log
 
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
+
+import java.io.File
+import java.io.IOException
+import java.lang.Exception
 
 private const val TAG = "VersionUpdater"
 
@@ -23,8 +28,10 @@ class VersionUpdater(
         val settings = context.getSharedPreferences("sshfs", 0)
         val lastVersion = settings.getInt("version", 0)
 
-        copyAssets("ssh", "ssh", lastVersion != currentVersion)
-        copyAssets("sshfs", "sshfs", lastVersion != currentVersion)
+        // The only reason of those symlinks is to make executable files paths compatible with
+        // legacy code. TODO(bobrofon): Use real paths in old code and remove symlinks.
+        makeLibrarySymlink("ssh", "ssh")
+        makeLibrarySymlink("sshfs", "sshfs")
 
         if (lastVersion < 9) {
             update02to03()
@@ -61,23 +68,60 @@ class VersionUpdater(
         list.save(context)
     }
 
-    private fun copyAssets(assetPath: String, localPath: String, force: Boolean) {
-        try {
-            val home = context.filesDir.path
-            val file = File("$home/$localPath")
-            if (!file.exists() || force) {
-                context.assets.open(assetPath).use { inputStream ->
-                    context.openFileOutput(localPath, 0).use { outputStream ->
-                        inputStream.copyTo(outputStream, 4096)
-                    }
-                }
+    /**
+     * @param libName source library name (without 'lib' prefix and '.so' extension)
+     * @param exeName destination executable file name (relative to the application's 'file' dir)
+     * @param forceUpdate override symlink if already exists
+     */
+    private fun makeLibrarySymlink(libName: String, exeName: String) {
+        val library = File(context.applicationInfo.nativeLibraryDir, "lib$libName.so")
+        val link = File(context.filesDir.path, exeName)
 
-                if (!file.setExecutable(true)) {
-                    appLog.addMessage("Can't set executable bit on $localPath")
+        try {
+            // There is no way to check if symlink exist before API 26. Always delete it.
+            if (!link.delete()) {
+                appLog.addMessage("Cannot delete old $exeName")
+            }
+            makeSymlink(library.path, link.path)
+        } catch (e: IOException) {
+            Log.w(TAG, "symlink update failed", e)
+        }
+    }
+
+    companion object {
+        private fun makeSymlink(originalPath: String, linkPath: String) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Os.symlink(originalPath, linkPath)
+                } else {
+                    Reflected.Os.symlink(originalPath, linkPath)
+                }
+            } catch (e: Exception) {
+                // ErrnoException is only available since API 21
+                throw IOException(e)
+            }
+        }
+
+        /**
+         * Set of Android APIs which can be accessible only via reflection, because
+         * minSdKVersion not allows to use them directly.
+         */
+        private object Reflected {
+            object Os {
+                /**
+                 * Added in API level 21
+                 */
+                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                fun symlink(oldPath: String, newPath: String) {
+                    val libCoreClass = Class.forName("libcore.io.Libcore")
+                    val osField = libCoreClass.getDeclaredField("os")
+                    osField.isAccessible = true
+                    val os = osField.get(null)
+                    val method =
+                        os.javaClass.getMethod("symlink", String::class.java, String::class.java)
+                    method.invoke(os, oldPath, newPath)
                 }
             }
-        } catch (e: IOException) {
-            Log.w(TAG, "copyAssets: ", e)
         }
     }
 }

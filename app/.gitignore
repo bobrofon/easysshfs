@@ -1,5 +1,10 @@
-/build
-.idea
-.gradle
+# Build folders.
+/build/
+/.cxx/
+
+# IDE project files.
+/.idea/
+
+# Gradle cache and settings.
+/.gradle/
 local.properties
-app.iml
