@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
@@ -7,7 +8,7 @@ import android.view.Menu
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
-
+import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
@@ -112,8 +113,16 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         }
 
         fun initNewShell(): Shell {
-            Shell.setFlags(Shell.FLAG_MOUNT_MASTER)
             return Shell.getShell()
+        }
+
+        init {
+            Shell.enableVerboseLogging = BuildConfig.DEBUG
+            Shell.setDefaultBuilder(
+                Shell.Builder.create()
+                    .setFlags(Shell.FLAG_MOUNT_MASTER)
+                    .setInitializers(BusyBoxInstaller::class::java.get())
+            )
         }
     }
 }
