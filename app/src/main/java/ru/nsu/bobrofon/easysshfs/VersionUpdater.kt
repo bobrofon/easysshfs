@@ -72,10 +72,18 @@ class VersionUpdater(
      * @param forceUpdate override symlink if already exists
      */
     private fun makeLibrarySymlink(libName: String, exeName: String, forceUpdate: Boolean) {
-        val library = File(context.applicationInfo.nativeLibraryDir, "lib$libName.so")
+        val soName = "lib$libName.so"
+        val library = File(context.applicationInfo.nativeLibraryDir, soName)
+        val localLibrary = File(context.filesDir.path, soName)
         val link = File(context.filesDir.path, exeName)
 
         try {
+            Log.d(TAG, "delete local .so link")
+            if (fileExists(localLibrary.path) && !localLibrary.delete()) {
+                appLog.addMessage("Cannot delete $soName")
+            }
+            Log.d(TAG, "update .so link")
+            makeSymlink(library.path, localLibrary.path)
             if (fileExists(link.path)) {
                 if (forceUpdate) {
                     Log.i(TAG, "deleting old $exeName")
@@ -88,7 +96,7 @@ class VersionUpdater(
                 }
             }
             Log.i(TAG, "installing new $exeName")
-            makeSymlink(library.path, link.path)
+            makeSymlink(localLibrary.name, link.path)
         } catch (e: IOException) {
             Log.w(TAG, "symlink update failed", e)
         }
