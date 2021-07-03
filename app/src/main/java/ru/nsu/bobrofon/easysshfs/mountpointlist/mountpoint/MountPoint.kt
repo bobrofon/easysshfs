@@ -1,5 +1,16 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
+import android.content.Context
+import android.os.AsyncTask
+import android.util.Log
+import android.util.Pair
+import com.topjohnwu.superuser.Shell
+import com.topjohnwu.superuser.ShellUtils
+import org.json.JSONException
+import org.json.JSONObject
+import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
+import ru.nsu.bobrofon.easysshfs.log.AppLog
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -7,21 +18,8 @@ import java.lang.ref.WeakReference
 import java.net.Inet6Address
 import java.net.InetAddress
 import java.net.UnknownHostException
-import java.util.LinkedList
+import java.util.*
 
-
-import android.content.Context
-import android.os.AsyncTask
-import android.util.Log
-import android.util.Pair
-
-import org.json.JSONException
-import org.json.JSONObject
-
-import com.topjohnwu.superuser.Shell
-
-import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
-import ru.nsu.bobrofon.easysshfs.log.AppLog
 
 class MountPoint(
     var pointName: String = "",
@@ -145,7 +143,7 @@ class MountPoint(
     }
 
     fun umount(shell: Shell, context: Context? = null) {
-        val umountCommand = if (isBusyboxAvailable(shell)) "busybox umount -f " else "umount "
+        val umountCommand = "umount -l "
         logMessage(umountCommand)
         runCommand(umountCommand + localPath, shell, context)
     }
@@ -161,28 +159,21 @@ class MountPoint(
 
     private fun runCommand(command: String, shell: Shell, context: Context? = null) {
         Log.i("shell", command)
-        val stdout = LinkedList<String>()
-        val stderr = LinkedList<String>()
-        shell.run(stdout, stderr, object : Shell.Async.Callback {
-            override fun onTaskResult(stdout: List<String>?, stderr: List<String>?) {
-                logAll(stdout)
-                logAll(stderr)
-                checkMount(context)
-            }
-
-            private fun logAll(stdio: List<String>?) {
-                if (stdio == null) {
-                    return
-                }
-                for (line in stdio) {
-                    logMessage(line)
-                }
-            }
-        }, command)
+        shell.newJob().add(command).to(LinkedList(), LinkedList()).submit { result ->
+            logAll(result.out)
+            logAll(result.err)
+            logMessage("exit code: ${result.code}")
+            checkMount(context)
+        }
     }
 
-    private fun isBusyboxAvailable(_shell: Shell): Boolean {
-        return _shell.testCmd("busybox")
+    private fun logAll(stdio: List<String>?) {
+        if (stdio == null) {
+            return
+        }
+        for (line in stdio) {
+            logMessage(line)
+        }
     }
 
     companion object {
@@ -300,5 +291,4 @@ class MountPoint(
             }
         }
     }
-
 }
