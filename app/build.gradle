@@ -79,4 +79,6 @@ dependencies {
     // implementation "com.github.topjohnwu.libsu:io:${libsuVersion}"
     // Optional: Bundle prebuilt BusyBox binaries
     implementation "com.github.topjohnwu.libsu:busybox:${libsuVersion}"
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
