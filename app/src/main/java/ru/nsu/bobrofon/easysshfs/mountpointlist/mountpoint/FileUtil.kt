@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
 import java.io.File
@@ -13,6 +14,7 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import ru.nsu.bobrofon.easysshfs.DeprecatedApi
 
 // Some strange code from stackoverflow
 object FileUtil {
@@ -125,7 +127,7 @@ object FileUtil {
         val (uriType, uriValue) = splitUri(uri)
 
         return if ("primary".equals(uriType, ignoreCase = true)) {
-            Environment.getExternalStorageDirectory().toString() + "/" + uriValue
+            DeprecatedApi.Environment.getExternalStorageDirectory().path + "/" + uriValue
         } else {
             val storageDefinition = if (Environment.isExternalStorageRemovable())
                 "EXTERNAL_STORAGE" else "SECONDARY_STORAGE"
