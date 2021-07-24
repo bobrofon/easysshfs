@@ -4,7 +4,6 @@ package ru.nsu.bobrofon.easysshfs
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
-import android.os.Environment
 import android.system.Os
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -56,9 +55,10 @@ class VersionUpdater(
         mountPoint.userName = settings.getString("username", "") ?: ""
         mountPoint.host = settings.getString("host", "") ?: ""
         mountPoint.setPort(settings.getInt("port", 22).toString())
-        mountPoint.localPath =
-            settings.getString("local_dir", Environment.getExternalStorageDirectory().path + "/mnt")
-                ?: ""
+        mountPoint.localPath = settings.getString(
+            "local_dir",
+            DeprecatedApi.Environment.getExternalStorageDirectory().path + "/mnt"
+        ) ?: ""
         mountPoint.remotePath = settings.getString("remote_dir", "") ?: ""
 
         val list = MountPointsList.instance(context)
