@@ -1,0 +1,15 @@
+<!-- SPDX-License-Identifier: MIT -->
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/automount_header">
+
+        <SwitchPreferenceCompat
+            app:persistent="false"
+            app:key="autoMountInForegroundService"
+            app:summaryOff="@string/foreground_service_summary_off"
+            app:summaryOn="@string/foreground_service_summary_on"
+            app:title="@string/foreground_service_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

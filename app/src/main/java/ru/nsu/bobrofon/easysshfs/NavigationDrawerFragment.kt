@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
@@ -86,7 +87,8 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
             arrayOf(
                 getString(R.string.title_section1),
                 getString(R.string.title_section2),
-                getString(R.string.title_section3)
+                getString(R.string.title_section3),
+                getString(R.string.title_section4)
             )
         )
         drawerListView.setItemChecked(currentSelectedPosition, true)

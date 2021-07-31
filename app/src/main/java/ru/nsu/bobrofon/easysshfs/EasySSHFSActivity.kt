@@ -14,6 +14,7 @@ import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 
@@ -22,6 +23,10 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.AutoMountChangeObserver
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
+import ru.nsu.bobrofon.easysshfs.settings.SettingsFragment
+import ru.nsu.bobrofon.easysshfs.settings.SettingsRepository
+import ru.nsu.bobrofon.easysshfs.settings.SettingsViewModel
+import ru.nsu.bobrofon.easysshfs.settings.settingsDataStore
 
 
 private const val TAG = "EasySSHFSActivity"
@@ -39,7 +44,9 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
      * Used to store the last screen title. For use in [.restoreActionBar].
      */
     private lateinit var screenTitle: CharSequence
-    private lateinit var fragments: Array<EasySSHFSFragment>
+    private lateinit var fragments: Array<Fragment>
+    private val easySSHFSFragments: Array<EasySSHFSFragment>
+        get() = fragments.mapNotNull { it as? EasySSHFSFragment }.toTypedArray()
 
     val shell: Shell by lazy { initNewShell() }
 
@@ -48,7 +55,15 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
         VersionUpdater(applicationContext).update()
 
-        fragments = arrayOf(MountpointFragment(), LogFragment())
+        fragments = arrayOf(
+            MountpointFragment(),
+            LogFragment(),
+            SettingsFragment(
+                SettingsViewModel.Factory(
+                    SettingsRepository(applicationContext.settingsDataStore)
+                )
+            )
+        )
 
         setContentView(R.layout.activity_easy_sshfs)
 
@@ -61,7 +76,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             findViewById<View>(R.id.drawer_layout) as DrawerLayout
         )
 
-        fragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
+        easySSHFSFragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
 
         ensureAllPermissionsGranted()
         MountPointsList.instance(applicationContext).registerAutoMountObserver(this)
@@ -196,10 +211,12 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         if (isAutoMountRequired) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 applicationContext.startForegroundService(
-                    Intent(applicationContext, EasySSHFSService::class.java))
+                    Intent(applicationContext, EasySSHFSService::class.java)
+                )
             } else {
                 applicationContext.startService(
-                    Intent(applicationContext, EasySSHFSService::class.java))
+                    Intent(applicationContext, EasySSHFSService::class.java)
+                )
             }
         } else {
             stopService(Intent(applicationContext, EasySSHFSService::class.java))
