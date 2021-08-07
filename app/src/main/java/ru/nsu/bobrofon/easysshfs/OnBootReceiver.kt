@@ -1,15 +1,23 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
+import ru.nsu.bobrofon.easysshfs.settings.SettingsRepository
+import ru.nsu.bobrofon.easysshfs.settings.settingsDataStore
 
 private const val TAG = "OnBootReceiver"
 
 class OnBootReceiver : BroadcastReceiver() {
+    private val receiverScope = CoroutineScope(Dispatchers.Main.immediate)
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (Intent.ACTION_BOOT_COMPLETED != intent?.action) {
@@ -27,10 +35,23 @@ class OnBootReceiver : BroadcastReceiver() {
             return
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(Intent(context, EasySSHFSService::class.java))
-        } else {
-            context.startService(Intent(context, EasySSHFSService::class.java))
+        val settingsRepository = SettingsRepository(context.applicationContext.settingsDataStore)
+        goAsync {
+            if (settingsRepository.autoMountInForegroundService.firstOrNull() == true) {
+                EasySSHFSService.start(context)
+            }
+        }
+    }
+
+    private fun goAsync(
+        coroutineScope: CoroutineScope = receiverScope,
+        dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
+        block: suspend () -> Unit
+    ) {
+        val pendingResult = goAsync()
+        coroutineScope.launch(dispatcher) {
+            block()
+            pendingResult.finish()
         }
     }
 }

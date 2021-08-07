@@ -1,6 +1,8 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
@@ -65,5 +67,19 @@ class EasySSHFSService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    companion object {
+        fun start(context: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(Intent(context, EasySSHFSService::class.java))
+            } else {
+                context.startService(Intent(context, EasySSHFSService::class.java))
+            }
+        }
+
+        fun stop(context: Context) {
+            context.stopService(Intent(context, EasySSHFSService::class.java))
+        }
     }
 }

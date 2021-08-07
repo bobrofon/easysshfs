@@ -3,7 +3,6 @@ package ru.nsu.bobrofon.easysshfs
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -14,12 +13,11 @@ import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
-import ru.nsu.bobrofon.easysshfs.mountpointlist.AutoMountChangeObserver
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
@@ -33,7 +31,7 @@ private const val TAG = "EasySSHFSActivity"
 private const val PERMISSION_REQUEST_CODE = 1
 
 class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.NavigationDrawerCallbacks,
-    MountpointFragment.OnFragmentInteractionListener, AutoMountChangeObserver {
+    MountpointFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -44,26 +42,23 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
      * Used to store the last screen title. For use in [.restoreActionBar].
      */
     private lateinit var screenTitle: CharSequence
-    private lateinit var fragments: Array<Fragment>
-    private val easySSHFSFragments: Array<EasySSHFSFragment>
-        get() = fragments.mapNotNull { it as? EasySSHFSFragment }.toTypedArray()
 
     val shell: Shell by lazy { initNewShell() }
+
+    private lateinit var viewModel: EasySSHFSViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        VersionUpdater(applicationContext).update()
-
-        fragments = arrayOf(
-            MountpointFragment(),
-            LogFragment(),
-            SettingsFragment(
-                SettingsViewModel.Factory(
-                    SettingsRepository(applicationContext.settingsDataStore)
-                )
+        viewModel = ViewModelProvider(
+            this,
+            EasySSHFSViewModel.Factory(
+                SettingsRepository(applicationContext.settingsDataStore),
+                MountPointsList.instance(applicationContext)
             )
-        )
+        ).get(EasySSHFSViewModel::class.java)
+
+        VersionUpdater(applicationContext).update()
 
         setContentView(R.layout.activity_easy_sshfs)
 
@@ -76,15 +71,11 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             findViewById<View>(R.id.drawer_layout) as DrawerLayout
         )
 
-        easySSHFSFragments.forEach { it.setDrawerStatus(navigationDrawerFragment) }
-
         ensureAllPermissionsGranted()
-        MountPointsList.instance(applicationContext).registerAutoMountObserver(this)
-    }
 
-    override fun onDestroy() {
-        MountPointsList.instance(applicationContext).unregisterAutoMountObserver(this)
-        super.onDestroy()
+        viewModel.autoMountServiceRequired.observe(this, {
+            onAutoMountChanged(it)
+        })
     }
 
     private fun ensureAllPermissionsGranted() {
@@ -139,18 +130,24 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
     override fun onNavigationDrawerItemSelected(position: Int) {
         // update the main content by replacing fragments
-        try {
-            val fragmentManager = supportFragmentManager
-            var backStackCount = fragmentManager.backStackEntryCount
-            while (backStackCount-- > 0) {
-                fragmentManager.popBackStack()
-            }
-
-            fragmentManager.beginTransaction().replace(R.id.container, fragments[position]).commit()
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            finish()
+        val fragmentManager = supportFragmentManager
+        var backStackCount = fragmentManager.backStackEntryCount
+        while (backStackCount-- > 0) {
+            fragmentManager.popBackStack()
         }
 
+        val fragment = when(position) {
+            0 -> MountpointFragment().apply { setDrawerStatus(navigationDrawerFragment) }
+            1 -> LogFragment().apply { setDrawerStatus(navigationDrawerFragment) }
+            2 -> SettingsFragment(SettingsViewModel.Factory(SettingsRepository(applicationContext.settingsDataStore)))
+            else -> null
+        }
+
+        if (fragment != null) {
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        } else {
+            finish()
+        }
     }
 
     fun onSectionAttached(titleId: Int) {
@@ -207,19 +204,11 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         }
     }
 
-    override fun onAutoMountChanged(isAutoMountRequired: Boolean) {
+    private fun onAutoMountChanged(isAutoMountRequired: Boolean) {
         if (isAutoMountRequired) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                applicationContext.startForegroundService(
-                    Intent(applicationContext, EasySSHFSService::class.java)
-                )
-            } else {
-                applicationContext.startService(
-                    Intent(applicationContext, EasySSHFSService::class.java)
-                )
-            }
+            EasySSHFSService.start(applicationContext)
         } else {
-            stopService(Intent(applicationContext, EasySSHFSService::class.java))
+            EasySSHFSService.stop(applicationContext)
         }
     }
 }
