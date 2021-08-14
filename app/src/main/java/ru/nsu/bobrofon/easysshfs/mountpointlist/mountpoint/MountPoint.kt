@@ -132,9 +132,9 @@ class MountPoint(
             return
         }
 
-        val umountCommand = "umount -l "
+        val umountCommand = "umount -l -v $localPath"
         logMessage(umountCommand)
-        runCommand(umountCommand + localPath, shell, context)
+        runCommand(umountCommand, shell, context)
     }
 
     fun registerObserver(observer: MountStateChangeObserver) {

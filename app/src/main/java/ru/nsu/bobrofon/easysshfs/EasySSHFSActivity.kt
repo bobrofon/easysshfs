@@ -136,7 +136,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             fragmentManager.popBackStack()
         }
 
-        val fragment = when(position) {
+        val fragment = when (position) {
             0 -> MountpointFragment().apply { setDrawerStatus(navigationDrawerFragment) }
             1 -> LogFragment().apply { setDrawerStatus(navigationDrawerFragment) }
             2 -> SettingsFragment(SettingsViewModel.Factory(SettingsRepository(applicationContext.settingsDataStore)))
