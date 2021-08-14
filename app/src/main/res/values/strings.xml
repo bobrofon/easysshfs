@@ -1,9 +1,11 @@
+<!-- SPDX-License-Identifier: MIT -->
 <resources>
     <string name="app_name">EasySSHFS</string>
 
     <string name="title_section1">Mount points</string>
     <string name="title_section2">Log</string>
-    <string name="title_section3">Exit</string>
+    <string name="title_section3">Settings</string>
+    <string name="title_section4">Exit</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -40,4 +42,13 @@
     <string name="select_dir">select</string>
     <string name="identity_file_hint">IdentityFile</string>
     <string name="identity_file_select">select</string>
+
+    <!--  Settings screen  -->
+    <string name="settings_title">Settings</string>
+    <string name="automount_header">Automount</string>
+    <string name="foreground_service_title">Use foreground service</string>
+    <string name="foreground_service_summary_on">
+        Start foreground service to manage network changes all the time</string>
+    <string name="foreground_service_summary_off">
+        Manage network changes only when application is in foreground</string>
 </resources>

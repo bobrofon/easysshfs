@@ -10,6 +10,7 @@ import com.topjohnwu.superuser.ShellUtils
 import org.json.JSONException
 import org.json.JSONObject
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
+import ru.nsu.bobrofon.easysshfs.IpResolver
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import java.io.File
 import java.io.FileNotFoundException
@@ -55,24 +56,7 @@ class MountPoint(
             field = value
         }
 
-    private val hostIp: String by lazy { resolveHostIp() }
-
-    private fun resolveHostIp(): String {
-        try {
-            val address = InetAddress.getByName(host)
-            if (address is Inet6Address) {
-                if (!address.getHostAddress().startsWith("[")) {
-                    return "[" + address.getHostAddress() + "]"
-                }
-            }
-            return address.hostAddress
-
-        } catch (e: UnknownHostException) {
-            logMessage(e.message.orEmpty())
-            return host
-        }
-
-    }
+    private fun hostIp(foreground: Boolean = true) = IpResolver.resolve(host, foreground)
 
     fun setPort(value: String) {
         try {
@@ -143,9 +127,14 @@ class MountPoint(
     }
 
     fun umount(shell: Shell, context: Context? = null) {
-        val umountCommand = "umount -l "
+        if (context == null && !isMounted) {
+            Log.d(TAG, "skip umount because we are in the background and it is not mounted")
+            return
+        }
+
+        val umountCommand = "umount -l -v $localPath"
         logMessage(umountCommand)
-        runCommand(umountCommand + localPath, shell, context)
+        runCommand(umountCommand, shell, context)
     }
 
     fun registerObserver(observer: MountStateChangeObserver) {
@@ -206,8 +195,9 @@ class MountPoint(
                     this(mountPoint, WeakReference(context))
 
             override fun doInBackground(vararg params: Void): Pair<Boolean?, String> {
+                val fromForeground = context.get() != null
                 val mountLine = StringBuilder()
-                mountLine.append("${mountPoint.userName}@${mountPoint.hostIp}:")
+                mountLine.append("${mountPoint.userName}@${mountPoint.hostIp(fromForeground)}:")
 
                 val canonicalLocalPath: String
                 try {
@@ -263,10 +253,13 @@ class MountPoint(
             constructor(mountPoint: MountPoint, shell: Shell, context: Context?) :
                     this(mountPoint, shell, WeakReference(context))
 
-            override fun doInBackground(vararg params: Void): String = mountPoint.hostIp
+            override fun doInBackground(vararg params: Void): String {
+                val fromForeground = context.get() != null
+                return mountPoint.hostIp(fromForeground)
+            }
 
             override fun onPostExecute(hostIp: String) {
-                val command = "${fixLocalPath()} echo '${mountPoint.password}' | " +
+                val command = "${ensureLocalPath()} echo '${mountPoint.password}' | " +
                         "${mountPoint.rootDir}/sshfs" +
                         " -o 'ssh_command=${mountPoint.rootDir}/ssh," +
                         "${mountPoint.options}${identity()},port=${mountPoint.port}' " +
@@ -282,12 +275,16 @@ class MountPoint(
                 } else ",IdentityFile=${mountPoint.identityFile}"
             }
 
-            private fun fixLocalPath(): String {
-                return if (!mountPoint.forcePermissions) {
-                    ""
-                } else "mkdir -p ${mountPoint.localPath} ; " +
-                        "chmod 777 ${mountPoint.localPath} ; " +
-                        "chown 9997:9997 ${mountPoint.localPath} ; "
+            private fun ensureLocalPath(): String {
+                if (context.get() == null) {
+                    return "ls ${mountPoint.localPath} && "
+                }
+                if (mountPoint.forcePermissions) {
+                    return "mkdir -p ${mountPoint.localPath} ; " +
+                            "chmod 777 ${mountPoint.localPath} ; " +
+                            "chown 9997:9997 ${mountPoint.localPath} ; "
+                }
+                return ""
             }
         }
     }

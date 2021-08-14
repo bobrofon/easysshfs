@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.Context
@@ -59,15 +60,15 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
             currentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION)
             fromSavedInstanceState = true
         }
-
-        // Select either the default item (0) or the last selected item.
-        selectItem(currentSelectedPosition)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true)
+
+        // Select either the default item (0) or the last selected item.
+        selectItem(currentSelectedPosition)
     }
 
     override fun onCreateView(
@@ -86,7 +87,8 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
             arrayOf(
                 getString(R.string.title_section1),
                 getString(R.string.title_section2),
-                getString(R.string.title_section3)
+                getString(R.string.title_section3),
+                getString(R.string.title_section4)
             )
         )
         drawerListView.setItemChecked(currentSelectedPosition, true)
