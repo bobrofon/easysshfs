@@ -1,0 +1,2 @@
+* added armeabi-v7a
+* replaced glibc by uClibc

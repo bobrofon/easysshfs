@@ -1,0 +1,12 @@
+SSH Filesystem is a filesystem client based on the SSH File Transfer Protocol.
+Fuse 2.9.9.
+Sshfs 2.8.
+Ssh client from OpenSSH-portable 8.1p (with OpenSSL 1.1.1i).
+̶P̶a̶s̶s̶w̶o̶r̶d̶ ̶a̶u̶t̶h̶e̶n̶t̶i̶c̶a̶t̶i̶o̶n̶ ̶o̶n̶l̶y̶.̶ For using public key authentication add "IdentityFile=<path>" to sshfs options.
+Rooted device required (/dev/fuse in android is not allow for users except root).
+
+Application source code: https://github.com/bobrofon/easysshfs
+
+NOTE:
+- If you are using SuperSu to manage root access and have no effect after mounting done, try to disable "mount namespace separation" option in SuperSU.
+- It is highly recommended to create mount points in /data/media/0 on Android 4.2 and /mnt/runtime/default/emulated/0 on Android 6.0 and above.
