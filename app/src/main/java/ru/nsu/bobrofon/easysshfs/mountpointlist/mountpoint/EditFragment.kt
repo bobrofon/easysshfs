@@ -42,7 +42,7 @@ class EditFragment : EasySSHFSFragment() {
     private val options get() = binding.sshfsOptions
     private val identityFile get() = binding.identityFile
     private val selectLocalDir get() = binding.selectDir
-    private val selectIdentityFile get() = binding.identityFile
+    private val selectIdentityFile get() = binding.identityFileSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
