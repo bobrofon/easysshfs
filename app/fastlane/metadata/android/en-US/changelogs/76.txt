@@ -1,4 +1,5 @@
 * Application is now packaged as a single multiarch APK file, instead of multiple APKs (one per-arch). WARNING: APK file size was significantly increased!
 * Restored automount functionality. This feature is highly experimental. Automatic mounting on network connection should work fine, but unmounting on disconnections may be broken. Be careful if you will try to use auto-mounting on devices with unstable network connections. Enable "Use foreground service" setting if you want to try.
+* Fix local directory chooser on Android 11.
 * Minimum supported Android version is 4.2. NOTICE: binary components may require a higher version of Android because they expect specific versions of Linux kernel.
 * armeabi binary components were removed.
