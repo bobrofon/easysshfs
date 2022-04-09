@@ -2,7 +2,7 @@ SSH Filesystem is a filesystem client based on the SSH File Transfer Protocol.
 Fuse 2.9.9.
 Sshfs 2.8.
 Ssh client from OpenSSH-portable 8.1p (with OpenSSL 1.1.1i).
-̶P̶a̶s̶s̶w̶o̶r̶d̶ ̶a̶u̶t̶h̶e̶n̶t̶i̶c̶a̶t̶i̶o̶n̶ ̶o̶n̶l̶y̶.̶ For using public key authentication add "IdentityFile=<path>" to sshfs options.
+For using public key authentication add "IdentityFile=<path>" to sshfs options. Password-protected keys are not supported.
 Rooted device required (/dev/fuse in android is not allow for users except root).
 
 Application source code: https://github.com/bobrofon/easysshfs
