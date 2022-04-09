@@ -4,6 +4,8 @@ package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 import java.io.File
 import java.lang.reflect.Array as JArray
 
+import kotlin.Array
+
 import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
@@ -14,6 +16,7 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+
 import ru.nsu.bobrofon.easysshfs.DeprecatedApi
 
 // Some strange code from stackoverflow
@@ -30,43 +33,64 @@ object FileUtil {
     }
 
     private fun getVolumePath(volumeId: String, context: Context): String? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return null
-        }
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP -> {
+                return null
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                val storageManager =
+                    context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
 
-        try {
-            val mStorageManager =
-                context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-
-            val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
-
-            val getVolumeList = mStorageManager.javaClass.getMethod("getVolumeList")
-            val getUuid = storageVolumeClazz.getMethod("getUuid")
-            val getPath = storageVolumeClazz.getMethod("getPath")
-            val isPrimary = storageVolumeClazz.getMethod("isPrimary")
-            val result = getVolumeList.invoke(mStorageManager) ?: return null
-
-            val length = JArray.getLength(result)
-            for (i in 0 until length) {
-                val storageVolumeElement = JArray.get(result, i)
-                val uuid = getUuid.invoke(storageVolumeElement) as String?
-                val primary = isPrimary.invoke(storageVolumeElement) as Boolean
-
-                // primary volume
-                if (primary && volumeId == "primary") {
-                    return getPath.invoke(storageVolumeElement) as String
+                for (storageVolume in storageManager.storageVolumes) {
+                    val directory = storageVolume.directory
+                    if (storageVolume.isPrimary && PRIMARY_VOLUME_NAME == volumeId) {
+                        return directory?.absolutePath
+                    } else if (storageVolume.uuid != null) {
+                        if (storageVolume.uuid.equals(volumeId)) {
+                            return directory?.absolutePath
+                        }
+                    }
                 }
 
-                // other volumes
-                if (uuid == volumeId) {
-                    return getPath.invoke(storageVolumeElement) as String
+                // not found.
+                return null
+            }
+            else -> {
+                try {
+                    val mStorageManager =
+                        context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+
+                    val storageVolumeClazz = Class.forName("android.os.storage.StorageVolume")
+
+                    val getVolumeList = mStorageManager.javaClass.getMethod("getVolumeList")
+                    val getUuid = storageVolumeClazz.getMethod("getUuid")
+                    val getPath = storageVolumeClazz.getMethod("getPath")
+                    val isPrimary = storageVolumeClazz.getMethod("isPrimary")
+                    val result = getVolumeList.invoke(mStorageManager) ?: return null
+
+                    val length = JArray.getLength(result)
+                    for (i in 0 until length) {
+                        val storageVolumeElement = JArray.get(result, i)
+                        val uuid = getUuid.invoke(storageVolumeElement) as String?
+                        val primary = isPrimary.invoke(storageVolumeElement) as Boolean
+
+                        // primary volume
+                        if (primary && volumeId == "primary") {
+                            return getPath.invoke(storageVolumeElement) as String
+                        }
+
+                        // other volumes
+                        if (uuid == volumeId) {
+                            return getPath.invoke(storageVolumeElement) as String
+                        }
+                    }
+
+                    // not found
+                    return null
+                } catch (ex: Exception) {
+                    return null
                 }
             }
-
-            // not found
-            return null
-        } catch (ex: Exception) {
-            return null
         }
     }
 
@@ -187,4 +211,9 @@ object FileUtil {
         } else null
 
     private const val DATA_COLUMN_NAME = "_data"
+
+    /**
+     * The name of the primary volume (LOLLIPOP).
+     */
+    private const val PRIMARY_VOLUME_NAME = "primary"
 }
