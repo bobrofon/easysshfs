@@ -30,7 +30,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 77
-        versionName "0.5.7-dev"
+        versionName "0.5.7"
 
         externalNativeBuild {
             cmake {

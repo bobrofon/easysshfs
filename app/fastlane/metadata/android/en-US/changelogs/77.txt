@@ -1,0 +1,3 @@
+* fixed bug with sshfs process stucking in a busy loop after unmounting
+* fixed segfault on x86 and x86_64 architectures
+* updated native components to the latest stable releases
