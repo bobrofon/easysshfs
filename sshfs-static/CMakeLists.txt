@@ -12,7 +12,7 @@ set(BUILDROOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/buildroot")
 
 include("Buildroot")
 
-set(SSHFS_STATIC_SUPPORTED_ARCHS armeabi armeabi-v7a arm64-v8a x86 x86_64)
+set(SSHFS_STATIC_SUPPORTED_ARCHS armeabi-v7a arm64-v8a x86 x86_64)
 set(SSHFS_STATIC_EXECUTABLES ssh sshfs)
 
 foreach(arch IN LISTS SSHFS_STATIC_SUPPORTED_ARCHS)
