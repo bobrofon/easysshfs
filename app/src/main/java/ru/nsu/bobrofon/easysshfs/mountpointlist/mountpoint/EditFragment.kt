@@ -230,7 +230,14 @@ class EditFragment : EasySSHFSFragment() {
         val context = context!!
 
         val path = FileUtil.getFullPathFromTreeUri(uri, context)
-        localPath.setText(path)
+        // Most of the time users select some directory, they are actually trying to select a path
+        // on one of the bind-mounted runtime directories (like "/mnt/runtime/[default|write|read|...]/"),
+        // because they just want to access the remote filesystem from most of their Android applications.
+        // So let's replace the path they selected with the path in "/mnt/runtime/default" directory.
+        // This is not necessary that a user would want us to do, but he can edit this path manually
+        // in case we are wrong.
+        val runtimeStoragePath = toUnderlyingDefaultStorage(path)
+        localPath.setText(runtimeStoragePath)
     }
 
     private fun setIdentityFile(uri: Uri) {
@@ -261,13 +268,31 @@ class EditFragment : EasySSHFSFragment() {
             return fragment
         }
 
-        fun sdcard(): String = if (isMultiUserEnvironment) {
-            "/data/media/0"
-        } else {
-            "/mnt/sdcard"
+        private fun sdcard(): String = when {
+            // TODO(bobrofon): substitute an actual active user id instead of hardcoding '0'
+            hasRuntimePermissions -> {
+                "/mnt/runtime/default/emulated/0"
+            }
+            isMultiUserEnvironment -> {
+                "/data/media/0"
+            }
+            else -> {
+                "/mnt/sdcard"
+            }
+        }
+
+        private fun toUnderlyingDefaultStorage(storagePath: String): String {
+            return if (hasRuntimePermissions) {
+                storagePath.replaceFirst(Regex("^/storage/"), "/mnt/runtime/default/")
+            } else {
+                storagePath
+            }
         }
 
         private val isMultiUserEnvironment: Boolean
-            get() = Build.VERSION.SDK_INT >= 17
+            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 // Android 4.2
+
+        private val hasRuntimePermissions: Boolean
+            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M // Android 6.0
     }
 } // Required empty public constructor
