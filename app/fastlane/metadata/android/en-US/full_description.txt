@@ -7,6 +7,13 @@ Rooted device required (/dev/fuse in android is not allow for users except root)
 
 Application source code: https://github.com/bobrofon/easysshfs
 
+WARNING:
+If you just want to have access to the files on your PC from your Android phone, then sshfs is a
+VERY bad solution for that problem. You really need to know some internal details about Android
+storage implementation to make something useful with sshfs. And EasySSHFS is not intended to hide
+all these details from its users. Please try to use any implementation of Android document provider
+for sftp protocol (or any other solution to work with sftp) before trying to use sshfs.
+
 NOTE:
 - If you are using SuperSu to manage root access and have no effect after mounting done, try to disable "mount namespace separation" option in SuperSU.
 - It is highly recommended to create mount points in /data/media/0 on Android 4.2 and /mnt/runtime/default/emulated/0 on Android 6.0 and above.
