@@ -27,8 +27,13 @@ class EasySSHFSService : Service() {
             setSmallIcon(R.mipmap.ic_launcher)
 
             val notificationIntent = Intent(applicationContext, EasySSHFSActivity::class.java)
+            val intentFLags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE
+            } else {
+                0
+            }
             val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, notificationIntent, 0)
+                applicationContext, 0, notificationIntent, intentFLags)
             setContentIntent(pendingIntent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
