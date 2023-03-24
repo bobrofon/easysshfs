@@ -1,6 +1,7 @@
 [submodule "sshfs-static/Buildroot.cmake"]
 	path = sshfs-static/Buildroot.cmake
-	url = https://github.com/raumfeld/Buildroot.cmake.git
+	url = https://github.com/bobrofon/Buildroot.cmake.git
+	branch = easysshfs
 [submodule "sshfs-static/buildroot"]
 	path = sshfs-static/buildroot
 	url = https://github.com/bobrofon/buildroot.git
