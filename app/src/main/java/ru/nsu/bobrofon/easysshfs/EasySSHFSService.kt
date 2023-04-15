@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 
 private const val TAG = "EasySSHFSService"
@@ -18,7 +19,7 @@ private const val NOTIFICATION_ID = 1
 
 class EasySSHFSService : Service() {
 
-    private val handler =  Handler()
+    private val handler =  Handler(Looper.getMainLooper())
     private val internetStateChangeReceiver = InternetStateChangeReceiver(handler)
     private val internetStateChangeFilter = IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION)
 
