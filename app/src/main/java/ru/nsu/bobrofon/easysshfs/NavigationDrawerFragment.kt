@@ -8,7 +8,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.content.res.Configuration
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -18,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.preference.PreferenceManager
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -53,7 +53,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer.
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
         userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false)
 
         if (savedInstanceState != null) {
@@ -140,7 +140,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.
                     userLearnedDrawer = true
-                    val sp = PreferenceManager.getDefaultSharedPreferences(context)
+                    val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
                 }
 
