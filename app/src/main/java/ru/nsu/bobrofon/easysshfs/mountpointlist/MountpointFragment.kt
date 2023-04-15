@@ -7,6 +7,10 @@ import android.view.*
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListAdapter
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment.OnFragmentInteractionListener
@@ -33,7 +37,6 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         val context = requireContext()
         val shell = shell!!
 
-        setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.fragment_mountpoint, container, false)
 
         mountPointsList = MountPointsList.instance(context)
@@ -47,6 +50,13 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         // mountPointsList.autoMount();
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onDestroyView() {
@@ -82,20 +92,21 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         fun onFragmentInteraction(id: Int)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        if (!drawerStatus.isDrawerOpen) {
-            inflater.inflate(R.menu.list, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_new_mount_point) {
-            onFragmentInteractionListener?.onFragmentInteraction(listAdapter.count)
-            return true
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            if (!drawerStatus.isDrawerOpen) {
+                menuInflater.inflate(R.menu.list, menu)
+            }
         }
 
-        return super.onOptionsItemSelected(item)
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_new_mount_point) {
+                onFragmentInteractionListener?.onFragmentInteraction(listAdapter.count)
+                return true
+            }
+
+            return false
+        }
     }
 
     override fun onMountStateChanged() {

@@ -4,14 +4,22 @@ package ru.nsu.bobrofon.easysshfs
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.preference.PreferenceManager
 
 /**
@@ -57,13 +65,25 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         }
     }
 
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            // NavigationDrawerFragment doesn't have its own menu items.
+            // Nothing to do here
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return drawerToggle.onOptionsItemSelected(menuItem)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
-        setHasOptionsMenu(true)
 
         // Select either the default item (0) or the last selected item.
         selectItem(currentSelectedPosition)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onCreateView(
@@ -139,6 +159,10 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
                 }
 
+                // Show the global app actions in the action bar. See also
+                // showGlobalContextActionBar, which controls the top-left area of the action bar.
+                showGlobalContextActionBar()
+
                 activity?.invalidateOptionsMenu() // calls onPrepareOptionsMenu()
             }
         }
@@ -184,19 +208,6 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         super.onConfigurationChanged(newConfig)
         // Forward the new configuration the drawer toggle component.
         drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        // If the drawer is open, show the global app actions in the action bar. See also
-        // showGlobalContextActionBar, which controls the top-left area of the action bar.
-        if (isDrawerOpen) {
-            showGlobalContextActionBar()
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return drawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item)
     }
 
     /**
