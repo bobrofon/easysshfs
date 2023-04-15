@@ -34,7 +34,7 @@ object IpResolver {
         try {
             val address = InetAddress.getByName(host)
             if (address is Inet6Address) {
-                if (!address.getHostAddress().startsWith("[")) {
+                if (address.getHostAddress()?.startsWith("[") == true) {
                     return "[" + address.getHostAddress() + "]"
                 }
             }
