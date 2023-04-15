@@ -11,6 +11,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.core.app.NotificationCompat
 
 private const val TAG = "EasySSHFSService"
 private const val CHANNEL_ID = "Channel Mount"
@@ -24,7 +25,7 @@ class EasySSHFSService : Service() {
     private val internetStateChangeFilter = IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION)
 
     private val notification: Notification by lazy {
-        Notification.Builder(applicationContext).apply {
+        NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
             setSmallIcon(R.mipmap.ic_launcher)
 
             val notificationIntent = Intent(applicationContext, EasySSHFSActivity::class.java)
@@ -36,11 +37,7 @@ class EasySSHFSService : Service() {
             val pendingIntent = PendingIntent.getActivity(
                 applicationContext, 0, notificationIntent, intentFLags)
             setContentIntent(pendingIntent)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                setChannelId(CHANNEL_ID)
-            }
-        }.notification
+        }.build()
     }
     private val notificationManager: NotificationManager by lazy {
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).apply {
