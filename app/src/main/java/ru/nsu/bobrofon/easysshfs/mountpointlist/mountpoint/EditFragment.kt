@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
+import androidx.annotation.RequiresApi
 
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
@@ -198,32 +199,29 @@ class EditFragment : EasySSHFSFragment() {
         EasySSHFSActivity.showToast(message, context)
     }
 
+    private val localDirPicker =
+        registerForActivityResult(OpenDocumentTree()) { uri: Uri? ->
+            uri?.let { setLocalPath(it) }
+        }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun selectLocalDir() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        startActivityForResult(intent, PICKDIR_REQUEST_CODE)
+        localDirPicker.launch(/* starting location */ null)
     }
+
+    private val identityFilePicker =
+        registerForActivityResult(object: GetContent() {
+            override fun createIntent(context: Context, input: String): Intent {
+                val intent = super.createIntent(context, input)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                return Intent.createChooser(intent, "Select IdentityFile")
+            }
+        }) { uri: Uri? ->
+            uri?.let { setIdentityFile(it) }
+        }
 
     private fun selectIdentityFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        startActivityForResult(
-            Intent.createChooser(intent, "Select IdentityFile"),
-            PICK_IDENTITY_FILE_CODE
-        )
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            PICKDIR_REQUEST_CODE -> if (resultCode == RESULT_OK) {
-                data?.data?.let { setLocalPath(it) }
-            }
-            PICK_IDENTITY_FILE_CODE -> if (resultCode == RESULT_OK) {
-                data?.data?.let { setIdentityFile(it) }
-            }
-            else -> super.onActivityResult(requestCode, resultCode, data)
-        }
+        identityFilePicker.launch("*/*")
     }
 
     private fun setLocalPath(uri: Uri) {
