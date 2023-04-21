@@ -38,11 +38,19 @@ android {
             }
         }
     }
+    signingConfigs {
+        release
+        debug
+    }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     externalNativeBuild {
@@ -79,4 +87,23 @@ dependencies {
     // implementation "com.github.topjohnwu.libsu:io:${libsuVersion}"
     // Optional: Bundle prebuilt BusyBox binaries
     implementation "com.github.topjohnwu.libsu:busybox:${libsuVersion}"
+}
+
+def signingPropsFile = file("signing.properties")
+if (signingPropsFile.exists()) {
+    def signingProps = new Properties()
+    signingProps.load(new FileInputStream(signingPropsFile))
+
+    android.buildTypes.release.signingConfig.storeFile = file(signingProps['RELEASE_STORE_FILE'])
+    android.buildTypes.release.signingConfig.storePassword = signingProps['RELEASE_STORE_PASSWORD']
+    android.buildTypes.release.signingConfig.keyAlias = signingProps['RELEASE_KEY_ALIAS']
+    android.buildTypes.release.signingConfig.keyPassword = signingProps['RELEASE_KEY_PASSWORD']
+
+    android.buildTypes.debug.signingConfig.storeFile = file(signingProps['DEBUG_STORE_FILE'])
+    android.buildTypes.debug.signingConfig.storePassword = signingProps['DEBUG_STORE_PASSWORD']
+    android.buildTypes.debug.signingConfig.keyAlias = signingProps['DEBUG_KEY_ALIAS']
+    android.buildTypes.debug.signingConfig.keyPassword = signingProps['DEBUG_KEY_PASSWORD']
+} else {
+    android.buildTypes.release.signingConfig = null
+    android.buildTypes.debug.signingConfig = null
 }

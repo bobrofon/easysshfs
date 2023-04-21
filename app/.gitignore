@@ -8,3 +8,4 @@
 # Gradle cache and settings.
 /.gradle/
 local.properties
+signing.properties
