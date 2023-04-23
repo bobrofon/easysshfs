@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(private val repository: SettingsRepository): ViewModel() {
+class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
     private val _autoMountInForegroundService = MutableLiveData<Boolean>()
     val autoMountInForegroundService: LiveData<Boolean> get() = _autoMountInForegroundService
 
@@ -24,7 +24,7 @@ class SettingsViewModel(private val repository: SettingsRepository): ViewModel()
     }
 
     class Factory(private val repository: SettingsRepository) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return SettingsViewModel(repository) as T

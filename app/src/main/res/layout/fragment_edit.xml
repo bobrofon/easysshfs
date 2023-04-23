@@ -1,159 +1,151 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/mount_point_name"
-                    android:hint="@string/mount_point_name_hint"
-                    android:layout_weight="1"
-                    android:inputType="text"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/automount"
-                    android:id="@+id/automount"
-                    android:layout_weight="4"/>
-            </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <EditText
+                android:id="@+id/mount_point_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/username"
-                android:hint="@string/username_hint"/>
+                android:layout_weight="1"
+                android:hint="@string/mount_point_name_hint"
+                android:inputType="text" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/linearLayoutn">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/host"
-                    android:layout_weight="1"
-                    android:hint="@string/host_hint"
-                    android:inputType="text"/>
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/port"
-                    android:layout_weight="4"
-                    android:hint="@string/port_hint"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:ems="10"
-                    android:id="@+id/password"
-                    android:layout_weight="9"
-                    android:hint="@string/password_hint"/>
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/store"
-                    android:id="@+id/store_password"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:id="@+id/identity_file"
-                    android:layout_weight="9"
-                    android:hint="@string/identity_file_hint"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/identity_file_select"
-                    android:layout_weight="1"
-                    android:id="@+id/identity_file_select"/>
-            </LinearLayout>
-
-            <EditText
+            <CheckBox
+                android:id="@+id/automount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/remote_path"
-                android:hint="@string/remote_path_hint"
-                android:inputType="text"/>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/local_path"
-                    android:hint="@string/local_path_hint"
-                    android:layout_weight="9"
-                    android:inputType="text"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_dir"
-                    android:layout_weight="1"
-                    android:id="@+id/select_dir"/>
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/force_permissions"
-                    android:id="@+id/force_permissions"
-                    android:layout_weight="1"/>
-            </LinearLayout>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/sshfs_options"
-                android:hint="@string/sshfs_options_hint"/>
+                android:layout_weight="4"
+                android:text="@string/automount" />
         </LinearLayout>
-    </ScrollView>
 
-</FrameLayout>
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/username_hint"
+            android:inputType="textPersonName" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/host_hint"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:ems="10"
+                android:hint="@string/port_hint"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:ems="10"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword" />
+
+            <CheckBox
+                android:id="@+id/store_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/store" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/identity_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:hint="@string/identity_file_hint"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/identity_file_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/identity_file_select" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/remote_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/remote_path_hint"
+            android:inputType="text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/local_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:hint="@string/local_path_hint"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/select_dir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/select_dir" />
+
+            <CheckBox
+                android:id="@+id/force_permissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/force_permissions" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/sshfs_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sshfs_options_hint" />
+    </LinearLayout>
+</ScrollView>

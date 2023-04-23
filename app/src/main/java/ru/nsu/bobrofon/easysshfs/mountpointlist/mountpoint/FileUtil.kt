@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
-import java.io.File
-import java.lang.reflect.Array as JArray
-
-import kotlin.Array
-
 import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
@@ -16,8 +11,10 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-
 import ru.nsu.bobrofon.easysshfs.DeprecatedApi
+import java.io.File
+import kotlin.Array
+import java.lang.reflect.Array as JArray
 
 // Some strange code from stackoverflow
 object FileUtil {

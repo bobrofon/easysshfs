@@ -1,20 +1,15 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ListAdapter
-
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
-
+import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment.OnFragmentInteractionListener
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPointsArrayAdapter
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
 
@@ -35,7 +30,7 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val context = context!!
+        val context = requireContext()
         val shell = shell!!
 
         setHasOptionsMenu(true)

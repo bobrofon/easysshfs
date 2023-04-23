@@ -9,7 +9,9 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import androidx.core.app.NotificationCompat
 
 private const val TAG = "EasySSHFSService"
 private const val CHANNEL_ID = "Channel Mount"
@@ -18,29 +20,34 @@ private const val NOTIFICATION_ID = 1
 
 class EasySSHFSService : Service() {
 
-    private val handler =  Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val internetStateChangeReceiver = InternetStateChangeReceiver(handler)
     private val internetStateChangeFilter = IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION)
 
     private val notification: Notification by lazy {
-        Notification.Builder(applicationContext).apply {
+        NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
             setSmallIcon(R.mipmap.ic_launcher)
 
             val notificationIntent = Intent(applicationContext, EasySSHFSActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, notificationIntent, 0)
-            setContentIntent(pendingIntent)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                setChannelId(CHANNEL_ID)
+            val intentFLags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_IMMUTABLE
+            } else {
+                0
             }
-        }.notification
+            val pendingIntent = PendingIntent.getActivity(
+                applicationContext, 0, notificationIntent, intentFLags
+            )
+            setContentIntent(pendingIntent)
+        }.build()
     }
     private val notificationManager: NotificationManager by lazy {
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel(NotificationChannel(
-                    CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
+                createNotificationChannel(
+                    NotificationChannel(
+                        CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW
+                    )
+                )
             }
         }
     }

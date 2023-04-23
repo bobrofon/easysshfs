@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.util.Log
@@ -11,7 +12,7 @@ object IpResolver {
     private val cache = HashMap<String, String>()
 
     fun resolve(host: String, refreshCache: Boolean = true): String {
-        val cachedIp = cache.getOrElse(host, {null})
+        val cachedIp = cache[host]
 
         if (cachedIp != null && !refreshCache) {
             return cachedIp
@@ -34,7 +35,7 @@ object IpResolver {
         try {
             val address = InetAddress.getByName(host)
             if (address is Inet6Address) {
-                if (!address.getHostAddress().startsWith("[")) {
+                if (address.getHostAddress()?.startsWith("[") == true) {
                     return "[" + address.getHostAddress() + "]"
                 }
             }

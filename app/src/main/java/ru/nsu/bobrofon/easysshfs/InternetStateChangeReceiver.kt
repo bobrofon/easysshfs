@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.content.BroadcastReceiver
@@ -33,7 +34,7 @@ class InternetStateChangeReceiver(
         handler.removeCallbacksAndMessages(null) // ignore repeated intents
         if (info.isConnected) {
             Log.d(TAG, "network is connected")
-            handler.postDelayed({autoMount(mountPointsList, shell)}, AUTO_MOUNT_DELAY_MILLIS)
+            handler.postDelayed({ autoMount(mountPointsList, shell) }, AUTO_MOUNT_DELAY_MILLIS)
         } else {
             Log.d(TAG, "unmount everything")
             handler.post { forceUmount(mountPointsList, shell) }

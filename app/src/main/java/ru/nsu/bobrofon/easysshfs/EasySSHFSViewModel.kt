@@ -20,7 +20,7 @@ class EasySSHFSViewModel(
     private val _autoMountServiceRequired = MutableLiveData<Boolean>()
     val autoMountServiceRequired: LiveData<Boolean> get() = _autoMountServiceRequired
 
-    private val autoMountChangeObserver = object: AutoMountChangeObserver {
+    private val autoMountChangeObserver = object : AutoMountChangeObserver {
         override fun onAutoMountChanged(isAutoMountRequired: Boolean) {
             autoMountEnabled = isAutoMountRequired
             updateAutoMountServiceRequired()
@@ -52,7 +52,7 @@ class EasySSHFSViewModel(
         private val settingsRepository: SettingsRepository,
         private val mountPointsList: MountPointsList
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(EasySSHFSViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return EasySSHFSViewModel(
