@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist
 
 import java.lang.ref.WeakReference

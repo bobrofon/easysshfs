@@ -6,7 +6,6 @@ import android.os.AsyncTask
 import android.util.Log
 import android.util.Pair
 import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.ShellUtils
 import org.json.JSONException
 import org.json.JSONObject
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
@@ -16,9 +15,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.net.Inet6Address
-import java.net.InetAddress
-import java.net.UnknownHostException
 import java.util.*
 
 
@@ -45,7 +41,7 @@ class MountPoint(
         private set
 
     val visiblePointName: String
-        get() = if (pointName.isNotEmpty()) pointName else localPath
+        get() = pointName.ifEmpty { localPath }
 
     var port: Int = port
         set(value) {
@@ -117,7 +113,7 @@ class MountPoint(
         appLog.addMessage(message)
     }
 
-    fun checkMount(context: Context? = null) {
+    private fun checkMount(context: Context? = null) {
         CheckMountTask(this, context).execute()
     }
 
@@ -194,6 +190,7 @@ class MountPoint(
             constructor(mountPoint: MountPoint, context: Context?) :
                     this(mountPoint, WeakReference(context))
 
+            @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: Void): Pair<Boolean?, String> {
                 val fromForeground = context.get() != null
                 val mountLine = StringBuilder()
@@ -224,12 +221,13 @@ class MountPoint(
                 }
 
                 return if (result) {
-                    Pair(result, "Pattern $mountLine is in $mountFile")
+                    Pair(true, "Pattern $mountLine is in $mountFile")
                 } else {
-                    Pair(result, "Pattern $mountLine is not in $mountFile")
+                    Pair(false, "Pattern $mountLine is not in $mountFile")
                 }
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onPostExecute(result: Pair<Boolean?, String>) {
                 mountPoint.isMounted = result.first ?: mountPoint.isMounted
                 mountPoint.logMessage(result.second)
@@ -253,11 +251,13 @@ class MountPoint(
             constructor(mountPoint: MountPoint, shell: Shell, context: Context?) :
                     this(mountPoint, shell, WeakReference(context))
 
+            @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: Void): String {
                 val fromForeground = context.get() != null
                 return mountPoint.hostIp(fromForeground)
             }
 
+            @Deprecated("Deprecated in Java")
             override fun onPostExecute(hostIp: String) {
                 val command = "${ensureLocalPath()} echo '${mountPoint.password}' | " +
                         "${mountPoint.rootDir}/sshfs" +

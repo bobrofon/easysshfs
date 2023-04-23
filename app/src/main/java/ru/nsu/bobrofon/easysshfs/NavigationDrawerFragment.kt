@@ -75,7 +75,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         drawerListView =
             inflater.inflate(R.layout.fragment_navigation_drawer, container, false) as ListView
         drawerListView.onItemClickListener =
@@ -101,7 +101,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param layout The DrawerLayout containing this fragment's UI.
      */
-    fun setUp(fragmentId: Int, layout: androidx.drawerlayout.widget.DrawerLayout) {
+    fun setUp(fragmentId: Int, layout: DrawerLayout) {
         fragmentContainerView = activity?.findViewById(fragmentId)!!
         drawerLayout = layout
 

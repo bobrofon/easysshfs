@@ -54,11 +54,11 @@ class EditFragment : EasySSHFSFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
 
-        val context = context!!
+        val context = requireContext()
 
         mountPointsList = MountPointsList.instance(context)
 
@@ -117,7 +117,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private fun grabMountPoint(mountPoint: MountPoint) {
-        val context = context!!
+        val context = requireContext()
 
         mountPoint.pointName = name.text.toString()
         mountPoint.autoMount = auto.isChecked
@@ -155,7 +155,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private fun saveAction() {
-        val context = context!!
+        val context = requireContext()
 
         grabMountPoint(self)
 
@@ -167,7 +167,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private fun deleteAction() {
-        val context = context!!
+        val context = requireContext()
 
         mountPointsList.mountPoints.remove(self)
         mountPointsList.save(context)
@@ -225,7 +225,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private fun setLocalPath(uri: Uri) {
-        val context = context!!
+        val context = requireContext()
 
         val path = FileUtil.getFullPathFromTreeUri(uri, context)
         // Most of the time users select some directory, they are actually trying to select a path
@@ -239,7 +239,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private fun setIdentityFile(uri: Uri) {
-        val context = context!!
+        val context = requireContext()
 
         val path = FileUtil.getPath(uri, context) ?: return
         replaceIdentityFile(path)
@@ -255,8 +255,6 @@ class EditFragment : EasySSHFSFragment() {
 
     companion object {
         private const val MOUNT_POINT_ID = "MOUNT_POINT_ID"
-        private const val PICKDIR_REQUEST_CODE = 1
-        private const val PICK_IDENTITY_FILE_CODE = 2
 
         fun newInstance(id: Int): EditFragment {
             val fragment = EditFragment()

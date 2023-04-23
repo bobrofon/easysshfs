@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
@@ -141,6 +142,7 @@ class VersionUpdater(
             object Os {
                 private val self: Any
                     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                    @SuppressLint("ObsoleteSdkInt", "DiscouragedPrivateApi")
                     @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     get() {
                         val libCoreClass = Class.forName("libcore.io.Libcore")
@@ -150,6 +152,7 @@ class VersionUpdater(
                     }
 
                 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                @SuppressLint("ObsoleteSdkInt")
                 @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                 fun symlink(oldPath: String, newPath: String) {
                     val method =
@@ -158,6 +161,7 @@ class VersionUpdater(
                 }
 
                 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+                @SuppressLint("ObsoleteSdkInt")
                 @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                 fun lstat(path: String): Any {
                     val method = self.javaClass.getMethod("lstat", String::class.java)

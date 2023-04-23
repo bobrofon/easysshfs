@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.log
 
 import java.lang.ref.WeakReference

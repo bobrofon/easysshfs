@@ -52,7 +52,7 @@ class EasySSHFSViewModel(
         private val settingsRepository: SettingsRepository,
         private val mountPointsList: MountPointsList
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(EasySSHFSViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return EasySSHFSViewModel(

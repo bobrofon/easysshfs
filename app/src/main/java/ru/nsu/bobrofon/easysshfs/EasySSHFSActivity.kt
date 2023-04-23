@@ -73,9 +73,9 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
         ensureAllPermissionsGranted()
 
-        viewModel.autoMountServiceRequired.observe(this, {
+        viewModel.autoMountServiceRequired.observe(this) {
             onAutoMountChanged(it)
-        })
+        }
     }
 
     private fun ensureAllPermissionsGranted() {
@@ -86,9 +86,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECEIVE_BOOT_COMPLETED,
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
+        allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             allPermissions.add(Manifest.permission.FOREGROUND_SERVICE)
         }

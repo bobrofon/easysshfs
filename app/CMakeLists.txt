@@ -15,7 +15,7 @@ project(assets LANGUAGES NONE)
 set(SSHFS_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../sshfs-static")
 # import 'ssh-static-${ANDROID_ABI}-target' and 'sshfs-static-${ANDROID_ABI}-target' targets
 add_subdirectory(../sshfs-static "${SSHFS_BINARY_DIR}")
-# import 'stub' library. externalNativeBuild requires sume sources to generate compile_commands.json
+# import 'stub' library. externalNativeBuild requires some sources to generate compile_commands.json
 # TODO(bobrofon): report issue
 add_subdirectory(src/main/cpp)
 

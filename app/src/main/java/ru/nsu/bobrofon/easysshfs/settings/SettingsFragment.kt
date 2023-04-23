@@ -4,11 +4,8 @@ package ru.nsu.bobrofon.easysshfs.settings
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.R
 
@@ -27,9 +24,9 @@ class SettingsFragment(viewModelFactory: SettingsViewModel.Factory) : Preference
                 }
             }
 
-        viewModel.autoMountInForegroundService.observe(this, {
+        viewModel.autoMountInForegroundService.observe(this) {
             autoMountInForegroundServiceSwitch?.isChecked = it
-        })
+        }
     }
 
     override fun onAttach(context: Context) {

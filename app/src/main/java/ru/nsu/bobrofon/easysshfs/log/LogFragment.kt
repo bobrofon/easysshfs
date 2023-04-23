@@ -29,7 +29,7 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         Log.i(TAG, "onCreateView")
         super.onCreateView(inflater, container, savedInstanceState)
         setHasOptionsMenu(true)
