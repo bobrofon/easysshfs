@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist
 
-import java.lang.ref.WeakReference
-import java.util.LinkedList
-
 import android.content.Context
 import android.util.Log
-
+import com.topjohnwu.superuser.Shell
 import org.json.JSONArray
 import org.json.JSONException
-
-import com.topjohnwu.superuser.Shell
-
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
+import java.lang.ref.WeakReference
+import java.util.*
 
 class MountPointsList(
     mountPoints: MutableList<MountPoint> = LinkedList(),

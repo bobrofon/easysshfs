@@ -20,7 +20,7 @@ private const val NOTIFICATION_ID = 1
 
 class EasySSHFSService : Service() {
 
-    private val handler =  Handler(Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
     private val internetStateChangeReceiver = InternetStateChangeReceiver(handler)
     private val internetStateChangeFilter = IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION)
 
@@ -35,15 +35,19 @@ class EasySSHFSService : Service() {
                 0
             }
             val pendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, notificationIntent, intentFLags)
+                applicationContext, 0, notificationIntent, intentFLags
+            )
             setContentIntent(pendingIntent)
         }.build()
     }
     private val notificationManager: NotificationManager by lazy {
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                createNotificationChannel(NotificationChannel(
-                    CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW))
+                createNotificationChannel(
+                    NotificationChannel(
+                        CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW
+                    )
+                )
             }
         }
     }

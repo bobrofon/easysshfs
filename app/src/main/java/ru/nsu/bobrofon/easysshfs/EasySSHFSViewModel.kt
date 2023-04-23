@@ -20,7 +20,7 @@ class EasySSHFSViewModel(
     private val _autoMountServiceRequired = MutableLiveData<Boolean>()
     val autoMountServiceRequired: LiveData<Boolean> get() = _autoMountServiceRequired
 
-    private val autoMountChangeObserver = object: AutoMountChangeObserver {
+    private val autoMountChangeObserver = object : AutoMountChangeObserver {
         override fun onAutoMountChanged(isAutoMountRequired: Boolean) {
             autoMountEnabled = isAutoMountRequired
             updateAutoMountServiceRequired()

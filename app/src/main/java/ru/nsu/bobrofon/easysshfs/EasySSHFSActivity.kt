@@ -5,22 +5,21 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import androidx.drawerlayout.widget.DrawerLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
-
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
-import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
+import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.settings.SettingsFragment
 import ru.nsu.bobrofon.easysshfs.settings.SettingsRepository
 import ru.nsu.bobrofon.easysshfs.settings.SettingsViewModel

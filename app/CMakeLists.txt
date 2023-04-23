@@ -21,7 +21,7 @@ add_subdirectory(src/main/cpp)
 
 set(ASSETS_EXECUTABLES ssh sshfs)
 
-foreach(exe IN LISTS ASSETS_EXECUTABLES)
+foreach (exe IN LISTS ASSETS_EXECUTABLES)
     set(src_path "${SSHFS_BINARY_DIR}/${exe}-static-${ANDROID_ABI}")
     # By default only 'lib*.so' files are packaging.
     set(dst_path "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib${exe}.so")
@@ -35,4 +35,4 @@ foreach(exe IN LISTS ASSETS_EXECUTABLES)
         DEPENDS "${dst_path}"
         VERBATIM
     )
-endforeach()
+endforeach ()

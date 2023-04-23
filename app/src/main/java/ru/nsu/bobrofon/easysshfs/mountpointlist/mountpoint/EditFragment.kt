@@ -6,16 +6,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.annotation.RequiresApi
-
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
@@ -210,7 +204,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     private val identityFilePicker =
-        registerForActivityResult(object: GetContent() {
+        registerForActivityResult(object : GetContent() {
             override fun createIntent(context: Context, input: String): Intent {
                 val intent = super.createIntent(context, input)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)

@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(private val repository: SettingsRepository): ViewModel() {
+class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
     private val _autoMountInForegroundService = MutableLiveData<Boolean>()
     val autoMountInForegroundService: LiveData<Boolean> get() = _autoMountInForegroundService
 

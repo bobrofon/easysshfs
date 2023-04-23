@@ -4,8 +4,8 @@
     <PreferenceCategory app:title="@string/automount_header">
 
         <SwitchPreferenceCompat
-            app:persistent="false"
             app:key="autoMountInForegroundService"
+            app:persistent="false"
             app:summaryOff="@string/foreground_service_summary_off"
             app:summaryOn="@string/foreground_service_summary_on"
             app:title="@string/foreground_service_title" />

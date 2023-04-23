@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.log
 
-import java.lang.ref.WeakReference
-
 import android.util.Log
+import java.lang.ref.WeakReference
 
 private const val TAG = "AppLog"
 private const val SIZE_LIMIT = 4 * 1024 * 1024
