@@ -51,4 +51,5 @@
         Start foreground service to manage network changes all the time</string>
     <string name="foreground_service_summary_off">
         Manage network changes only when application is in foreground</string>
+    <string name="privacy_policy_web_page">Privacy Policy</string>
 </resources>
