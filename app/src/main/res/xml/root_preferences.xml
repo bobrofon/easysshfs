@@ -12,4 +12,12 @@
 
     </PreferenceCategory>
 
+    <Preference
+        app:key="webpage"
+        app:title="@string/privacy_policy_web_page">
+        <intent xmlns:android="http://schemas.android.com/apk/res/android"
+            android:action="android.intent.action.VIEW"
+            android:data="https://github.com/bobrofon/easysshfs/blob/master/PRIVACY_POLICY.md" />
+    </Preference>
+
 </PreferenceScreen>
