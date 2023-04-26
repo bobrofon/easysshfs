@@ -29,8 +29,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 80
-        versionName "0.5.9-dev"
+        versionCode 81
+        versionName "0.5.9"
 
         externalNativeBuild {
             cmake {

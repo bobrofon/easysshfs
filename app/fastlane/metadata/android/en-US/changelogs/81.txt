@@ -1,0 +1,2 @@
+* Target Android SDK upgraded to version 31 (Android 12) (needed to fit new Google Play requirements)
+* Added privacy policy link
