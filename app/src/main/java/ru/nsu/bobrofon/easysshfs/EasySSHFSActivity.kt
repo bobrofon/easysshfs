@@ -55,7 +55,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
                 SettingsRepository(applicationContext.settingsDataStore),
                 MountPointsList.instance(applicationContext)
             )
-        ).get(EasySSHFSViewModel::class.java)
+        )[EasySSHFSViewModel::class.java]
 
         VersionUpdater(applicationContext).update()
 

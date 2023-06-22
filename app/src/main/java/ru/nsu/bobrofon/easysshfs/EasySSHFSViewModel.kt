@@ -3,7 +3,6 @@ package ru.nsu.bobrofon.easysshfs
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.nsu.bobrofon.easysshfs.mountpointlist.AutoMountChangeObserver
