@@ -140,18 +140,22 @@ class EditFragment : EasySSHFSFragment() {
                     saveAction()
                     true
                 }
+
                 R.id.action_delete -> {
                     deleteAction()
                     true
                 }
+
                 R.id.action_mount -> {
                     mountAction()
                     true
                 }
+
                 R.id.action_umount -> {
                     umountAction()
                     true
                 }
+
                 else -> false
             }
     }
@@ -271,9 +275,11 @@ class EditFragment : EasySSHFSFragment() {
             hasRuntimePermissions -> {
                 "/mnt/runtime/default/emulated/0"
             }
+
             isMultiUserEnvironment -> {
                 "/data/media/0"
             }
+
             else -> {
                 "/mnt/sdcard"
             }

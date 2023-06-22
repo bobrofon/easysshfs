@@ -10,7 +10,7 @@ import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.LinkedList
 
 class MountPointsList(
     mountPoints: MutableList<MountPoint> = LinkedList(),
