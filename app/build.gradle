@@ -80,7 +80,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.6.0"
     implementation "androidx.core:core-ktx:1.10.1"
 
-    def libsuVersion = '3.1.2'
+    def libsuVersion = '3.2.1'
     // The core module is used by all other components
     implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
     // Optional: APIs for creating root services
