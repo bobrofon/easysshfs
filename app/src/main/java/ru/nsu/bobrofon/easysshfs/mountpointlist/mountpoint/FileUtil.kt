@@ -161,10 +161,15 @@ object FileUtil {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private fun getDownloadsProviderPath(context: Context, uri: Uri): String? {
         val id = DocumentsContract.getDocumentId(uri)
-        val contentUri = ContentUris.withAppendedId(
-            Uri.parse("content://downloads/public_downloads"),
-            java.lang.Long.valueOf(id)
-        )
+        val contentUri = try {
+            ContentUris.withAppendedId(
+                Uri.parse("content://downloads/public_downloads"),
+                java.lang.Long.valueOf(id)
+            )
+        } catch (e: NumberFormatException) {
+            e.printStackTrace()
+            return null
+        }
 
         return getDataColumn(context, contentUri)
     }
