@@ -2,7 +2,6 @@
 package ru.nsu.bobrofon.easysshfs.settings
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {

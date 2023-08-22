@@ -10,6 +10,10 @@ import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.annotation.RequiresApi
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
@@ -50,7 +54,6 @@ class EditFragment : EasySSHFSFragment() {
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        setHasOptionsMenu(true)
 
         val context = requireContext()
 
@@ -92,6 +95,9 @@ class EditFragment : EasySSHFSFragment() {
         forcePermissions.isChecked = self.forcePermissions
         options.setText(self.options)
         identityFile.setText(self.identityFile)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun initLocalDirSelector(selector: View) {
@@ -101,13 +107,6 @@ class EditFragment : EasySSHFSFragment() {
             }
         }
         selector.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        if (!drawerStatus.isDrawerOpen) {
-            inflater.inflate(R.menu.edit, menu)
-        }
     }
 
     private fun grabMountPoint(mountPoint: MountPoint) {
@@ -128,24 +127,37 @@ class EditFragment : EasySSHFSFragment() {
         mountPoint.rootDir = context.filesDir.path
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.action_save -> {
-            saveAction()
-            true
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            if (!drawerStatus.isDrawerOpen) {
+                menuInflater.inflate(R.menu.edit, menu)
+            }
         }
-        R.id.action_delete -> {
-            deleteAction()
-            true
-        }
-        R.id.action_mount -> {
-            mountAction()
-            true
-        }
-        R.id.action_umount -> {
-            umountAction()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+            when (menuItem.itemId) {
+                R.id.action_save -> {
+                    saveAction()
+                    true
+                }
+
+                R.id.action_delete -> {
+                    deleteAction()
+                    true
+                }
+
+                R.id.action_mount -> {
+                    mountAction()
+                    true
+                }
+
+                R.id.action_umount -> {
+                    umountAction()
+                    true
+                }
+
+                else -> false
+            }
     }
 
     private fun saveAction() {
@@ -263,9 +275,11 @@ class EditFragment : EasySSHFSFragment() {
             hasRuntimePermissions -> {
                 "/mnt/runtime/default/emulated/0"
             }
+
             isMultiUserEnvironment -> {
                 "/data/media/0"
             }
+
             else -> {
                 "/mnt/sdcard"
             }

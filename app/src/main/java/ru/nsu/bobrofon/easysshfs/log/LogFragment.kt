@@ -4,7 +4,15 @@ package ru.nsu.bobrofon.easysshfs.log
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
 import ru.nsu.bobrofon.easysshfs.databinding.FragmentLogBinding
@@ -26,7 +34,6 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
     ): View {
         Log.i(TAG, "onCreateView")
         super.onCreateView(inflater, container, savedInstanceState)
-        setHasOptionsMenu(true)
         _binding = FragmentLogBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -34,6 +41,9 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appLog.registerObserver(this)
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onDestroyView() {
@@ -55,21 +65,22 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
         appActivity?.onSectionAttached(R.string.debug_log_title)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        if (!drawerStatus.isDrawerOpen) {
-            inflater.inflate(R.menu.log, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        if (id == R.id.action_clean) {
-            appLog.clean()
-            return true
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            if (!drawerStatus.isDrawerOpen) {
+                menuInflater.inflate(R.menu.log, menu)
+            }
         }
 
-        return super.onOptionsItemSelected(item)
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            val id = menuItem.itemId
+
+            if (id == R.id.action_clean) {
+                appLog.clean()
+                return true
+            }
+
+            return false
+        }
     }
 }// Required empty public constructor

@@ -34,6 +34,7 @@ object FileUtil {
             Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP -> {
                 return null
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 val storageManager =
                     context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
@@ -52,6 +53,7 @@ object FileUtil {
                 // not found.
                 return null
             }
+
             else -> {
                 try {
                     val mStorageManager =

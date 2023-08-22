@@ -8,6 +8,7 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiManager
 import android.os.Handler
 import android.util.Log
+import androidx.core.content.IntentCompat
 import com.topjohnwu.superuser.Shell
 
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
@@ -28,7 +29,16 @@ class InternetStateChangeReceiver(
 
         Log.d(TAG, "network state changed")
 
-        val info = intent.getParcelableExtra<NetworkInfo>(WifiManager.EXTRA_NETWORK_INFO) ?: return
+        val info = IntentCompat.getParcelableExtra(
+            intent,
+            WifiManager.EXTRA_NETWORK_INFO,
+            NetworkInfo::class.java
+        )
+        if (info == null) {
+            Log.w(TAG, "failed to get wifi network info from intent '$intent'")
+            return
+        }
+
         val mountPointsList = MountPointsList.instance(context)
 
         handler.removeCallbacksAndMessages(null) // ignore repeated intents
