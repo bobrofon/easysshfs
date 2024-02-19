@@ -5,11 +5,26 @@ import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.Shell.Builder
 import ru.nsu.bobrofon.easysshfs.log.AppLog
+import java.lang.ref.WeakReference
 
 object ShellBuilder {
     private const val TAG = "ShellBuilder"
 
-    fun build(): Shell {
+    private var sharedShell = WeakReference<Shell?>(null)
+
+    @Synchronized
+    fun sharedShell(): Shell {
+        val oldShell = sharedShell.get()
+        if (oldShell == null) {
+            Log.i(TAG, "create new shared shell")
+            val newShell = build()
+            sharedShell = WeakReference(newShell)
+            return newShell
+        }
+        return oldShell
+    }
+
+    private fun build(): Shell {
         val builder = Builder.create()
             .setInitializers(BusyBoxInstaller::class::java.get())
 

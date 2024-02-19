@@ -187,7 +187,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         }
 
         fun initNewShell(): Shell {
-            return ShellBuilder.build()
+            return ShellBuilder.sharedShell()
         }
 
         init {
