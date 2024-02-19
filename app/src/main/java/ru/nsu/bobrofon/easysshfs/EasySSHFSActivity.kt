@@ -187,12 +187,11 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         }
 
         fun initNewShell(): Shell {
-            return Shell.getShell()
+            return ShellBuilder.build()
         }
 
         init {
             Shell.enableVerboseLogging = BuildConfig.DEBUG
-            Shell.setDefaultBuilder(ShellBuilder.create())
         }
     }
 
