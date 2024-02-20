@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
-import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
@@ -188,16 +187,11 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         }
 
         fun initNewShell(): Shell {
-            return Shell.getShell()
+            return ShellBuilder.sharedShell()
         }
 
         init {
             Shell.enableVerboseLogging = BuildConfig.DEBUG
-            Shell.setDefaultBuilder(
-                Shell.Builder.create()
-                    .setFlags(Shell.FLAG_MOUNT_MASTER)
-                    .setInitializers(BusyBoxInstaller::class::java.get())
-            )
         }
     }
 
