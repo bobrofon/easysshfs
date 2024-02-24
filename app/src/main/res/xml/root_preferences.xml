@@ -10,6 +10,13 @@
             app:summaryOn="@string/foreground_service_summary_on"
             app:title="@string/foreground_service_title" />
 
+        <SwitchPreferenceCompat
+            app:key="checkSshServersPeriodically"
+            app:persistent="false"
+            app:summaryOff="@string/periodic_check_summary_off"
+            app:summaryOn="@string/periodic_check_summary_on"
+            app:title="@string/periodic_check_title" />
+
     </PreferenceCategory>
 
     <Preference

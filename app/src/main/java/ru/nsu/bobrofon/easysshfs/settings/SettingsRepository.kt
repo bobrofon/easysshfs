@@ -18,4 +18,15 @@ class SettingsRepository(private val settingsDataStore: DataStore<Preferences>) 
             settings[Settings.autoMountInForegroundService] = value
         }
     }
+
+    val checkSshServersPeriodically: Flow<Boolean>
+        get() = settingsDataStore.data.map { settings ->
+            settings[Settings.checkSshServersPeriodically] ?: false
+        }
+
+    suspend fun setCheckSshServersPeriodically(value: Boolean) {
+        settingsDataStore.edit { settings ->
+            settings[Settings.checkSshServersPeriodically] = value
+        }
+    }
 }
