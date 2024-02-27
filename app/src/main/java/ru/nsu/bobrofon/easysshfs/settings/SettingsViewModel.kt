@@ -8,10 +8,19 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     private val _autoMountInForegroundService = MutableLiveData<Boolean>()
     val autoMountInForegroundService: LiveData<Boolean> get() = _autoMountInForegroundService
 
+    private val _checkSshServersPeriodically = MutableLiveData<Boolean>()
+    val checkSshServersPeriodically: LiveData<Boolean> get() = _checkSshServersPeriodically
+
     init {
         viewModelScope.launch {
             repository.autoMountInForegroundService.collect {
                 _autoMountInForegroundService.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            repository.checkSshServersPeriodically.collect {
+                _checkSshServersPeriodically.value = it
             }
         }
     }
@@ -19,6 +28,12 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     fun setAutoMountInForegroundService(value: Boolean) {
         viewModelScope.launch {
             repository.setAutoMountInForegroundService(value)
+        }
+    }
+
+    fun setCheckSshServersPeriodically(value: Boolean) {
+        viewModelScope.launch {
+            repository.setCheckSshServersPeriodically(value)
         }
     }
 

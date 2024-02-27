@@ -15,7 +15,11 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.*
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketTimeoutException
+import java.util.LinkedList
+import kotlin.time.Duration
 
 
 class MountPoint(
@@ -161,6 +165,46 @@ class MountPoint(
         }
     }
 
+    fun checkIfRemoteIsReachable(timeout: Duration): Boolean {
+        val socket = Socket()
+        try {
+            val address = InetSocketAddress(host, port)
+            socket.connect(address, timeout.inWholeMilliseconds.toInt())
+
+        } catch (e: IOException) {
+            Log.d(TAG, "'$host:$port' connection failed", e)
+            return false
+        } catch (e: SocketTimeoutException) {
+            Log.d(TAG, "'$host:$port' connection timeout", e)
+            return false
+        } finally {
+            try {
+                socket.close()
+            } catch (e: Exception) {
+                Log.w(TAG, "failed to close socket", e)
+            }
+        }
+
+        return true
+    }
+
+    fun checkIfMounted(foreground: Boolean): Pair<Boolean, String> {
+        val mountLine = StringBuilder()
+        mountLine.append("$userName@${hostIp(foreground)}:")
+
+        val canonicalLocalPath = File(localPath).canonicalPath
+        mountLine.append("$remotePath $canonicalLocalPath fuse.sshfs ")
+
+        val expectedLine = mountLine.toString()
+
+        val procmount = File(MOUNT_FILE)
+        val result = procmount.useLines { lines ->
+            lines.any { line -> line.contains(expectedLine) }
+        }
+
+        return Pair(result, expectedLine)
+    }
+
     companion object {
 
         private const val DEFAULT_OPTIONS = (
@@ -179,13 +223,13 @@ class MountPoint(
 
         private const val TAG = "MOUNT_POINT"
 
-        private class CheckMountTask constructor(
+        private const val MOUNT_FILE = "/proc/mounts"
+
+        private class CheckMountTask(
             private val mountPoint: MountPoint,
             private val context: WeakReference<Context?> = WeakReference(null)
         ) :
             AsyncTask<Void, Void, Pair<Boolean?, String>>() {
-
-            private val mountFile = "/proc/mounts"
 
             constructor(mountPoint: MountPoint, context: Context?) :
                     this(mountPoint, WeakReference(context))
@@ -193,37 +237,20 @@ class MountPoint(
             @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: Void): Pair<Boolean?, String> {
                 val fromForeground = context.get() != null
-                val mountLine = StringBuilder()
-                mountLine.append("${mountPoint.userName}@${mountPoint.hostIp(fromForeground)}:")
 
-                val canonicalLocalPath: String
+                val result: Pair<Boolean, String>
                 try {
-                    canonicalLocalPath = File(mountPoint.localPath).canonicalPath
-                } catch (e: IOException) {
-                    return Pair(
-                        null,
-                        "Can't get canonical path of ${mountPoint.localPath}: ${e.message}"
-                    )
-                }
-
-                mountLine.append("${mountPoint.remotePath} $canonicalLocalPath fuse.sshfs ")
-
-                val result: Boolean
-                try {
-                    val procmount = File(mountFile)
-                    result = procmount.useLines { lines ->
-                        lines.any { line -> line.contains(mountLine.toString()) }
-                    }
+                    result = mountPoint.checkIfMounted(fromForeground)
                 } catch (e: FileNotFoundException) {
                     return Pair(null, e.message ?: "")
                 } catch (e: IOException) {
                     return Pair(null, e.message ?: "")
                 }
 
-                return if (result) {
-                    Pair(true, "Pattern $mountLine is in $mountFile")
+                return if (result.first) {
+                    Pair(true, "Pattern ${result.second} is in $MOUNT_FILE")
                 } else {
-                    Pair(false, "Pattern $mountLine is not in $mountFile")
+                    Pair(false, "Pattern ${result.second} is not in $MOUNT_FILE")
                 }
             }
 
@@ -242,7 +269,7 @@ class MountPoint(
             }
         }
 
-        private class MountTask constructor(
+        private class MountTask(
             private val mountPoint: MountPoint,
             private val shell: Shell,
             private val context: WeakReference<Context?> = WeakReference(null)

@@ -24,8 +24,21 @@ class SettingsFragment(viewModelFactory: SettingsViewModel.Factory) : Preference
                 }
             }
 
+        val checkSshServersPeriodicallySwitch =
+            findPreference<SwitchPreferenceCompat>(Settings.checkSshServersPeriodically.name)?.apply {
+                setOnPreferenceChangeListener { _, value ->
+                    viewModel.setCheckSshServersPeriodically(value as Boolean)
+                    true
+                }
+            }
+
         viewModel.autoMountInForegroundService.observe(this) {
             autoMountInForegroundServiceSwitch?.isChecked = it
+            checkSshServersPeriodicallySwitch?.isEnabled = it
+        }
+
+        viewModel.checkSshServersPeriodically.observe(this) {
+            checkSshServersPeriodicallySwitch?.isChecked = it
         }
     }
 

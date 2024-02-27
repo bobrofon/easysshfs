@@ -51,5 +51,10 @@
         Start foreground service to manage network changes all the time</string>
     <string name="foreground_service_summary_off">
         Manage network changes only when application is in foreground</string>
+    <string name="periodic_check_title">Check remote servers periodically</string>
+    <string name="periodic_check_summary_on">
+        Check remote servers periodically and automount mountpoints if remote server becomes available</string>
+    <string name="periodic_check_summary_off">
+        Don\'t try to automount mountpoints if remote server becomes unavailable</string>
     <string name="privacy_policy_web_page">Privacy Policy</string>
 </resources>
