@@ -3,6 +3,9 @@
 # EasySSHFS
 SSHFS for android.
 
+# Notes
+* Root access required.
+
 # Binary components
 https://github.com/bobrofon/buildroot/releases
 
