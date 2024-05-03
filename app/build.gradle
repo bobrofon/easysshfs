@@ -29,8 +29,8 @@ android {
         applicationId "ru.nsu.bobrofon.easysshfs"
         minSdkVersion 16
         targetSdkVersion 33
-        versionCode 85
-        versionName "0.5.11"
+        versionCode 86
+        versionName "0.5.12-dev"
 
         externalNativeBuild {
             cmake {
@@ -76,6 +76,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-service:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation "androidx.fragment:fragment-ktx:1.6.0"
     implementation "androidx.core:core-ktx:1.10.1"

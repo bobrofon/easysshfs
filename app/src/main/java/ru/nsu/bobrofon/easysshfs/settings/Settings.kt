@@ -17,4 +17,9 @@ object Settings {
      * Start foreground service to automatically mount/umount mountpoints on network changes.
      */
     val autoMountInForegroundService = booleanPreferencesKey("autoMountInForegroundService")
+
+    /**
+     * Check remote ssh services periodically to automatically mount mountpoints.
+     */
+    val checkSshServersPeriodically = booleanPreferencesKey("checkSshServersPeriodically")
 }
