@@ -23,12 +23,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
+        compileSdk 34
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 86
         versionName "0.5.12-dev"
 
