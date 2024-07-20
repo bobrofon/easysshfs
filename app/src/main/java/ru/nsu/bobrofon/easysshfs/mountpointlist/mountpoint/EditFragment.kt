@@ -96,6 +96,22 @@ class EditFragment : EasySSHFSFragment() {
         options.setText(self.options)
         identityFile.setText(self.identityFile)
 
+        auto.setOnCheckedChangeListener { _, isAutoMountEnabled ->
+            val optionList = options.text.split(',').toMutableList()
+
+            if (isAutoMountEnabled) {
+                if (!optionList.contains("reconnect")) {
+                    optionList.add("reconnect")
+                }
+            } else {
+                if (optionList.last() == "reconnect") {
+                    optionList.removeLast()
+                }
+            }
+
+            options.setText(optionList.joinToString(","))
+        }
+
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
