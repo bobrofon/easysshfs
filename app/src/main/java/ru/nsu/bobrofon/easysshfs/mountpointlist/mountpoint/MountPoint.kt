@@ -175,7 +175,9 @@ class MountPoint(
                         + "umask=0,"
                         + "allow_other,"
                         + "uid=9997,"
-                        + "gid=9997")
+                        + "gid=9997,"
+                        + "ServerAliveInterval=15,"
+                        + "ServerAliveCountMax=3")
 
         private const val TAG = "MOUNT_POINT"
 
