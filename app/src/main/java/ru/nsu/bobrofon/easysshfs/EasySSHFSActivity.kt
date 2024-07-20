@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.topjohnwu.superuser.Shell
+import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
@@ -56,6 +57,10 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
             )
         )[EasySSHFSViewModel::class.java]
 
+        AppLog.instance().addMessage(
+            "EasySSHFS ${BuildConfig.VERSION_NAME} "
+                    + "(${BuildConfig.VERSION_CODE}) ${BuildConfig.BUILD_TYPE}"
+        )
         VersionUpdater(applicationContext).update()
 
         setContentView(R.layout.activity_easy_sshfs)
