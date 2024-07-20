@@ -1,0 +1,2 @@
+* Target Android SDK upgraded to version 34
+* Use 'reconnect,ServerAliveInterval=15,ServerAliveCountMax=3' sshfs options by default
