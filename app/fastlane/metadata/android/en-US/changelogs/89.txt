@@ -1,1 +1,2 @@
 * Fix ipv6 addresses resolution
+* Fix foreground server crash on Android 14
