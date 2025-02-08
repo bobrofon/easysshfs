@@ -2,6 +2,7 @@
 package ru.nsu.bobrofon.easysshfs
 
 import android.Manifest
+import android.app.UiModeManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,10 +12,13 @@ import android.view.Menu
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.log.LogFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
@@ -22,7 +26,7 @@ import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment
 import ru.nsu.bobrofon.easysshfs.settings.SettingsFragment
 import ru.nsu.bobrofon.easysshfs.settings.SettingsRepository
-import ru.nsu.bobrofon.easysshfs.settings.SettingsViewModel
+import ru.nsu.bobrofon.easysshfs.settings.ThemeMode
 import ru.nsu.bobrofon.easysshfs.settings.settingsDataStore
 
 
@@ -49,10 +53,12 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val settingsRepository = SettingsRepository(applicationContext.settingsDataStore)
+
         viewModel = ViewModelProvider(
             this,
             EasySSHFSViewModel.Factory(
-                SettingsRepository(applicationContext.settingsDataStore),
+                settingsRepository,
                 MountPointsList.instance(applicationContext)
             )
         )[EasySSHFSViewModel::class.java]
@@ -62,6 +68,13 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
                     + "(${BuildConfig.VERSION_CODE}) ${BuildConfig.BUILD_TYPE}"
         )
         VersionUpdater(applicationContext).update()
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // night mode is not persisted by framework, so we need to update it
+            // BEFORE content view is set
+            val themeMode = runBlocking { settingsRepository.themeMode.first() }
+            updateThemeMode(themeMode)
+        }
 
         setContentView(R.layout.activity_easy_sshfs)
 
@@ -78,6 +91,21 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
         viewModel.autoMountServiceRequired.observe(this) {
             onAutoMountChanged(it)
+        }
+
+        viewModel.themeMode.observe(this) {
+            updateThemeMode(it)
+        }
+    }
+
+    private fun updateThemeMode(mode: ThemeMode) {
+        Log.i(TAG, "change app theme mode to '$mode'")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
+            uiModeManager.setApplicationNightMode(mode.nightMode)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(mode.compatNightMode)
         }
     }
 
@@ -140,7 +168,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         val fragment = when (position) {
             0 -> MountpointFragment().apply { setDrawerStatus(navigationDrawerFragment) }
             1 -> LogFragment().apply { setDrawerStatus(navigationDrawerFragment) }
-            2 -> SettingsFragment(SettingsViewModel.Factory(SettingsRepository(applicationContext.settingsDataStore)))
+            2 -> SettingsFragment()
             else -> null
         }
 

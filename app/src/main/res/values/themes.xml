@@ -1,0 +1,18 @@
+<!-- SPDX-License-Identifier: MIT -->
+<resources>
+    <string-array name="theme_names">
+        <item>@string/theme_name_default</item>
+        <item>@string/theme_name_light</item>
+        <item>@string/theme_name_dark</item>
+    </string-array>
+
+    <string name="theme_mode_default">default</string>
+    <string name="theme_mode_light">light</string>
+    <string name="theme_mode_dark">dark</string>
+
+    <string-array name="theme_modes">
+        <item>@string/theme_mode_default</item>
+        <item>@string/theme_mode_light</item>
+        <item>@string/theme_mode_dark</item>
+    </string-array>
+</resources>

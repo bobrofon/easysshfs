@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.nsu.bobrofon.easysshfs.mountpointlist.AutoMountChangeObserver
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.settings.SettingsRepository
+import ru.nsu.bobrofon.easysshfs.settings.ThemeMode
 
 class EasySSHFSViewModel(
     autoMountInForegroundService: Flow<Boolean>,
+    themeMode: Flow<ThemeMode>,
     private val mountPointsList: MountPointsList
 ) : ViewModel() {
     private var foregroundServiceAllowed = false
@@ -18,6 +24,9 @@ class EasySSHFSViewModel(
 
     private val _autoMountServiceRequired = MutableLiveData<Boolean>()
     val autoMountServiceRequired: LiveData<Boolean> get() = _autoMountServiceRequired
+
+    private val _themeMode = MutableLiveData<ThemeMode>()
+    val themeMode: LiveData<ThemeMode> get() = _themeMode
 
     private val autoMountChangeObserver = object : AutoMountChangeObserver {
         override fun onAutoMountChanged(isAutoMountRequired: Boolean) {
@@ -33,6 +42,12 @@ class EasySSHFSViewModel(
                 updateAutoMountServiceRequired()
             }
             autoMountInForegroundService.first()
+        }
+
+        viewModelScope.launch {
+            themeMode.collect {
+                _themeMode.value = it
+            }
         }
 
         mountPointsList.registerAutoMountObserver(autoMountChangeObserver)
@@ -56,6 +71,7 @@ class EasySSHFSViewModel(
                 @Suppress("UNCHECKED_CAST")
                 return EasySSHFSViewModel(
                     settingsRepository.autoMountInForegroundService,
+                    settingsRepository.themeMode,
                     mountPointsList
                 ) as T
             }

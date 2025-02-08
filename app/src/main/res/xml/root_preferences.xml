@@ -12,6 +12,13 @@
 
     </PreferenceCategory>
 
+    <ListPreference
+        app:defaultValue="@string/theme_mode_default"
+        app:entries="@array/theme_names"
+        app:entryValues="@array/theme_modes"
+        app:key="themeMode"
+        app:title="@string/theme_title" />
+
     <Preference
         app:key="webpage"
         app:title="@string/privacy_policy_web_page">
