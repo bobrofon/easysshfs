@@ -4,12 +4,15 @@ package ru.nsu.bobrofon.easysshfs.settings
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.viewModels
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.R
 
-class SettingsFragment(viewModelFactory: SettingsViewModel.Factory) : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat() {
+
+    private lateinit var viewModelFactory: SettingsViewModel.Factory
 
     private val viewModel: SettingsViewModel by viewModels { viewModelFactory }
 
@@ -27,10 +30,24 @@ class SettingsFragment(viewModelFactory: SettingsViewModel.Factory) : Preference
         viewModel.autoMountInForegroundService.observe(this) {
             autoMountInForegroundServiceSwitch?.isChecked = it
         }
+
+        val themeModeList = findPreference<ListPreference>(Settings.themeMode.name)?.apply {
+            setOnPreferenceChangeListener { _, value ->
+                viewModel.setThemeMode(value as String)
+                true
+            }
+        }
+
+        viewModel.themeMode.observe(this) {
+            themeModeList?.value = it.preferenceValue
+        }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        viewModelFactory = SettingsViewModel.Factory(SettingsRepository(context.settingsDataStore))
+
         (activity as? EasySSHFSActivity)?.onSectionAttached(R.string.settings_title)
     }
 }

@@ -52,4 +52,8 @@
     <string name="foreground_service_summary_off">
         Manage network changes only when application is in foreground</string>
     <string name="privacy_policy_web_page">Privacy Policy</string>
+    <string name="theme_title">Theme</string>
+    <string name="theme_name_default">System default</string>
+    <string name="theme_name_light">Light</string>
+    <string name="theme_name_dark">Dark</string>
 </resources>
