@@ -21,7 +21,7 @@ jobs:
       - name: Assemble release APKs
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assembleRelease
+          arguments: assembleRelease -Dorg.gradle.daemon.performance.enable-monitoring=false
           build-root-directory: app
       - name: Upload APKs
         uses: actions/upload-artifact@v4
