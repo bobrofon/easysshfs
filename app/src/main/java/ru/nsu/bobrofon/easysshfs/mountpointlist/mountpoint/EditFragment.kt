@@ -221,6 +221,7 @@ class EditFragment : EasySSHFSFragment() {
         EasySSHFSActivity.showToast(message, context)
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private val localDirPicker =
         registerForActivityResult(OpenDocumentTree()) { uri: Uri? ->
             uri?.let { setLocalPath(it) }
