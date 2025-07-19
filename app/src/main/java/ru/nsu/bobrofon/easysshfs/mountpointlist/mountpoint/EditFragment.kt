@@ -105,7 +105,7 @@ class EditFragment : EasySSHFSFragment() {
                 }
             } else {
                 if (optionList.last() == "reconnect") {
-                    optionList.removeLast()
+                    optionList.removeLastOrNull()
                 }
             }
 
