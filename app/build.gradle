@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,9 +25,9 @@ apply plugin: 'kotlin-android'
 android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 16
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 94
         versionName "0.5.15-dev"
 
