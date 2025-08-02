@@ -1,0 +1,1 @@
+* Fix main activity positioning in edge-to-edge mode
