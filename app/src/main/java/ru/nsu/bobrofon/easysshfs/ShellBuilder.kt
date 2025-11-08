@@ -1,7 +1,7 @@
+// SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
 import android.util.Log
-import com.topjohnwu.superuser.BusyBoxInstaller
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.Shell.Builder
 import ru.nsu.bobrofon.easysshfs.log.AppLog
@@ -26,7 +26,6 @@ object ShellBuilder {
 
     private fun build(): Shell {
         val builder = Builder.create()
-            .setInitializers(BusyBoxInstaller::class::java.get())
 
         return if (isMagiskV27x()) {
             // TODO: remove logging after the following release (or maybe a few releases)
@@ -45,7 +44,6 @@ object ShellBuilder {
 
     private fun isMagiskV27x(): Boolean {
         val sh = Builder.create()
-            .setInitializers(BusyBoxInstaller::class::java.get())
             .setFlags(Shell.FLAG_NON_ROOT_SHELL)
             .build()
 
