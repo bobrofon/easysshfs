@@ -94,8 +94,6 @@ dependencies {
     // implementation "com.github.topjohnwu.libsu:service:${libsuVersion}"
     // Optional: For com.topjohnwu.superuser.io classes
     // implementation "com.github.topjohnwu.libsu:io:${libsuVersion}"
-    // Optional: Bundle prebuilt BusyBox binaries
-    implementation "com.github.topjohnwu.libsu:busybox:${libsuVersion}"
 }
 
 def signingPropsFile = file("signing.properties")
