@@ -11,13 +11,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
@@ -39,14 +38,6 @@ class EasySSHFSActivity : AppCompatActivity() {
     val shell: Shell by lazy { initNewShell() }
 
     private lateinit var viewModel: EasySSHFSViewModel
-
-    private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
-    private val navController: NavController by lazy {
-        (supportFragmentManager.findFragmentById(R.id.main_content) as NavHostFragment).navController
-    }
-    private val navigationView: NavigationView by lazy { findViewById(R.id.nav_view) }
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +66,11 @@ class EasySSHFSActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_easy_sshfs)
 
-        appBarConfiguration = AppBarConfiguration(
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.mountpointFragment,
                 R.id.logFragment,
@@ -83,7 +78,12 @@ class EasySSHFSActivity : AppCompatActivity() {
             ),
             drawerLayout
         )
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.main_content) as NavHostFragment).navController
+        toolbar.setupWithNavController(navController, appBarConfiguration)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
         navigationView.setupWithNavController(navController)
 
         val exitMenuItem = navigationView.menu.findItem(R.id.exitAction)
@@ -158,10 +158,6 @@ class EasySSHFSActivity : AppCompatActivity() {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     companion object {
