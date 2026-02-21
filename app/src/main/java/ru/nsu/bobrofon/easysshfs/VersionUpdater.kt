@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
+import android.os.Environment
+import android.system.ErrnoException
 import android.system.Os
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
@@ -59,7 +57,7 @@ class VersionUpdater(
         mountPoint.setPort(settings.getInt("port", 22).toString())
         mountPoint.localPath = settings.getString(
             "local_dir",
-            DeprecatedApi.Environment.getExternalStorageDirectory().path + "/mnt"
+            Environment.getExternalStorageDirectory().path + "/mnt"
         ) ?: ""
         mountPoint.remotePath = settings.getString("remote_dir", "") ?: ""
 
@@ -107,13 +105,8 @@ class VersionUpdater(
     companion object {
         private fun makeSymlink(originalPath: String, linkPath: String) {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Os.symlink(originalPath, linkPath)
-                } else {
-                    Reflected.Os.symlink(originalPath, linkPath)
-                }
-            } catch (e: Exception) {
-                // ErrnoException is only available since API 21
+                Os.symlink(originalPath, linkPath)
+            } catch (e: ErrnoException) {
                 throw IOException(e)
             }
         }
@@ -123,52 +116,11 @@ class VersionUpdater(
          */
         private fun fileExists(path: String): Boolean {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Os.lstat(path) // ignore result, check exceptions instead
-                } else {
-                    Reflected.Os.lstat(path)
-                }
-            } catch (_: Exception) {
-                // ErrnoException is only available since API 21
+                Os.lstat(path) // ignore result, check exceptions instead
+            } catch (_: ErrnoException) {
                 return false
             }
             return true
-        }
-
-        /**
-         * Set of Android APIs which can be accessible only via reflection, because
-         * minSdKVersion not allows to use them directly.
-         */
-        private object Reflected {
-            object Os {
-                private val self: Any
-                    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-                    @SuppressLint("ObsoleteSdkInt", "DiscouragedPrivateApi")
-                    @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                    get() {
-                        val libCoreClass = Class.forName("libcore.io.Libcore")
-                        val osField = libCoreClass.getDeclaredField("os")
-                        osField.isAccessible = true
-                        return osField.get(null)!!
-                    }
-
-                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-                @SuppressLint("ObsoleteSdkInt")
-                @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                fun symlink(oldPath: String, newPath: String) {
-                    val method =
-                        self.javaClass.getMethod("symlink", String::class.java, String::class.java)
-                    method.invoke(self, oldPath, newPath)
-                }
-
-                @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-                @SuppressLint("ObsoleteSdkInt")
-                @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                fun lstat(path: String): Any {
-                    val method = self.javaClass.getMethod("lstat", String::class.java)
-                    return method.invoke(self, path)!!
-                }
-            }
         }
     }
 }

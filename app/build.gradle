@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
         compileSdk 35
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 35
         versionCode 100
         versionName "0.5.17-dev"

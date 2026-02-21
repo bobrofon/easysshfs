@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
-import androidx.annotation.RequiresApi
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
@@ -121,11 +120,9 @@ class EditFragment : EasySSHFSFragment() {
 
     private fun initLocalDirSelector(selector: View) {
         selector.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                selectLocalDir()
-            }
+            selectLocalDir()
         }
-        selector.isEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        selector.isEnabled = true
     }
 
     private fun grabMountPoint(mountPoint: MountPoint) {
@@ -223,12 +220,10 @@ class EditFragment : EasySSHFSFragment() {
         EasySSHFSActivity.showToast(message, context)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private val localDirPicker = registerForActivityResult(OpenDocumentTree()) { uri: Uri? ->
         uri?.let { setLocalPath(it) }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun selectLocalDir() {
         localDirPicker.launch(/* starting location */ null)
     }
@@ -293,12 +288,8 @@ class EditFragment : EasySSHFSFragment() {
                 "/mnt/runtime/default/emulated/0"
             }
 
-            isMultiUserEnvironment -> {
-                "/data/media/0"
-            }
-
             else -> {
-                "/mnt/sdcard"
+                "/data/media/0"
             }
         }
 
@@ -309,9 +300,6 @@ class EditFragment : EasySSHFSFragment() {
                 storagePath
             }
         }
-
-        private val isMultiUserEnvironment: Boolean
-            get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 // Android 4.2
 
         private val hasRuntimePermissions: Boolean
             get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M // Android 6.0
