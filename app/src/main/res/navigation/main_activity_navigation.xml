@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: MIT -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_navigation"
+    app:startDestination="@id/mountpointFragment">
+
+    <fragment
+        android:id="@+id/mountpointFragment"
+        android:name="ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment"
+        android:label="@string/mount_point_list_title"
+        tools:layout="@layout/fragment_mountpoint_list">
+        <action
+            android:id="@+id/action_mountpointFragment_to_editFragment"
+            app:destination="@id/editFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.EditFragment"
+        android:label="@string/mount_point_title"
+        tools:layout="@layout/fragment_edit">
+        <argument
+            android:name="MOUNT_POINT_ID"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/logFragment"
+        android:name="ru.nsu.bobrofon.easysshfs.log.LogFragment"
+        android:label="@string/debug_log_title"
+        tools:layout="@layout/fragment_log" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="ru.nsu.bobrofon.easysshfs.settings.SettingsFragment"
+        android:label="@string/settings_title" />
+</navigation>

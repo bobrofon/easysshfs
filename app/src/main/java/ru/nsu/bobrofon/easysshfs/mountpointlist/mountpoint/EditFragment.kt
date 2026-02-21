@@ -145,9 +145,7 @@ class EditFragment : EasySSHFSFragment() {
 
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            if (!drawerStatus.isDrawerOpen) {
-                menuInflater.inflate(R.menu.edit, menu)
-            }
+            menuInflater.inflate(R.menu.edit, menu)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
@@ -211,11 +209,6 @@ class EditFragment : EasySSHFSFragment() {
         mountPoint.umount(shell, context)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        appActivity?.onSectionAttached(R.string.mount_point_title)
-    }
-
     private fun showToast(message: String) {
         EasySSHFSActivity.showToast(message, context)
     }
@@ -274,12 +267,8 @@ class EditFragment : EasySSHFSFragment() {
     companion object {
         private const val MOUNT_POINT_ID = "MOUNT_POINT_ID"
 
-        fun newInstance(id: Int): EditFragment {
-            val fragment = EditFragment()
-            val args = Bundle()
-            args.putInt(MOUNT_POINT_ID, id)
-            fragment.arguments = args
-            return fragment
+        fun createArgs(id: Int): Bundle = Bundle().apply {
+            putInt(MOUNT_POINT_ID, id)
         }
 
         private fun sdcard(): String = when {
