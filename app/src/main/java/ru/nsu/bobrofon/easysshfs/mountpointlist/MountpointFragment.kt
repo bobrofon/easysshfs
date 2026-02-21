@@ -17,7 +17,6 @@ import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
-import ru.nsu.bobrofon.easysshfs.mountpointlist.MountpointFragment.OnFragmentInteractionListener
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPointsArrayAdapter
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountStateChangeObserver
 
@@ -34,9 +33,7 @@ class MountpointFragment : EasySSHFSFragment(), AdapterView.OnItemClickListener,
     private lateinit var mountPointsList: MountPointsList
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val context = requireContext()
         val shell = shell!!

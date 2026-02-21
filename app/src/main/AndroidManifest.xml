@@ -39,8 +39,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".EasySSHFSService"
-            android:foregroundServiceType="connectedDevice"/>
+        <service
+            android:name=".EasySSHFSService"
+            android:foregroundServiceType="connectedDevice" />
 
         <receiver
             android:name=".OnBootReceiver"

@@ -15,7 +15,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.LinkedList
 
 
 class MountPoint(
@@ -45,7 +45,7 @@ class MountPoint(
 
     var port: Int = port
         set(value) {
-            if (value < 0 || value > 65535) {
+            if (value !in 0..65535) {
                 logMessage("Port $value is out of range [0; 65535]")
                 return
             }
@@ -57,7 +57,7 @@ class MountPoint(
     fun setPort(value: String) {
         try {
             port = Integer.parseInt(value)
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             logMessage("'$port' is invalid port value")
         }
 
@@ -181,16 +181,17 @@ class MountPoint(
 
         private const val TAG = "MOUNT_POINT"
 
-        private class CheckMountTask constructor(
+        private class CheckMountTask(
             private val mountPoint: MountPoint,
             private val context: WeakReference<Context?> = WeakReference(null)
-        ) :
-            AsyncTask<Void, Void, Pair<Boolean?, String>>() {
+        ) : AsyncTask<Void, Void, Pair<Boolean?, String>>() {
 
             private val mountFile = "/proc/mounts"
 
-            constructor(mountPoint: MountPoint, context: Context?) :
-                    this(mountPoint, WeakReference(context))
+            constructor(mountPoint: MountPoint, context: Context?) : this(
+                mountPoint,
+                WeakReference(context)
+            )
 
             @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: Void): Pair<Boolean?, String> {
@@ -212,8 +213,8 @@ class MountPoint(
 
                 val result: Boolean
                 try {
-                    val procmount = File(mountFile)
-                    result = procmount.useLines { lines ->
+                    val procMounts = File(mountFile)
+                    result = procMounts.useLines { lines ->
                         lines.any { line -> line.contains(mountLine.toString()) }
                     }
                 } catch (e: FileNotFoundException) {
@@ -244,14 +245,17 @@ class MountPoint(
             }
         }
 
-        private class MountTask constructor(
+        private class MountTask(
             private val mountPoint: MountPoint,
             private val shell: Shell,
             private val context: WeakReference<Context?> = WeakReference(null)
         ) : AsyncTask<Void, Void, String>() {
 
-            constructor(mountPoint: MountPoint, shell: Shell, context: Context?) :
-                    this(mountPoint, shell, WeakReference(context))
+            constructor(mountPoint: MountPoint, shell: Shell, context: Context?) : this(
+                mountPoint,
+                shell,
+                WeakReference(context)
+            )
 
             @Deprecated("Deprecated in Java")
             override fun doInBackground(vararg params: Void): String {

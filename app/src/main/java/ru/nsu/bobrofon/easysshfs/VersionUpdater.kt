@@ -8,6 +8,7 @@ import android.os.Build
 import android.system.Os
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.content.edit
 import ru.nsu.bobrofon.easysshfs.log.AppLog
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
 import ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint.MountPoint
@@ -35,9 +36,9 @@ class VersionUpdater(
             update02to03()
         }
 
-        val prefsEditor = settings.edit()
-        prefsEditor.putInt("version", currentVersion)
-        prefsEditor.apply()
+        settings.edit {
+            putInt("version", currentVersion)
+        }
     }
 
     private fun update02to03() {
@@ -127,7 +128,7 @@ class VersionUpdater(
                 } else {
                     Reflected.Os.lstat(path)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // ErrnoException is only available since API 21
                 return false
             }
