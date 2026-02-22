@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:touchscreenBlocksFocus="false"
             android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"/>
 
         <!-- The drawer is given a fixed width in dp and extends the full height of
