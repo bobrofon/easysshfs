@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 buildscript {
     ext.kotlin_version = '1.8.20'
+    ext.nav_version = '2.9.7'
     repositories {
         google()
         mavenCentral()
@@ -26,7 +27,7 @@ android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
         compileSdk 35
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 35
         versionCode 100
         versionName "0.5.17-dev"
@@ -87,6 +88,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation "androidx.fragment:fragment-ktx:1.6.0"
     implementation "androidx.core:core-ktx:1.10.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     def libsuVersion = '3.2.1'
     // The core module is used by all other components

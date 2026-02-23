@@ -7,7 +7,6 @@ import androidx.fragment.app.viewModels
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -47,7 +46,5 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onAttach(context)
 
         viewModelFactory = SettingsViewModel.Factory(SettingsRepository(context.settingsDataStore))
-
-        (activity as? EasySSHFSActivity)?.onSectionAttached(R.string.settings_title)
     }
 }

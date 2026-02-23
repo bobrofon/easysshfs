@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.log
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -59,16 +58,9 @@ class LogFragment : EasySSHFSFragment(), LogChangeObserver {
         logTextView.text = String.format("%s%s", logHeader, logBody)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        appActivity?.onSectionAttached(R.string.debug_log_title)
-    }
-
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            if (!drawerStatus.isDrawerOpen) {
-                menuInflater.inflate(R.menu.log, menu)
-            }
+            menuInflater.inflate(R.menu.log, menu)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

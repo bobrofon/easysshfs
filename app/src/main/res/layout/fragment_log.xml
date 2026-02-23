@@ -1,9 +1,8 @@
+<!-- SPDX-License-Identifier: MIT -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/logScroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ru.nsu.bobrofon.easysshfs.log.LogFragment">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/log"

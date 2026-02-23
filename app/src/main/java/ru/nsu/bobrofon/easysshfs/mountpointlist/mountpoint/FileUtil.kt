@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 package ru.nsu.bobrofon.easysshfs.mountpointlist.mountpoint
 
-import android.annotation.TargetApi
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
@@ -12,7 +11,6 @@ import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.core.net.toUri
-import ru.nsu.bobrofon.easysshfs.DeprecatedApi
 import java.io.File
 import java.lang.reflect.Array as JArray
 
@@ -30,10 +28,6 @@ object FileUtil {
 
     private fun getVolumePath(volumeId: String, context: Context): String? {
         when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP -> {
-                return null
-            }
-
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                 val storageManager =
                     context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
@@ -92,7 +86,6 @@ object FileUtil {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun splitTreeUri(treeUri: Uri): Pair<String?, String> {
         val treeDocumentId = DocumentsContract.getTreeDocumentId(treeUri)
         val split = splitId(treeDocumentId)
@@ -106,15 +99,11 @@ object FileUtil {
         id.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
     fun getPath(uri: Uri, context: Context): String? = when {
-        isDocumentUri(context, uri) -> getDocumentProviderPath(context, uri)
+        DocumentsContract.isDocumentUri(context, uri) -> getDocumentProviderPath(context, uri)
         isMediaStoreUri(uri) -> getRemoteAddress(context, uri)
         isFileUri(uri) -> uri.path
         else -> null
     }
-
-    private fun isDocumentUri(context: Context, uri: Uri): Boolean =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-                && DocumentsContract.isDocumentUri(context, uri)
 
     private fun isMediaStoreUri(uri: Uri): Boolean = "content".equals(uri.scheme, ignoreCase = true)
 
@@ -146,7 +135,7 @@ object FileUtil {
         val (uriType, uriValue) = splitUri(uri)
 
         return if ("primary".equals(uriType, ignoreCase = true)) {
-            DeprecatedApi.Environment.getExternalStorageDirectory().path + "/" + uriValue
+            Environment.getExternalStorageDirectory().path + "/" + uriValue
         } else {
             val storageDefinition =
                 if (Environment.isExternalStorageRemovable()) "EXTERNAL_STORAGE" else "SECONDARY_STORAGE"
@@ -156,13 +145,11 @@ object FileUtil {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private fun getDownloadsProviderPath(context: Context, uri: Uri): String? {
         val id = DocumentsContract.getDocumentId(uri)
         val contentUri = try {
             ContentUris.withAppendedId(
-                "content://downloads/public_downloads".toUri(),
-                java.lang.Long.valueOf(id)
+                "content://downloads/public_downloads".toUri(), java.lang.Long.valueOf(id)
             )
         } catch (e: NumberFormatException) {
             e.printStackTrace()
@@ -186,7 +173,6 @@ object FileUtil {
         return contentUri?.let { getDataColumn(context, contentUri, selection, selectionArgs) }
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private fun splitUri(uri: Uri): Pair<String, String> {
         val documentId = DocumentsContract.getDocumentId(uri)
         val splitUri = splitId(documentId)

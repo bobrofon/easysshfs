@@ -11,11 +11,4 @@ abstract class EasySSHFSFragment : Fragment() {
 
     protected val shell: Shell?
         get() = appActivity?.shell
-
-    protected lateinit var drawerStatus: DrawerStatus
-        private set
-
-    fun setDrawerStatus(status: DrawerStatus) {
-        drawerStatus = status
-    }
 }
