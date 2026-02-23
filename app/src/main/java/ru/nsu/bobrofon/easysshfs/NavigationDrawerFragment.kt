@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -54,7 +55,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
+        // Read in the flag indicating whether the user has demonstrated awareness of the
         // drawer.
         val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
         userLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false)
@@ -87,9 +88,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         drawerListView =
             inflater.inflate(R.layout.fragment_navigation_drawer, container, false) as ListView
@@ -128,7 +127,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeButtonEnabled(true)
 
-        // ActionBarDrawerToggle ties together the the proper interactions
+        // ActionBarDrawerToggle ties together the proper interactions
         // between the navigation drawer and the action bar app icon.
         drawerToggle = object : ActionBarDrawerToggle(
             activity, /* host Activity */
@@ -156,7 +155,7 @@ class NavigationDrawerFragment : EasySSHFSFragment(), DrawerStatus {
                     // the navigation drawer automatically in the future.
                     userLearnedDrawer = true
                     val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply()
+                    sp.edit { putBoolean(PREF_USER_LEARNED_DRAWER, true) }
                 }
 
                 // Show the global app actions in the action bar. See also

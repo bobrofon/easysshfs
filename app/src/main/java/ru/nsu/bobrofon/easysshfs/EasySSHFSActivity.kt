@@ -64,8 +64,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         )[EasySSHFSViewModel::class.java]
 
         AppLog.instance().addMessage(
-            "EasySSHFS ${BuildConfig.VERSION_NAME} "
-                    + "(${BuildConfig.VERSION_CODE}) ${BuildConfig.BUILD_TYPE}"
+            "EasySSHFS ${BuildConfig.VERSION_NAME} " + "(${BuildConfig.VERSION_CODE}) ${BuildConfig.BUILD_TYPE}"
         )
         VersionUpdater(applicationContext).update()
 
@@ -83,8 +82,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
         navigationDrawerFragment =
             supportFragmentManager.findFragmentById(R.id.navigation_drawer) as NavigationDrawerFragment
         navigationDrawerFragment.setUp(
-            R.id.navigation_drawer,
-            findViewById<View>(R.id.drawer_layout) as DrawerLayout
+            R.id.navigation_drawer, findViewById<View>(R.id.drawer_layout) as DrawerLayout
         )
 
         ensureAllPermissionsGranted()
@@ -124,8 +122,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
 
         val permissions = allPermissions.filter {
             ContextCompat.checkSelfPermission(
-                applicationContext,
-                it
+                applicationContext, it
             ) != PackageManager.PERMISSION_GRANTED
         }
 
@@ -142,8 +139,7 @@ class EasySSHFSActivity : AppCompatActivity(), NavigationDrawerFragment.Navigati
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             for (i in permissions.indices) {

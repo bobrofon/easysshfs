@@ -6,14 +6,18 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.annotation.RequiresApi
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
-
 import ru.nsu.bobrofon.easysshfs.EasySSHFSActivity
 import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
@@ -50,8 +54,7 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
@@ -150,30 +153,29 @@ class EditFragment : EasySSHFSFragment() {
             }
         }
 
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-            when (menuItem.itemId) {
-                R.id.action_save -> {
-                    saveAction()
-                    true
-                }
-
-                R.id.action_delete -> {
-                    deleteAction()
-                    true
-                }
-
-                R.id.action_mount -> {
-                    mountAction()
-                    true
-                }
-
-                R.id.action_umount -> {
-                    umountAction()
-                    true
-                }
-
-                else -> false
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+            R.id.action_save -> {
+                saveAction()
+                true
             }
+
+            R.id.action_delete -> {
+                deleteAction()
+                true
+            }
+
+            R.id.action_mount -> {
+                mountAction()
+                true
+            }
+
+            R.id.action_umount -> {
+                umountAction()
+                true
+            }
+
+            else -> false
+        }
     }
 
     private fun saveAction() {
@@ -222,26 +224,24 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private val localDirPicker =
-        registerForActivityResult(OpenDocumentTree()) { uri: Uri? ->
-            uri?.let { setLocalPath(it) }
-        }
+    private val localDirPicker = registerForActivityResult(OpenDocumentTree()) { uri: Uri? ->
+        uri?.let { setLocalPath(it) }
+    }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun selectLocalDir() {
         localDirPicker.launch(/* starting location */ null)
     }
 
-    private val identityFilePicker =
-        registerForActivityResult(object : GetContent() {
-            override fun createIntent(context: Context, input: String): Intent {
-                val intent = super.createIntent(context, input)
-                intent.addCategory(Intent.CATEGORY_OPENABLE)
-                return Intent.createChooser(intent, "Select IdentityFile")
-            }
-        }) { uri: Uri? ->
-            uri?.let { setIdentityFile(it) }
+    private val identityFilePicker = registerForActivityResult(object : GetContent() {
+        override fun createIntent(context: Context, input: String): Intent {
+            val intent = super.createIntent(context, input)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            return Intent.createChooser(intent, "Select IdentityFile")
         }
+    }) { uri: Uri? ->
+        uri?.let { setIdentityFile(it) }
+    }
 
     private fun selectIdentityFile() {
         identityFilePicker.launch("*/*")

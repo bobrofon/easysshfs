@@ -11,9 +11,9 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import ru.nsu.bobrofon.easysshfs.DeprecatedApi
 import java.io.File
-import kotlin.Array
 import java.lang.reflect.Array as JArray
 
 // Some strange code from stackoverflow
@@ -25,8 +25,7 @@ object FileUtil {
         volumePath = volumePath.trimEnd(File.separatorChar)
         documentPath = documentPath.trim(File.separatorChar)
 
-        return if (documentPath.isNotEmpty())
-            volumePath + File.separator + documentPath else volumePath
+        return if (documentPath.isNotEmpty()) volumePath + File.separator + documentPath else volumePath
     }
 
     private fun getVolumePath(volumeId: String, context: Context): String? {
@@ -86,7 +85,7 @@ object FileUtil {
 
                     // not found
                     return null
-                } catch (ex: Exception) {
+                } catch (_: Exception) {
                     return null
                 }
             }
@@ -106,23 +105,20 @@ object FileUtil {
     private fun splitId(id: String): Array<String> =
         id.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-    fun getPath(uri: Uri, context: Context): String? =
-        when {
-            isDocumentUri(context, uri) -> getDocumentProviderPath(context, uri)
-            isMediaStoreUri(uri) -> getRemoteAddress(context, uri)
-            isFileUri(uri) -> uri.path
-            else -> null
-        }
+    fun getPath(uri: Uri, context: Context): String? = when {
+        isDocumentUri(context, uri) -> getDocumentProviderPath(context, uri)
+        isMediaStoreUri(uri) -> getRemoteAddress(context, uri)
+        isFileUri(uri) -> uri.path
+        else -> null
+    }
 
     private fun isDocumentUri(context: Context, uri: Uri): Boolean =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && DocumentsContract.isDocumentUri(context, uri)
 
-    private fun isMediaStoreUri(uri: Uri): Boolean =
-        "content".equals(uri.scheme, ignoreCase = true)
+    private fun isMediaStoreUri(uri: Uri): Boolean = "content".equals(uri.scheme, ignoreCase = true)
 
-    private fun isFileUri(uri: Uri): Boolean =
-        "file".equals(uri.scheme, ignoreCase = true)
+    private fun isFileUri(uri: Uri): Boolean = "file".equals(uri.scheme, ignoreCase = true)
 
     private fun getDocumentProviderPath(context: Context, uri: Uri): String? = when {
         isExternalStorageDocument(uri) -> getExternalStorageProviderPath(uri)
@@ -152,8 +148,8 @@ object FileUtil {
         return if ("primary".equals(uriType, ignoreCase = true)) {
             DeprecatedApi.Environment.getExternalStorageDirectory().path + "/" + uriValue
         } else {
-            val storageDefinition = if (Environment.isExternalStorageRemovable())
-                "EXTERNAL_STORAGE" else "SECONDARY_STORAGE"
+            val storageDefinition =
+                if (Environment.isExternalStorageRemovable()) "EXTERNAL_STORAGE" else "SECONDARY_STORAGE"
 
             val storage = System.getenv(storageDefinition) ?: ""
             "$storage/$uriValue"
@@ -165,7 +161,7 @@ object FileUtil {
         val id = DocumentsContract.getDocumentId(uri)
         val contentUri = try {
             ContentUris.withAppendedId(
-                Uri.parse("content://downloads/public_downloads"),
+                "content://downloads/public_downloads".toUri(),
                 java.lang.Long.valueOf(id)
             )
         } catch (e: NumberFormatException) {
@@ -199,8 +195,7 @@ object FileUtil {
     }
 
     private fun getDataColumn(
-        context: Context, uri: Uri, selection: String? = null,
-        selectionArgs: Array<String>? = null
+        context: Context, uri: Uri, selection: String? = null, selectionArgs: Array<String>? = null
     ): String? {
         val projection = arrayOf(DATA_COLUMN_NAME)
 
@@ -208,11 +203,10 @@ object FileUtil {
             .use { cursor -> cursor?.let { getDataColumn(cursor) } }
     }
 
-    private fun getDataColumn(cursor: Cursor): String? =
-        if (cursor.moveToFirst()) {
-            val columnIndex = cursor.getColumnIndexOrThrow(DATA_COLUMN_NAME)
-            cursor.getString(columnIndex)
-        } else null
+    private fun getDataColumn(cursor: Cursor): String? = if (cursor.moveToFirst()) {
+        val columnIndex = cursor.getColumnIndexOrThrow(DATA_COLUMN_NAME)
+        cursor.getString(columnIndex)
+    } else null
 
     private const val DATA_COLUMN_NAME = "_data"
 

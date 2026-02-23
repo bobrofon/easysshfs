@@ -11,8 +11,7 @@ interface LogChangeObserver {
     fun onLogChanged(logView: LogView)
 }
 
-internal class LogObservable(private val logView: LogView) :
-    Observable<LogChangeObserver>() {
+internal class LogObservable(private val logView: LogView) : Observable<LogChangeObserver>() {
 
     override fun registerObserver(observer: LogChangeObserver) {
         super.registerObserver(observer)

@@ -3,6 +3,7 @@ package ru.nsu.bobrofon.easysshfs.mountpointlist
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import com.topjohnwu.superuser.Shell
 import org.json.JSONArray
 import org.json.JSONException
@@ -76,8 +77,9 @@ class MountPointsList(
             selJson.put(item.json())
         }
 
-        val prefsEditor = settings.edit()
-        prefsEditor.putString(STORAGE_FILE, selJson.toString()).apply()
+        settings.edit {
+            putString(STORAGE_FILE, selJson.toString())
+        }
         autoMountObservable.notifyChanged(isAutoMountEnabled)
     }
 

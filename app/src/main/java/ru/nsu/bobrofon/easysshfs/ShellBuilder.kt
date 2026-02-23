@@ -43,9 +43,7 @@ object ShellBuilder {
     }
 
     private fun isMagiskV27x(): Boolean {
-        val sh = Builder.create()
-            .setFlags(Shell.FLAG_NON_ROOT_SHELL)
-            .build()
+        val sh = Builder.create().setFlags(Shell.FLAG_NON_ROOT_SHELL).build()
 
         // The result should be something like this:
         //   $ su -v 2>/dev/null
