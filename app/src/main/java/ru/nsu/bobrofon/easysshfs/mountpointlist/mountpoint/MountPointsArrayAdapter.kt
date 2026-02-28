@@ -17,7 +17,9 @@ import ru.nsu.bobrofon.easysshfs.databinding.RowLayoutBinding
 class MountPointsArrayAdapter(
     context: Context,
     private val values: List<MountPoint>,
-    private val shell: Shell
+    private val shell: Shell,
+    private val buttonOnFocusChangeListener: View.OnFocusChangeListener,
+    private val buttonOnKeyListener: View.OnKeyListener
 ) : ArrayAdapter<MountPoint>(context, R.layout.row_layout, values) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -39,6 +41,8 @@ class MountPointsArrayAdapter(
             mountButton.text = context.getString(R.string.mount)
             mountButton.setOnClickListener { self.mount(shell, context) }
         }
+        mountButton.onFocusChangeListener = buttonOnFocusChangeListener
+        mountButton.setOnKeyListener(buttonOnKeyListener)
 
         return rowView
     }
