@@ -1,0 +1,3 @@
+* Added D-pad navigation support (and devices without touchscreen)
+* Migrated to NavigationUI and ToolBar
+* Updated minimum SDK version to 21 (Android 5.0 Lollipop)

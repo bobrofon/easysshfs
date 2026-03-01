@@ -29,8 +29,8 @@ android {
         compileSdk 35
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 100
-        versionName "0.5.17-dev"
+        versionCode 101
+        versionName "0.5.17"
 
         externalNativeBuild {
             cmake {
