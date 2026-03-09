@@ -146,12 +146,15 @@ class EasySSHFSActivity : AppCompatActivity() {
             Manifest.permission.INTERNET,
             Manifest.permission.ACCESS_WIFI_STATE,
             Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECEIVE_BOOT_COMPLETED,
         )
-        allPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             allPermissions.add(Manifest.permission.FOREGROUND_SERVICE)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            allPermissions.add(Manifest.permission.NEARBY_WIFI_DEVICES)
         }
 
         val permissions = allPermissions.filter {
