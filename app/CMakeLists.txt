@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10.2)
 # The project generates following files:
 #   * lib/${ANDROID_ABI}/libssh.so
 #   * lib/${ANDROID_ABI}/libsshfs.so
+#   * lib/${ANDROID_ABI}/libnsenter.so
 #   * lib/${ANDROID_ABI}/libstub.so
 project(assets LANGUAGES NONE)
 
@@ -19,7 +20,7 @@ add_subdirectory(../sshfs-static "${SSHFS_BINARY_DIR}")
 # TODO(bobrofon): report issue
 add_subdirectory(src/main/cpp)
 
-set(ASSETS_EXECUTABLES ssh sshfs)
+set(ASSETS_EXECUTABLES ssh sshfs nsenter)
 
 foreach (exe IN LISTS ASSETS_EXECUTABLES)
     set(src_path "${SSHFS_BINARY_DIR}/${exe}-static-${ANDROID_ABI}")

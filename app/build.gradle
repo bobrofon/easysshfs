@@ -34,7 +34,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                targets "ssh", "sshfs"
+                targets "ssh", "sshfs", "nsenter"
             }
         }
     }

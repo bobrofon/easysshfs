@@ -29,6 +29,7 @@ class VersionUpdater(
         // directly use .so files, it will be not possible.
         makeLibrarySymlink("ssh", "ssh", lastVersion != currentVersion)
         makeLibrarySymlink("sshfs", "sshfs", lastVersion != currentVersion)
+        makeLibrarySymlink("nsenter", "nsenter", lastVersion != currentVersion)
 
         if (lastVersion < 9) {
             update02to03()
