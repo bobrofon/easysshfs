@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.10.2)
 # The project generates following files:
 #   * ssh-static-${arch}
 #   * sshfs-static-${arch}
+#   * nsenter-static-${arch}
 project(sshfs-static LANGUAGES NONE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Buildroot.cmake")
@@ -13,7 +14,7 @@ set(BUILDROOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/buildroot")
 include("Buildroot")
 
 set(SSHFS_STATIC_SUPPORTED_ARCHS armeabi-v7a arm64-v8a x86 x86_64)
-set(SSHFS_STATIC_EXECUTABLES ssh sshfs)
+set(SSHFS_STATIC_EXECUTABLES ssh sshfs nsenter)
 
 foreach(arch IN LISTS SSHFS_STATIC_SUPPORTED_ARCHS)
 	set(buildroot_sshfs buildroot-sshfs-static-${arch})
