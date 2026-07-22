@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:importantForAutofill="no"
-            android:inputType="textNoSuggestions"
+            android:inputType="textMultiLine|textNoSuggestions"
             android:hint="@string/sshfs_options_hint" />
     </LinearLayout>
 </ScrollView>
