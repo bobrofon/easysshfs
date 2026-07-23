@@ -1,0 +1,2 @@
+* Use bundled 'nsenter' instead of '--master-mount' option of 'su'
+* Use multiline text field for sshfs options
