@@ -26,9 +26,9 @@ apply plugin: 'kotlin-android'
 android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
-        compileSdk = 35
+        compileSdk = 36
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 104
         versionName "0.5.19-dev"
 
