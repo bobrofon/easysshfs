@@ -8,11 +8,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -70,6 +73,7 @@ class EasySSHFSActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        setupDrawerBackHandling(drawerLayout)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.mountpointFragment,
@@ -100,6 +104,29 @@ class EasySSHFSActivity : AppCompatActivity() {
 
         viewModel.themeMode.observe(this) {
             updateThemeMode(it)
+        }
+    }
+
+    private fun setupDrawerBackHandling(drawerLayout: DrawerLayout) {
+        val closeDrawerCallback = object : OnBackPressedCallback(false) {
+            override fun handleOnBackPressed() {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, closeDrawerCallback)
+
+        drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerOpened(drawerView: View) {
+                closeDrawerCallback.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                closeDrawerCallback.isEnabled = false
+            }
+        })
+        // The drawer may be restored in the open state (e.g. after a configuration change).
+        drawerLayout.post {
+            closeDrawerCallback.isEnabled = drawerLayout.isDrawerOpen(GravityCompat.START)
         }
     }
 
