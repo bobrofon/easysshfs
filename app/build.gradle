@@ -16,7 +16,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
+        maven { url = "https://jitpack.io" }
     }
 }
 
@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
-        compileSdk 35
+        compileSdk = 35
         minSdkVersion 21
         targetSdkVersion 35
         versionCode 104
@@ -45,12 +45,12 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
     externalNativeBuild {
@@ -59,8 +59,8 @@ android {
         }
     }
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -69,10 +69,10 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    namespace 'ru.nsu.bobrofon.easysshfs'
+    namespace = 'ru.nsu.bobrofon.easysshfs'
     packagingOptions {
         jniLibs {
-            useLegacyPackaging true
+            useLegacyPackaging = true
         }
     }
 }
