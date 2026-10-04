@@ -91,7 +91,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
-    def libsuVersion = '3.2.1'
+    def libsuVersion = '6.0.0'
     // The core module is used by all other components
     implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
     // Optional: APIs for creating root services
