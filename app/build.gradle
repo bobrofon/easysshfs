@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 buildscript {
-    ext.kotlin_version = '1.8.20'
-    ext.nav_version = '2.9.7'
+    ext.kotlin_version = '2.2.20'
+    ext.nav_version = '2.9.8'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath 'com.android.tools.build:gradle:8.13.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -16,7 +18,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
+        maven { url = "https://jitpack.io" }
     }
 }
 
@@ -26,9 +28,9 @@ apply plugin: 'kotlin-android'
 android {
     defaultConfig {
         applicationId "ru.nsu.bobrofon.easysshfs"
-        compileSdk 35
+        compileSdk = 36
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 104
         versionName "0.5.19-dev"
 
@@ -45,12 +47,12 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig = signingConfigs.release
         }
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
     externalNativeBuild {
@@ -59,39 +61,41 @@ android {
         }
     }
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
-    namespace 'ru.nsu.bobrofon.easysshfs'
+    namespace = 'ru.nsu.bobrofon.easysshfs'
     packagingOptions {
         jniLibs {
-            useLegacyPackaging true
+            useLegacyPackaging = true
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.1.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation "androidx.fragment:fragment-ktx:1.6.0"
-    implementation "androidx.core:core-ktx:1.10.1"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
+    implementation "androidx.fragment:fragment-ktx:1.8.9"
+    implementation "androidx.core:core-ktx:1.17.0"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
-    def libsuVersion = '3.2.1'
+    def libsuVersion = '6.0.0'
     // The core module is used by all other components
     implementation "com.github.topjohnwu.libsu:core:${libsuVersion}"
     // Optional: APIs for creating root services
