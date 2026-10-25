@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Process
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -267,18 +268,30 @@ class EditFragment : EasySSHFSFragment() {
     companion object {
         private const val MOUNT_POINT_ID = "MOUNT_POINT_ID"
 
+        /**
+         *  Range of UIDs allocated for a user.
+         *  See https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-17.0.0_r1/core/java/android/os/UserHandle.java#47
+         */
+        private const val PER_USER_RANGE = 100000
+
         fun createArgs(id: Int): Bundle = Bundle().apply {
             putInt(MOUNT_POINT_ID, id)
         }
 
+        /**
+         * Calculates user id like the hidden UserHandle.getUserId does
+         * See https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-17.0.0_r1/core/java/android/os/UserHandle.java#313
+         */
+        private val currentUserId: Int
+            get() = Process.myUid() / PER_USER_RANGE
+
         private fun sdcard(): String = when {
-            // TODO(bobrofon): substitute an actual active user id instead of hardcoding '0'
             hasRuntimePermissions -> {
-                "/mnt/runtime/default/emulated/0"
+                "/mnt/runtime/default/emulated/$currentUserId"
             }
 
             else -> {
-                "/data/media/0"
+                "/data/media/$currentUserId"
             }
         }
 
