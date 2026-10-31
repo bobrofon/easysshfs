@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Process
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,6 +24,8 @@ import ru.nsu.bobrofon.easysshfs.EasySSHFSFragment
 import ru.nsu.bobrofon.easysshfs.R
 import ru.nsu.bobrofon.easysshfs.databinding.FragmentEditBinding
 import ru.nsu.bobrofon.easysshfs.mountpointlist.MountPointsList
+import java.io.File
+import java.io.IOException
 
 class EditFragment : EasySSHFSFragment() {
 
@@ -239,11 +243,12 @@ class EditFragment : EasySSHFSFragment() {
         val context = requireContext()
 
         val path = FileUtil.getFullPathFromTreeUri(uri, context)
-        // Most of the time users select some directory, they are actually trying to select a path
-        // on one of the bind-mounted runtime directories (like "/mnt/runtime/[default|write|read|...]/"),
-        // because they just want to access the remote filesystem from most of their Android applications.
-        // So let's replace the path they selected with the path in "/mnt/runtime/default" directory.
-        // This is not necessary that a user would want us to do, but he can edit this path manually
+        // Most of the time users select some directory, they want to access the remote filesystem
+        // from most of their Android applications. "/storage/..." is a view (FUSE, sdcardfs, or
+        // bind mount) built on top of the real storage, and a mount made on it is either not
+        // possible or not visible to other apps. So let's replace the path they selected with the
+        // path in the underlying storage (see toUnderlyingDefaultStorage()).
+        // This is not necessarily what a user wants, but they can edit this path manually
         // in case we are wrong.
         val runtimeStoragePath = toUnderlyingDefaultStorage(path)
         localPath.setText(runtimeStoragePath)
@@ -265,29 +270,88 @@ class EditFragment : EasySSHFSFragment() {
     }
 
     companion object {
+        private const val TAG = "EditFragment"
+
         private const val MOUNT_POINT_ID = "MOUNT_POINT_ID"
+
+        /**
+         *  Range of UIDs allocated for a user.
+         *  See https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-17.0.0_r1/core/java/android/os/UserHandle.java#51
+         */
+        private const val PER_USER_RANGE = 100000
+
+        /**
+         * E.g. /storage/emulated/0/sshfs_mountpoint
+         */
+        private val STORAGE_PATH_REGEXP = Regex("^/storage/([^/]+)(/.*)?$")
 
         fun createArgs(id: Int): Bundle = Bundle().apply {
             putInt(MOUNT_POINT_ID, id)
         }
 
+        /**
+         * Calculates user id like the hidden UserHandle.getUserId does
+         * See https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-17.0.0_r1/core/java/android/os/UserHandle.java#319
+         */
+        private val currentUserId: Int
+            get() = Process.myUid() / PER_USER_RANGE
+
         private fun sdcard(): String = when {
-            // TODO(bobrofon): substitute an actual active user id instead of hardcoding '0'
             hasRuntimePermissions -> {
-                "/mnt/runtime/default/emulated/0"
+                toUnderlyingDefaultStorage("/storage/emulated/$currentUserId")
             }
 
             else -> {
-                "/data/media/0"
+                "/data/media/$currentUserId"
             }
         }
 
+        /**
+         * Map "/storage/<volume>/<path>" to the directory "/storage/<volume>" is built on:
+         *   - "/mnt/pass_through/<user>/<volume>/<path>" on Android 11+ with FUSE.
+         *   - "/mnt/runtime/default/<volume>/<path>" on Android 6-10 or devices with sdcardfs without FUSE.
+         */
         private fun toUnderlyingDefaultStorage(storagePath: String): String {
-            return if (hasRuntimePermissions) {
-                storagePath.replaceFirst(Regex("^/storage/"), "/mnt/runtime/default/")
-            } else {
-                storagePath
+            if (!hasRuntimePermissions) {
+                return storagePath
             }
+
+            val match = STORAGE_PATH_REGEXP.matchEntire(storagePath) ?: return storagePath
+            val volume = match.groupValues[1]
+            val path = match.groupValues[2]
+
+            val runtimeVolume = "/mnt/runtime/default/$volume"
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                // There is no FUSE pass-through before Android 11.
+                return runtimeVolume + path
+            }
+
+            val mountPoints = readMountPoints()
+            val passThroughVolume = "/mnt/pass_through/$currentUserId/$volume"
+            if (passThroughVolume in mountPoints) {
+                return passThroughVolume + path
+            }
+
+            if (runtimeVolume in mountPoints) {
+                return runtimeVolume + path
+            }
+
+            return storagePath
+        }
+
+        /**
+         * Mount points of the app's mount namespace.
+         * The app has no access to init's mount namespace, but the storage mounts in the app
+         * namespace are the same.
+         */
+        private fun readMountPoints(): Set<String> = try {
+            File("/proc/self/mountinfo").useLines { lines ->
+                // "<mount id> <parent id> <major:minor> <root> <mount point> <mount options> ..."
+                lines.mapNotNull { line -> line.split(' ').getOrNull(4) }.toSet()
+            }
+        } catch (e: IOException) {
+            Log.w(TAG, "Can't read mount points", e)
+            emptySet()
         }
 
         private val hasRuntimePermissions: Boolean
